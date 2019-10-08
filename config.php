@@ -22,3 +22,9 @@
 	$conf_db['rs']['name'] 			= "Rumah Sakit Ternate";
 	$conf_db['rs']['address'] 		= "Ternate";
 
+	$conf_app['tanggal_at']			= 0;
+	$conf_app['tanggal_to']			= 1;
+
+	$conf_app['check_in_at']		= "07.00";
+	$conf_app['check_in_to']		= "18.00";
+

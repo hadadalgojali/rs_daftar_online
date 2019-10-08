@@ -1,6 +1,6 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
-
+include "./config.php";
 /*
 | -------------------------------------------------------------------
 | DATABASE CONNECTIVITY SETTINGS
@@ -74,23 +74,24 @@ $active_group = 'default';
 $query_builder = TRUE;
 
 $db['default'] = array(
-	'dsn'	=> '',
-	'hostname' => 'localhost',
-	'username' => '',
-	'password' => '',
-	'database' => '',
-	'dbdriver' => 'mysqli',
-	'dbprefix' => '',
-	'pconnect' => FALSE,
-	'db_debug' => (ENVIRONMENT !== 'production'),
-	'cache_on' => FALSE,
-	'cachedir' => '',
-	'char_set' => 'utf8',
-	'dbcollat' => 'utf8_general_ci',
-	'swap_pre' => '',
-	'encrypt' => FALSE,
-	'compress' => FALSE,
-	'stricton' => FALSE,
-	'failover' => array(),
+	'dsn'          => '',
+	'hostname'     => $conf_db['default']['hostname'],
+	'username'     => $conf_db['default']['username'],
+	'password'     => $conf_db['default']['password'],
+	'database'     => $conf_db['default']['database'],
+	'dbdriver'     => $conf_db['default']['dbdriver'],
+	'port'         => $conf_db['default']['port'],
+	'dbprefix'     => '',
+	'pconnect'     => FALSE,
+	'db_debug'     => (ENVIRONMENT !== 'production'),
+	'cache_on'     => FALSE,
+	'cachedir'     => '',
+	'char_set'     => 'utf8',
+	'dbcollat'     => 'utf8_general_ci',
+	'swap_pre'     => '',
+	'encrypt'      => FALSE,
+	'compress'     => FALSE,
+	'stricton'     => FALSE,
+	'failover'     => array(),
 	'save_queries' => TRUE
 );
