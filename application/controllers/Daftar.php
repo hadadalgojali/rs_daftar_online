@@ -37,19 +37,19 @@ class Daftar extends CI_Controller {
 		$response['tanggal_to'] 	= "+".$conf_app['tanggal_to'];
 
 		$vals = array(
-			'img_path'	 	=> './assets/image/captcha/',
-			'img_url'	 	=> base_url().'assets/image/captcha/',
-			'img_width'	 	=> '160',
-			'img_height' 	=> 40,
-			'border' 		=> 0, 
-			'font_size'     => 24,
-			'expiration'	=> 7200,
-	    //     'colors'        => array(
-					// 'background' => array(255, 255, 255),
-					// 'border'     => array(255, 255, 255),
-					// 'text'       => array(0, 0, 0),
-					// 'grid'       => array(255, 40, 40)
-	    //     )                        
+			'img_path'   => './assets/image/captcha/',
+			'img_url'    => base_url().'assets/image/captcha/',
+			'img_width'  => '160',
+			'img_height' => 40,
+			'border'     => 0, 
+			'font_size'  => 30,
+			'expiration' => 4000,
+			'colors'     => array(
+					'background' => array(255, 255, 255),
+					'border'     => array(158, 252, 230),
+					'text'       => array(0, 0, 0),
+					'grid'       => array(158, 252, 230),
+			)
 		);
 
 		$cap = create_captcha($vals);
@@ -115,6 +115,35 @@ class Daftar extends CI_Controller {
 			$response['status'] 	= true;
 		}
 
+		echo json_encode($response);
+	}
+
+	public function create(){
+		$response 	= array();
+		$response['status'] = false;
+		$parameter 	= array();
+		$parameter['patient_code'] 	= $this->input->post('patient_code');
+		$parameter['kd_customer'] 	= $this->input->post('penjamin');
+		$parameter['jenis_penjamin']= $this->input->post('jenis_kunjungan');
+		$parameter['keluhan'] 		= $this->input->post('keluhan');
+		$parameter['tgl_kunjungan']	= $this->input->post('tgl_kunjungan');
+		$parameter['telepon']		= $this->input->post('telepon');
+		$parameter['unit_code']		= $this->input->post('klinik');
+		$parameter['no_rujukan']	= $this->input->post('no_rujukan');
+
+		$this->rs_patient->set_database($this->load->database('default',TRUE));
+		$response['patient'] = $this->rs_patient->get("*", array('patient_code' => $parameter['patient_code']));
+		if ($response['patient']->num_rows()>0) {
+			$response['patient'] = $response['patient']->result();
+		}
+
+		$this->rs_unit->set_database($this->load->database('default',TRUE));
+		$response['unit'] = $this->rs_unit->get("*", array('unit_code' => $parameter['unit_code']));
+		if ($response['unit']->num_rows()>0) {
+			$response['unit'] = $response['unit']->result();
+		}
+
+		
 		echo json_encode($response);
 	}
 }

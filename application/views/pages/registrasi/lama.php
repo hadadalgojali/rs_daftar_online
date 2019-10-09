@@ -14,6 +14,17 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 	</style>
 </head>
 <body>
+	<script type="text/javascript">
+		var status_    = {};
+		var parameter = {};
+
+		parameter.penjamin  		= "";
+		parameter.jenis_penjamin  	= "0";
+		parameter.klinik  			= "";
+
+		status_.get_pasien 		= false;
+		status_.check_validasi 	= false;
+	</script>
 	<?php echo $_header; ?>
 	<main role ="main">
 		<div class ="album py-4">
@@ -94,10 +105,19 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 														<select name="kelompok" id="kelompok" class="form-control"></select>
 													</div>
 												</div>
+												<div class="form-group row" style="display: none;" id="select_jenis_kunjungan">
+													<label for="staticEmail" class="col-sm-3 col-form-label">Jenis Kunj</label>
+													<div class="col-sm-9">
+														<select name="jenis_kunjungan" id="jenis_kunjungan" class="form-control">
+															<option value="0" selected="selected">Episode Baru</option>
+															<option value="1">Episode Lanjutan</option>
+														</select>
+													</div>
+												</div>
 												<div class="form-group row">
 													<label for="inputPassword" class="col-sm-3 col-form-label">Keluhan</label>
 													<div class="col-sm-9">
-														<textarea class="form-control"></textarea>
+														<textarea class="form-control" style="height: 95px;" id="keluhan"></textarea>
 													</div>
 												</div>
 												<div class="form-group row">
@@ -130,20 +150,53 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
 
 											<div class="col-md-6" id="form-bpjs" style="display: none;">
-												<form>
-													<div class="form-group row">
-														<label for="staticEmail" class="col-sm-3 col-form-label">Email</label>
-														<div class="col-sm-9">
-															<input type="text" class="form-control" id="staticEmail" value="email@example.com">
+												<div class="form-group row">
+													<label class="col-sm-4 col-form-label">No Rujuk</label>
+													<div class="col-sm-8">
+														<div class="input-group">
+															<input type="text" class="form-control" id="no_rujukan" name="no_rujukan">
+															<div class="input-group-prepend">
+																<button class="btn btn-primary" id="btn_no_rujukan">Cek</button>
+															</div>
 														</div>
 													</div>
-													<div class="form-group row">
-														<label for="inputPassword" class="col-sm-3 col-form-label">Password</label>
-														<div class="col-sm-9">
-															<input type="password" class="form-control" id="inputPassword" placeholder="Password">
-														</div>
+												</div>
+												<div class="form-group row">
+													<label class="col-sm-4 col-form-label">Tgl Rujuk</label>
+													<div class="col-sm-8">
+														<input type="text" class="form-control" id="tgl_rujukan" name="tgl_rujukan" readonly>
 													</div>
-												</form>
+												</div>
+												<div class="form-group row">
+													<label class="col-sm-4 col-form-label">Faskes</label>
+													<div class="col-sm-8">
+														<input type="text" class="form-control" id="faskes" name="faskes" readonly>
+													</div>
+												</div>
+												<div class="form-group row">
+													<label class="col-sm-4 col-form-label">Kelas</label>
+													<div class="col-sm-8">
+														<input type="text" class="form-control" id="kelas" name="kelas" readonly>
+													</div>
+												</div>
+												<div class="form-group row">
+													<label class="col-sm-4 col-form-label">Diagnosa</label>
+													<div class="col-sm-8">
+														<input type="text" class="form-control" id="diagnosa" name="diagnosa" readonly>
+													</div>
+												</div>
+												<div class="form-group row">
+													<label class="col-sm-4 col-form-label">Klinik Rujukan</label>
+													<div class="col-sm-8">
+														<input type="text" class="form-control" id="klinik_rujukan" name="klinik_rujukan" readonly>
+													</div>
+												</div>
+												<div class="form-group row">
+													<label class="col-sm-4 col-form-label">Pemberi surat</label>
+													<div class="col-sm-8">
+														<input type="text" class="form-control" id="pemberi_surat" name="pemberi_surat" readonly>
+													</div>
+												</div>
 											</div>
 										</div>
 
@@ -164,7 +217,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 											</table>
 										</div>
 										<div class="form-group">
-											<button class="btn btn-primary" id="btn_save">Simpan</button>
+											<button class="btn btn-primary" id="btn_save"><i class="fa fa-save" id="btn_load_save"></i> Simpan</button>
 										</div>
 
 									</div>
@@ -176,10 +229,38 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 			</div>
 		</div>
 	</main>
+
+	<!-- Modal -->
+	<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+				<h5 class="modal-title"><span id="ModalTitle" >Modal title</span></h5>
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+			<div class="modal-body">
+				<span id="ModalBody"></span>
+			</div>
+			<div class="modal-footer">
+				<button type="button" id="btnModal_close" class="btn btn-secondary" data-dismiss="modal">Close</button>
+				<button type="button" id="btnModal_save" class="btn btn-primary">Save</button>
+				<button type="button" id="btnModal_update" class="btn btn-success">Update</button>
+				<button type="button" id="btnModal_delete" class="btn btn-danger">Delete</button>
+			</div>
+			</div>
+		</div>
+	</div>
 	
 	<?php echo $_footer; ?>
 	<?php echo $_include_js; ?>
 	<script type="text/javascript">
+		function hide_btn_modal(){
+			document.getElementById('btnModal_save').style.display   = 'none';
+			document.getElementById('btnModal_update').style.display = 'none';
+			document.getElementById('btnModal_delete').style.display = 'none';
+		}
 
 	    function validate_time(t,st,et){
 	       t = t.split(/-/);
@@ -192,42 +273,80 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 	    }
 
 	    // Call like:
-
 		var getnow     = new Date();
 		var hrs_now = getnow.getHours() < 10 ? "0" + getnow.getHours() : getnow.getHours();
 		var mnt_now = getnow.getMinutes() < 10 ? "0" + getnow.getMinutes() : getnow.getMinutes();
 
-		var getNextDay = new Date();
-		getNextDay.setDate(getNextDay.getDate()+1); //date + 1
-		var tgl_tommorow = ("0" + (getNextDay.getDate())).slice(-2); // format 2 digit
-		var bulan_besok = ("0" + (getNextDay.getMonth()+1)).slice(-2); //format 2 digit
-		var NextDay = tgl_tommorow+'-'+bulan_besok+'-'+getNextDay.getFullYear();
-
-
 		$("#btn_save").click(function(){
-			if ($('#tgl_kunjungan').val() == NextDay || $('#tgl_kunjungan').val() == "<?php echo date('d-m-Y') ?>") {
-				if (validate_time("<?php echo $check_in_to; ?>","<?php echo $check_in_at; ?>",hrs_now+"-"+mnt_now) === false) {
-					$.toast({
-						heading: 'Infomasi',
-						text: 'Masa pendaftaran telah berakhir',
-						icon: 'warning',
-						position: 'top-right',
-					});
-				}else if($('#captcha').val() !== "<?php echo $word_captcha; ?>"){
-					$.toast({
-						heading: 'Infomasi',
-						text: 'Captcha salah, silahkan ulangi kembali',
-						icon: 'warning',
-						position: 'top-right',
-					});
-				}else{
-					$.toast({
-						heading: 'Infomasi',
-						text: 'Pendaftaran telah berhasil',
-						icon: 'info',
-						position: 'top-right',
-					});
-				}
+			if($('#kd_pasien').val() == "_-__-__-__" && $('#tgl_lahir').val() == "__-__-____"){
+				$.toast({
+					heading: 'Infomasi',
+					text: 'Pasien belum dipilih',
+					icon: 'warning',
+					position: 'top-right',
+				});
+				status_.check_validasi = false;
+			}else if (validate_time("<?php echo $check_in_to; ?>","<?php echo $check_in_at; ?>",hrs_now+"-"+mnt_now) === false) {
+				$.toast({
+					heading: 'Infomasi',
+					text: 'Masa pendaftaran telah berakhir',
+					icon: 'warning',
+					position: 'top-right',
+				});
+				status_.check_validasi = false;
+			}else if($('#captcha').val() !== "<?php echo $word_captcha; ?>"){
+				$.toast({
+					heading: 'Infomasi',
+					text: 'Captcha salah, silahkan ulangi kembali',
+					icon: 'warning',
+					position: 'top-right',
+				});
+				status_.check_validasi = false;
+			}else if(status_.check_validasi === false && status_.get_pasien === false){
+				$.toast({
+					heading: 'Infomasi',
+					text: 'Perhatikan kembali formulir pendaftaran',
+					icon: 'warning',
+					position: 'top-right',
+				});
+			}else if(parameter.klinik == ""){
+				$.toast({
+					heading 	: 'Infomasi',
+					text 		: 'Anda belum memilih klinik',
+					icon 		: 'warning',
+					position 	: 'top-right',
+				});
+			}else{
+				// $.toast({
+				// 	heading: 'Infomasi',
+				// 	text: 'Pendaftaran telah berhasil',
+				// 	icon: 'info',
+				// 	position: 'top-right',
+				// });
+				status_.check_validasi = true;
+			}
+
+			if (status_.check_validasi === true && status_.get_pasien === true) {
+				$("#btn_load_save").attr('class', 'fa fa-spinner fa-spin');
+				$.ajax({
+					url 		: "<?php echo base_url()?>Daftar/create",
+					dataType 	: 'json',
+					delay 		: 2000,
+					type 		: "POST",
+					data 		: {
+						patient_code 	: $('#kd_pasien').val(),
+						penjamin 		: parameter.penjamin,
+						jenis_kunjungan	: parameter.jenis_penjamin,
+						keluhan			: $('#keluhan').val(),
+						tgl_kunjungan	: $('#tgl_kunjungan').val(),
+						telepon			: $('#telepon').val(),
+						klinik			: parameter.klinik,
+						no_rujukan 		: $('#no_rujukan').val(),
+					},
+					success: function(data) {
+						$("#btn_load_save").attr('class', 'fa fa-save');
+					}
+				});
 			}
 		});
 
@@ -248,6 +367,15 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 			},
 			select : function(evt, ui){
 				// console.log(ui.item);
+
+				parameter.penjamin  		= ui.item.value;
+				if (ui.item.value !== '0000000001') {
+					document.getElementById('select_jenis_kunjungan').style.display = '';
+					document.getElementById('form-bpjs').style.display = '';
+				}else{
+					document.getElementById('select_jenis_kunjungan').style.display = 'none';
+					document.getElementById('form-bpjs').style.display = 'none';
+				}
 			},
 			style: 'dropdown',
 			width:'100%',
@@ -270,11 +398,12 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 							});
 						}
 					}
-				})
+				});
 			},
 			select : function(evt, ui){
-				// console.log(ui.item.label);
+				// console.log(ui.item);
 				document.getElementById('ket_klinik').innerHTML = ui.item.label;
+				parameter.klinik = ui.item.value;
 			},
 			style: 'dropdown',
 			width:'100%',
@@ -293,6 +422,21 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 			}
 		});
 
+		$("#jenis_kunjungan").change(function(text, evt){
+			// console.log(text);
+			parameter.jenis_penjamin  	= text.originalEvent.target.value;
+			hide_btn_modal();
+			document.getElementById('ModalTitle').innerHTML = "Informasi";
+			if (text.originalEvent.target.value == "0") {
+				document.getElementById('ModalBody').innerHTML = "Episode Baru adalah pasien yang belum cetak SEP dan akan memulai pemeriksaan baru.";
+				$("#btn_no_rujukan").attr('disabled', false);
+			}else{	
+				document.getElementById('ModalBody').innerHTML = "Episode Lanjutan adalah Pasien yang sudah cetak SEP dan belum selesai pemeriksaan di hari yang sama kemudian dilanjutkan di hari berikutnya tanpa cetak SEP.";
+				$("#btn_no_rujukan").attr('disabled', true);
+			}
+			$("#exampleModal").modal('show');
+		});
+
 		$('#btn_search').click(function(){
 			$("#btn_load_search").attr('class', 'fa fa-spinner fa-spin');
 			$("#btn_search").attr("disabled", true);
@@ -306,7 +450,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 				},
 				success: function (response) {
 					var Obj = JSON.parse(response);
-					$("#btn_load_search").attr('class', 'fa fa-save');
+					$("#btn_load_search").attr('class', 'fa fa-search');
 					$("#btn_search").attr("disabled", false);
 
 					if (Obj.status === false && Obj.patient.num_rows == 0) {
@@ -319,9 +463,11 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 							icon: 'info',
 							position: 'top-right',
 						});
+						status_.get_pasien = false;
 					}else{
 						$("#nama").val(Obj.patient[0].name);
 						$("#alamat").val(Obj.patient[0].address);
+						status_.get_pasien = true;
 					}
 				},
 				error: function(jqXHR, textStatus, errorThrown) {

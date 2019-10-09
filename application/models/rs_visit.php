@@ -2,23 +2,27 @@
 
 class rs_visit extends CI_Model {
 	protected $table 		= "rs_visit";
+	protected $database 	= "";
 
+	public function set_database($database){
+		$this->database = $database;
+	}
 
-	public function get($select = "*", $criteria = null, $order_by = "asc"){
-		$this->db->select($select);
-		$this->db->from($this->table);
+	public function get($select = "*", $criteria = null){
+		$this->database->select($select);
+		$this->database->from($this->table);
 		if ($criteria !== null) {
-			$this->db->where($criteria);
+			$this->database->where($criteria);
 		}
-		$this->db->order_by('name', $order_by);
+		// $this->database->order_by('name', $order_by);
 
-		return $this->db->get();
+		return $this->database->get();
 	}
 
 	public function create($parameter){
 		try {
-			$this->db->insert($this->table, $parameter);
-			return $this->db->affected_rows();
+			$this->database->insert($this->table, $parameter);
+			return $this->database->affected_rows();
 		} catch (Exception $e) {
 			return $e;
 		}
@@ -26,9 +30,9 @@ class rs_visit extends CI_Model {
 
 	public function update($criteria, $parameter){
 		try {
-			$this->db->where($criteria);
-			$this->db->update($this->table, $parameter);
-			return $this->db->affected_rows();
+			$this->database->where($criteria);
+			$this->database->update($this->table, $parameter);
+			return $this->database->affected_rows();
 		} catch (Exception $e) {
 			return $e;
 		}
@@ -36,9 +40,9 @@ class rs_visit extends CI_Model {
 
 	public function delete($criteria){
 		try {
-			$this->db->where($criteria);
-			$this->db->delete($this->table);
-			return $this->db->affected_rows();
+			$this->database->where($criteria);
+			$this->database->delete($this->table);
+			return $this->database->affected_rows();
 		} catch (Exception $e) {
 			return $e;
 		}
