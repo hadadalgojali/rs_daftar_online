@@ -1,14 +1,14 @@
 <?php 
 
-class rs_visit extends CI_Model {
-	protected $table 		= "rs_visit";
+class rs_dokter_klinik extends CI_Model {
+	protected $table 		= "rs_dokter_klinik";
 	protected $database 	= "";
 
 	public function set_database($database){
 		$this->database = $database;
 	}
 
-	public function get($select = "*", $criteria = null){
+	public function get($select = "*", $criteria = null, $order_by = "asc"){
 		$this->database->select($select);
 		$this->database->from($this->table);
 		if ($criteria !== null) {
@@ -19,8 +19,8 @@ class rs_visit extends CI_Model {
 
 	public function create($parameter){
 		try {
-			$this->database->insert($this->table, $parameter);
-			return $this->database->affected_rows();
+			$this->db->insert($this->table, $parameter);
+			return $this->db->affected_rows();
 		} catch (Exception $e) {
 			return $e;
 		}
@@ -28,9 +28,9 @@ class rs_visit extends CI_Model {
 
 	public function update($criteria, $parameter){
 		try {
-			$this->database->where($criteria);
-			$this->database->update($this->table, $parameter);
-			return $this->database->affected_rows();
+			$this->db->where($criteria);
+			$this->db->update($this->table, $parameter);
+			return $this->db->affected_rows();
 		} catch (Exception $e) {
 			return $e;
 		}
@@ -38,9 +38,9 @@ class rs_visit extends CI_Model {
 
 	public function delete($criteria){
 		try {
-			$this->database->where($criteria);
-			$this->database->delete($this->table);
-			return $this->database->affected_rows();
+			$this->db->where($criteria);
+			$this->db->delete($this->table);
+			return $this->db->affected_rows();
 		} catch (Exception $e) {
 			return $e;
 		}

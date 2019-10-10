@@ -10,6 +10,8 @@ class Daftar extends CI_Controller {
 		$this->load->model('rs_patient');
 		$this->load->model('rs_customer');
 		$this->load->model('rs_unit');
+		$this->load->model('rs_visit');
+		$this->load->model('rs_dokter_klinik');
 		$this->load->helper('captcha');
 	}
 
@@ -127,6 +129,8 @@ class Daftar extends CI_Controller {
 		$parameter['jenis_penjamin']= $this->input->post('jenis_kunjungan');
 		$parameter['keluhan'] 		= $this->input->post('keluhan');
 		$parameter['tgl_kunjungan']	= $this->input->post('tgl_kunjungan');
+		$parameter['tgl_kunjungan'] = explode("-", $parameter['tgl_kunjungan']);
+		$parameter['tgl_kunjungan'] = $parameter['tgl_kunjungan'][2]."-".$parameter['tgl_kunjungan'][1]."-".$parameter['tgl_kunjungan'][0];
 		$parameter['telepon']		= $this->input->post('telepon');
 		$parameter['unit_code']		= $this->input->post('klinik');
 		$parameter['no_rujukan']	= $this->input->post('no_rujukan');
@@ -141,9 +145,120 @@ class Daftar extends CI_Controller {
 		$response['unit'] = $this->rs_unit->get("*", array('unit_code' => $parameter['unit_code']));
 		if ($response['unit']->num_rows()>0) {
 			$response['unit'] = $response['unit']->result();
+
+			$this->rs_dokter_klinik->set_database($this->load->database('default',TRUE));
+			$parameter['id_dokter_klinik'] = $this->rs_dokter_klinik->get(" employee_id ", array( 'unit_id' => $response['unit'][0]->unit_id ) );
+			if ($parameter['id_dokter_klinik']->num_rows()>0) {
+				$parameter['id_dokter_klinik'] = $parameter['id_dokter_klinik']->row()->employee_id;
+			}		
+
+			$this->rs_visit->set_database($this->load->database('default',TRUE));
+			$parameter['no_antrian'] = $this->rs_visit->get(" coalesce(count(*),0) + 1 as no_antrian ", array( 'entry_date' =>  $parameter['tgl_kunjungan'], 'unit_id' => $response['unit'][0]->unit_id) );
+			if ($parameter['no_antrian']->num_rows()>0) {
+				$parameter['no_antrian'] = $parameter['no_antrian']->row()->no_antrian;
+			}
 		}
 
-		
+		$this->rs_customer->set_database($this->load->database('default',TRUE));
+		$response['customer'] = $this->rs_customer->get("*", array('customer_code' => $parameter['kd_customer']));
+		if ($response['customer']->num_rows()>0) {
+			$response['customer'] = $response['customer']->result();
+		}
+
+		$this->rs_visit->set_database($this->load->database('default',TRUE));
+		$parameter['id_visit'] = $this->rs_visit->get(" max(visit_id)+1 as id ", null);
+		if ($parameter['id_visit']->num_rows()>0) {
+			$parameter['id_visit'] = $parameter['id_visit']->row()->id;
+		}		
+
+		$this->rs_visit->set_database($this->load->database('default',TRUE));
+		$parameter['no_pendaftaran'] = $this->rs_visit->get(" coalesce(count(*),0) + 1 as no_pendaftaran ", array( 'tgl_daftar' => date('Y-m-d') ) );
+		if ($parameter['no_pendaftaran']->num_rows()>0) {
+			$format 						= "000";
+			$parameter['no_pendaftaran'] 	= substr($format, 0,-strlen($parameter['no_pendaftaran']->row()->no_pendaftaran)).$parameter['no_pendaftaran']->row()->no_pendaftaran;
+		}		
+
+		$response['parameter'] = $parameter;
+
+		$response['message'] = "";
+		if (count($response['patient'])>0 && count($response['unit'])>0 && count($response['customer'])>0) {
+			$response['message'] 	= "Proses simpan data kunjungan";
+
+			$this->rs_visit->set_database($this->load->database('default',TRUE));
+			$rs_visit = $this->rs_visit->get("*", array( 'patient_id' => $response['patient'][0]->patient_id, 'unit_id' => $response['unit'][0]->unit_id, 'entry_date' => $parameter['tgl_kunjungan'], 'hadir' => '0' ) );
+			if ($rs_visit->num_rows() == 0) {
+				$response['status'] 	= $this->rs_visit->create(
+					array(
+						'visit_id' 				=> $parameter['id_visit'],
+						'patient_id' 			=> $response['patient'][0]->patient_id,
+						'unit_id' 				=> $response['unit'][0]->unit_id,
+						'entry_date' 			=> $parameter['tgl_kunjungan'],
+						'entry_seq' 			=> '1',
+						'dokter_id'				=> $parameter['id_dokter_klinik'],
+						'no_antrian'			=> $parameter['no_antrian'],
+						'customer_id'			=> $response['customer'][0]->customer_id,
+						'status_dilayani'		=> '0',
+						'kode_sep'				=> '',
+						'nama_peserta'			=> '',
+						'nomor_peserta'			=> '',
+						'no_pendaftaran'		=> substr(date('Y'), -2).date('m').date('d').$parameter['no_pendaftaran'],
+						'poli_tujuan'			=> '',
+						'no_rujukan'			=> $parameter['no_rujukan'],
+						'diagnosa'				=> '',
+						'faskes_asal'			=> '',
+						'kd_rujukan'			=> '',
+						'kelas'					=> '',
+						'hadir'					=> 0,
+						'jenis_daftar'			=> 'JNSDFTR_ONLINE',
+						'baru'					=> 0,
+						'pbi'					=> 0,
+						'non_pbi'				=> 0,
+						'keluhan'				=> $parameter['keluhan'],
+						'jenis_kunjungan_bpjs' 	=> $parameter['jenis_penjamin'],
+						'tgl_daftar' 			=> date('Y-m-d'),
+					)
+				);
+				$response['parameter']['no_pendaftaran']= substr(date('Y'), -2).date('m').date('d').$parameter['no_pendaftaran'];
+			}else{
+				$response['parameter']['no_pendaftaran'] = $rs_visit->row()->no_pendaftaran;
+				$response['status'] = true;
+			}
+		}
+
+		$response['parameter']['tgl_kunjungan'] = date_format(date_create($response['parameter']['tgl_kunjungan']), "d/M/Y");
+		if ($response['status'] > 0) {
+			$response['status'] = true;
+		}else{
+			$response['status'] = false;
+		}
 		echo json_encode($response);
 	}
+
+	public function check_rujukan(){
+		include('./config.php');
+		$opts = array(
+		  'http'=>array(
+			'method'=>'GET',
+			'header'=>$this->getSignature()
+		  )
+		);
+		$context = stream_context_create($opts);
+		$res  	 = json_decode(file_get_contents($conf_app['bpjs']['url_rujukan'].$this->input->post('no_signature'),false,$context),false);
+		echo json_encode($res);
+	}
+
+
+	private function getSignature(){
+		include('./config.php');
+
+		$tmp_secretKey  = $conf_app['bpjs']['secret_key'];
+		$tmp_costumerID = $conf_app['bpjs']['customer_id'];
+
+		date_default_timezone_set('UTC');
+		$tStamp = time();
+		$signature = hash_hmac('sha256', $tmp_costumerID."&".$tStamp, $tmp_secretKey, true);
+		$encodedSignature = base64_encode($signature);
+		return array("X-Cons-ID: ".$tmp_costumerID,"X-Timestamp: ".$tStamp,"X-Signature: ".$encodedSignature);	
+	}
+	
 }

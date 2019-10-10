@@ -35,6 +35,31 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
 						<div class="row">
 							<div class="col-md-12 py-2">
+								<div class="alert alert-success" role="alert" style="display: none;" id="result_pendaftaran">
+									Pendaftaran Berhasil.<br>
+									Harap Catat Nomor Pendaftaran dibawah ini untuk kunjungan Rumah Sakit:
+									<h3><span id="result_no_pendaftaran">-</span></h3>
+									Atas : 
+									<table>
+										<tr>
+											<td>Medrec</td>
+											<td>: <span id="result_medrec">-</span></td>
+										</tr>
+										<tr>
+											<td>Nama</td>
+											<td>: <span id="result_nama">-</span></td>
+										</tr>
+										<tr>
+											<td width="120">Hari/ Tanggal</td>
+											<td>: <span id="result_tgl_checkin">-</span></td>
+										</tr>
+										<tr>
+											<td>Klinik</td>
+											<td>: <span id="result_klinik">-</span></td>
+										</tr>
+									</table>
+								</div>
+
 								<div class="card">
 									<div class="card-header">
 										<b>PENDAFTARAN</b> PASIEN LAMA :
@@ -272,6 +297,44 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 	            || (t[0] == et[0] && t[1] > et[1]));
 	    }
 
+	    $("#btn_no_rujukan").click(function(){
+	    	$.ajax({
+				url 		: "<?php echo base_url()?>Daftar/check_rujukan",
+				dataType 	: 'json',
+				delay 		: 2000,
+				type 		: "POST",
+				data 		: {
+					no_signature 	: $('#no_rujukan').val(),
+				},
+				success: function(data) {
+					if (data.metaData.code == 200) {
+						$.toast({
+							heading 	: 'Infomasi',
+							text 		: 'No rujukan telah ditemukan',
+							icon 		: 'info',
+							position 	: 'top-right',
+						});
+						// DISINI
+						// data.response.rujukan.tglKunjungan
+						$('#tgl_rujukan').val(data.response.rujukan.tglKunjungan);
+						$('#faskes').val(data.response.rujukan.provPerujuk.nama);
+						$('#kelas').val(data.response.rujukan.peserta.hakKelas.keterangan);
+						$('#diagnosa').val(data.response.rujukan.diagnosa.kode+"-"+data.response.rujukan.diagnosa.nama);
+						// data.response_bpjs.resp.response.rujukan.poliRujukan.nama
+						$('#klinik_rujukan').val(data.response.rujukan.poliRujukan.kode+"-"+data.response.rujukan.poliRujukan.nama);
+						// $('#pemberi_surat').val(data.response.rujukan.poliRujukan.kode+"-"+data.response.rujukan.poliRujukan.nama);
+					}else{
+						$.toast({
+							heading 	: 'Infomasi',
+							text 		: 'No rujukan tidak ditemukan',
+							icon 		: 'warning',
+							position 	: 'top-right',
+						});
+					}
+				}
+			});
+	    });
+
 	    // Call like:
 		var getnow     = new Date();
 		var hrs_now = getnow.getHours() < 10 ? "0" + getnow.getHours() : getnow.getHours();
@@ -345,6 +408,16 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 					},
 					success: function(data) {
 						$("#btn_load_save").attr('class', 'fa fa-save');
+						// console.log(data);
+						if (data.status === true) {
+							document.getElementById('result_pendaftaran').style.display = "";
+							document.getElementById('result_nama').innerHTML            = data.patient[0].name;
+							document.getElementById('result_tgl_checkin').innerHTML     = data.parameter.tgl_kunjungan;
+							document.getElementById('result_medrec').innerHTML     		= data.parameter.patient_code;
+							document.getElementById('result_klinik').innerHTML     		= data.unit[0].unit_name;
+							document.getElementById('result_klinik').innerHTML     		= data.unit[0].unit_name;
+							document.getElementById('result_no_pendaftaran').innerHTML  = data.parameter.no_pendaftaran;
+						}
 					}
 				});
 			}
