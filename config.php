@@ -36,8 +36,9 @@
 			$conf_app['capcha']['grid']        = "150, 255, 230";
 			
 			// BPJS 
-			$conf_app['bpjs']['secret_key']    = "8eXF12CA03";
-			$conf_app['bpjs']['customer_id']   = "25246";
-			$conf_app['bpjs']['url_rujukan']   = "https://new-api.bpjs-kesehatan.go.id:8080/new-vclaim-rest/Rujukan/";
+			$conf_app['bpjs']['secret_key']    	= "8eXF12CA03";
+			$conf_app['bpjs']['customer_id']   	= "25246";
+			$conf_app['bpjs']['url_rujukan']   	= "https://new-api.bpjs-kesehatan.go.id:8080/new-vclaim-rest/Rujukan/";
+			$conf_app['bpjs']['url_dokter_dpjp']= "https://new-api.bpjs-kesehatan.go.id:8080/new-vclaim-rest/referensi/dokter/pelayanan/";
 		
 ?>

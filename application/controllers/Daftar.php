@@ -134,6 +134,7 @@ class Daftar extends CI_Controller {
 		$parameter['telepon']		= $this->input->post('telepon');
 		$parameter['unit_code']		= $this->input->post('klinik');
 		$parameter['no_rujukan']	= $this->input->post('no_rujukan');
+		$parameter['data_rujukan']	= json_decode($this->input->post('data_rujukan'));
 
 		$this->rs_patient->set_database($this->load->database('default',TRUE));
 		$response['patient'] = $this->rs_patient->get("*", array('patient_code' => $parameter['patient_code']));
@@ -216,6 +217,14 @@ class Daftar extends CI_Controller {
 						'keluhan'				=> $parameter['keluhan'],
 						'jenis_kunjungan_bpjs' 	=> $parameter['jenis_penjamin'],
 						'tgl_daftar' 			=> date('Y-m-d'),
+						'kd_kelas' 				=> $parameter['data_rujukan']->kd_kelas,
+						'kd_poli' 				=> $parameter['data_rujukan']->kd_poli,
+						'kd_diagnosa' 			=> $parameter['data_rujukan']->kd_diagnosa,
+						'rujukan' 				=> $parameter['data_rujukan']->rujukan,
+						'faskes' 				=> $parameter['data_rujukan']->faskes,
+						'tgl_rujukan' 			=> $parameter['data_rujukan']->tgl_rujukan,
+						'kd_dpjp' 				=> $parameter['data_rujukan']->kd_dpjp,
+
 					)
 				);
 				$response['parameter']['no_pendaftaran']= substr(date('Y'), -2).date('m').date('d').$parameter['no_pendaftaran'];
@@ -234,31 +243,4 @@ class Daftar extends CI_Controller {
 		echo json_encode($response);
 	}
 
-	public function check_rujukan(){
-		include('./config.php');
-		$opts = array(
-		  'http'=>array(
-			'method'=>'GET',
-			'header'=>$this->getSignature()
-		  )
-		);
-		$context = stream_context_create($opts);
-		$res  	 = json_decode(file_get_contents($conf_app['bpjs']['url_rujukan'].$this->input->post('no_signature'),false,$context),false);
-		echo json_encode($res);
-	}
-
-
-	private function getSignature(){
-		include('./config.php');
-
-		$tmp_secretKey  = $conf_app['bpjs']['secret_key'];
-		$tmp_costumerID = $conf_app['bpjs']['customer_id'];
-
-		date_default_timezone_set('UTC');
-		$tStamp = time();
-		$signature = hash_hmac('sha256', $tmp_costumerID."&".$tStamp, $tmp_secretKey, true);
-		$encodedSignature = base64_encode($signature);
-		return array("X-Cons-ID: ".$tmp_costumerID,"X-Timestamp: ".$tStamp,"X-Signature: ".$encodedSignature);	
-	}
-	
 }

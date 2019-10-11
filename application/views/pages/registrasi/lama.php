@@ -15,8 +15,16 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 </head>
 <body>
 	<script type="text/javascript">
-		var status_    = {};
-		var parameter = {};
+		var status_    	= {};
+		var parameter 	= {};
+		var _rujukan 	= {};
+		_rujukan.kd_kelas 		= "";
+		_rujukan.kd_poli 		= "";
+		_rujukan.kd_diagnosa 	= "";
+		_rujukan.rujukan 		= "";
+		_rujukan.faskes 		= "";
+		_rujukan.tgl_rujukan 	= "";
+		_rujukan.kd_dpjp 		= "";
 
 		parameter.penjamin  		= "";
 		parameter.jenis_penjamin  	= "0";
@@ -134,8 +142,8 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 													<label for="staticEmail" class="col-sm-3 col-form-label">Jenis Kunj</label>
 													<div class="col-sm-9">
 														<select name="jenis_kunjungan" id="jenis_kunjungan" class="form-control">
-															<option value="0" selected="selected">Episode Baru</option>
-															<option value="1">Episode Lanjutan</option>
+															<option value="1" selected="selected">Episode Baru</option>
+															<option value="2">Episode Lanjutan</option>
 														</select>
 													</div>
 												</div>
@@ -181,7 +189,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 														<div class="input-group">
 															<input type="text" class="form-control" id="no_rujukan" name="no_rujukan">
 															<div class="input-group-prepend">
-																<button class="btn btn-primary" id="btn_no_rujukan">Cek</button>
+																<button class="btn btn-primary" id="btn_no_rujukan"><span id="check_btn_no_rujukan">Cek</span> <i class="fa fa-spinner fa-spin" style="display: none;" id="check_load_no_rujukan"></i></button>
 															</div>
 														</div>
 													</div>
@@ -219,7 +227,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 												<div class="form-group row">
 													<label class="col-sm-4 col-form-label">Pemberi surat</label>
 													<div class="col-sm-8">
-														<input type="text" class="form-control" id="pemberi_surat" name="pemberi_surat" readonly>
+														<select id="pemberi_surat" class="form-control"></select>
 													</div>
 												</div>
 											</div>
@@ -298,8 +306,10 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 	    }
 
 	    $("#btn_no_rujukan").click(function(){
+			document.getElementById('check_btn_no_rujukan').style.display 	= "none";
+			document.getElementById('check_load_no_rujukan').style.display 	= "";
 	    	$.ajax({
-				url 		: "<?php echo base_url()?>Daftar/check_rujukan",
+				url 		: "<?php echo base_url()?>Vclaim/check_rujukan",
 				dataType 	: 'json',
 				delay 		: 2000,
 				type 		: "POST",
@@ -307,6 +317,8 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 					no_signature 	: $('#no_rujukan').val(),
 				},
 				success: function(data) {
+					document.getElementById('check_btn_no_rujukan').style.display 	= "";
+					document.getElementById('check_load_no_rujukan').style.display 	= "none";
 					if (data.metaData.code == 200) {
 						$.toast({
 							heading 	: 'Infomasi',
@@ -315,14 +327,42 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 							position 	: 'top-right',
 						});
 						// DISINI
-						// data.response.rujukan.tglKunjungan
 						$('#tgl_rujukan').val(data.response.rujukan.tglKunjungan);
 						$('#faskes').val(data.response.rujukan.provPerujuk.nama);
 						$('#kelas').val(data.response.rujukan.peserta.hakKelas.keterangan);
 						$('#diagnosa').val(data.response.rujukan.diagnosa.kode+"-"+data.response.rujukan.diagnosa.nama);
-						// data.response_bpjs.resp.response.rujukan.poliRujukan.nama
 						$('#klinik_rujukan').val(data.response.rujukan.poliRujukan.kode+"-"+data.response.rujukan.poliRujukan.nama);
-						// $('#pemberi_surat').val(data.response.rujukan.poliRujukan.kode+"-"+data.response.rujukan.poliRujukan.nama);
+
+						_rujukan.kd_kelas 	= data.response.rujukan.peserta.hakKelas.kode;
+						_rujukan.kd_poli 	= data.response.rujukan.poliRujukan.kode;
+						_rujukan.kd_diagnosa = data.response.rujukan.diagnosa.kode;
+						_rujukan.rujukan 	= $('#no_rujukan').val();
+						_rujukan.faskes 		= data.response.rujukan.provPerujuk.kode;
+						_rujukan.tgl_rujukan = data.response.rujukan.tglKunjungan;
+						// rujukan.kd_dpjp 	= "";
+
+				    	$.ajax({
+							url 		: "<?php echo base_url()?>Vclaim/check_dokter_dpjp",
+							dataType 	: 'json',
+							delay 		: 2000,
+							type 		: "POST",
+							data 		: {
+								pelayanan 	: 2,
+								spesialis 	: data.response.rujukan.poliRujukan.kode,
+							},
+							success : function(data){
+								console.log(data.response.list.length);
+								if (data.metaData.code == 200 || data.metaData.code == '200') {
+									_rujukan.kd_dpjp = data.response.list[0].kode;
+									for(var i = 0; i<data.response.list.length; i++){
+										$('#pemberi_surat').append($('<option>', {
+											value 	: data.response.list[i].kode,
+											text 	: data.response.list[i].nama
+										}));
+									}
+								}
+							}
+						});
 					}else{
 						$.toast({
 							heading 	: 'Infomasi',
@@ -333,6 +373,10 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 					}
 				}
 			});
+	    });
+
+	    $('#pemberi_surat').change(function(text, evt){
+	    	_rujukan.kd_dpjp = text.target.value;
 	    });
 
 	    // Call like:
@@ -405,6 +449,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 						telepon			: $('#telepon').val(),
 						klinik			: parameter.klinik,
 						no_rujukan 		: $('#no_rujukan').val(),
+						data_rujukan 	: JSON.stringify(_rujukan),
 					},
 					success: function(data) {
 						$("#btn_load_save").attr('class', 'fa fa-save');
@@ -443,11 +488,28 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
 				parameter.penjamin  		= ui.item.value;
 				if (ui.item.value !== '0000000001') {
+					parameter.jenis_penjamin = "0";
 					document.getElementById('select_jenis_kunjungan').style.display = '';
 					document.getElementById('form-bpjs').style.display = '';
 				}else{
 					document.getElementById('select_jenis_kunjungan').style.display = 'none';
 					document.getElementById('form-bpjs').style.display = 'none';
+
+					_rujukan.kd_kelas 		= "";
+					_rujukan.kd_poli 		= "";
+					_rujukan.kd_diagnosa 	= "";
+					_rujukan.rujukan 		= "";
+					_rujukan.faskes 		= "";
+					_rujukan.tgl_rujukan 	= "";
+					_rujukan.kd_dpjp 		= "";
+
+					$('#no_rujukan').val('');
+					$('#tgl_rujukan').val('');
+					$('#faskes').val('');
+					$('#kelas').val('');
+					$('#diagnosa').val('');
+					$('#klinik_rujukan').val('');
+					$('#pemberi_surat').empty();
 				}
 			},
 			style: 'dropdown',
@@ -500,7 +562,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 			parameter.jenis_penjamin  	= text.originalEvent.target.value;
 			hide_btn_modal();
 			document.getElementById('ModalTitle').innerHTML = "Informasi";
-			if (text.originalEvent.target.value == "0") {
+			if (text.originalEvent.target.value == "1") {
 				document.getElementById('ModalBody').innerHTML = "Episode Baru adalah pasien yang belum cetak SEP dan akan memulai pemeriksaan baru.";
 				$("#btn_no_rujukan").attr('disabled', false);
 			}else{	
