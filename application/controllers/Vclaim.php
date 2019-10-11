@@ -17,7 +17,7 @@ class Vclaim extends CI_Controller {
 
 	public function check_rujukan(){
 		include('./config.php');
-		$opts = array(
+		/*$opts = array(
 		  'http'=>array(
 			'method'=>'GET',
 			'header'=>$this->getSignature()
@@ -25,20 +25,41 @@ class Vclaim extends CI_Controller {
 		);
 		$context = stream_context_create($opts);
 		$res  	 = json_decode(file_get_contents($conf_app['bpjs']['url_rujukan'].$this->input->post('no_signature'),false,$context),false);
-		echo json_encode($res);
+		echo json_encode($res);*/
+
+		$url = $conf_app['bpjs']['url_rujukan'].$this->input->post('no_signature');
+		$curl = curl_init();
+		curl_setopt($curl, CURLOPT_URL, $url);
+		curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+		curl_setopt($curl, CURLOPT_HEADER, false);
+		curl_setopt($curl, CURLOPT_HTTPHEADER, $this->getSignature()); 
+		$data = curl_exec($curl);
+		curl_close($curl);
+		echo $data;
 	}
 
 	public function check_dokter_dpjp(){
 		include('./config.php');
-		$opts = array(
-		  'http'=>array(
-			'method'=>'GET',
-			'header'=>$this->getSignature()
-		  )
-		);
-		$context = stream_context_create($opts);
-		$res  	 = json_decode(file_get_contents($conf_app['bpjs']['url_dokter_dpjp'].$this->input->post('pelayanan')."/tglPelayanan/".date("Y-m-d")."/Spesialis/".$this->input->post('spesialis'),false,$context),false);
-		echo json_encode($res);
+		// $opts = array(
+		//   'http'=>array(
+		// 	'method'=>'GET',
+		// 	'header'=>$this->getSignature()
+		//   )
+		// );
+		// $context = stream_context_create($opts);
+		// $res  	 = json_decode(file_get_contents($conf_app['bpjs']['url_dokter_dpjp'].$this->input->post('pelayanan')."/tglPelayanan/".date("Y-m-d")."/Spesialis/".$this->input->post('spesialis'),false,$context),false);
+		// echo json_encode($res);
+
+		
+		$url = $conf_app['bpjs']['url_dokter_dpjp'].$this->input->post('pelayanan')."/tglPelayanan/".date("Y-m-d")."/Spesialis/".$this->input->post('spesialis');
+		$curl = curl_init();
+		curl_setopt($curl, CURLOPT_URL, $url);
+		curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+		curl_setopt($curl, CURLOPT_HEADER, false);
+		curl_setopt($curl, CURLOPT_HTTPHEADER, $this->getSignature()); 
+		$data = curl_exec($curl);
+		curl_close($curl);
+		echo $data;
 	}
 
 
