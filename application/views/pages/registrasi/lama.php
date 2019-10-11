@@ -48,10 +48,13 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 									Harap Catat Nomor Pendaftaran dibawah ini untuk kunjungan Rumah Sakit:
 									<h3><span id="result_no_pendaftaran">-</span></h3>
 									Atas : 
-									<table>
+									<table border="0" width="100%">
 										<tr>
 											<td>Medrec</td>
 											<td>: <span id="result_medrec">-</span></td>
+											<td width="120" rowspan="4">
+												<img id="img_qr_code" width="120">
+											</td>
 										</tr>
 										<tr>
 											<td>Nama</td>
@@ -462,6 +465,8 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 							document.getElementById('result_klinik').innerHTML     		= data.unit[0].unit_name;
 							document.getElementById('result_klinik').innerHTML     		= data.unit[0].unit_name;
 							document.getElementById('result_no_pendaftaran').innerHTML  = data.parameter.no_pendaftaran;
+							// img_qr_code
+							document.getElementById("img_qr_code").src = "<?php echo base_url() ?>"+"/assets/image/qrcode/"+data.parameter.no_pendaftaran+".png";
 						}
 					}
 				});

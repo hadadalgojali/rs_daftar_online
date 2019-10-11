@@ -7,11 +7,11 @@ class Vclaim extends CI_Controller {
 	public function __construct(){
 		parent::__construct();
 		$this->_ci = &get_instance();
-		$this->load->model('rs_patient');
-		$this->load->model('rs_customer');
-		$this->load->model('rs_unit');
-		$this->load->model('rs_visit');
-		$this->load->model('rs_dokter_klinik');
+		$this->load->model('Rs_patient');
+		$this->load->model('Rs_customer');
+		$this->load->model('Rs_unit');
+		$this->load->model('Rs_visit');
+		$this->load->model('Rs_dokter_klinik');
 		$this->load->helper('captcha');
 	}
 
@@ -34,7 +34,6 @@ class Vclaim extends CI_Controller {
 		curl_setopt($curl, CURLOPT_HEADER, false);
 		curl_setopt($curl, CURLOPT_HTTPHEADER, $this->getSignature()); 
 		$data = curl_exec($curl);
-		curl_close($curl);
 		echo $data;
 	}
 
@@ -50,7 +49,7 @@ class Vclaim extends CI_Controller {
 		// $res  	 = json_decode(file_get_contents($conf_app['bpjs']['url_dokter_dpjp'].$this->input->post('pelayanan')."/tglPelayanan/".date("Y-m-d")."/Spesialis/".$this->input->post('spesialis'),false,$context),false);
 		// echo json_encode($res);
 
-		
+
 		$url = $conf_app['bpjs']['url_dokter_dpjp'].$this->input->post('pelayanan')."/tglPelayanan/".date("Y-m-d")."/Spesialis/".$this->input->post('spesialis');
 		$curl = curl_init();
 		curl_setopt($curl, CURLOPT_URL, $url);
