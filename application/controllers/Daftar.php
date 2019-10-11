@@ -7,11 +7,11 @@ class Daftar extends CI_Controller {
 	public function __construct(){
 		parent::__construct();
 		$this->_ci = &get_instance();
-		$this->load->model('rs_patient');
-		$this->load->model('rs_customer');
-		$this->load->model('rs_unit');
-		$this->load->model('rs_visit');
-		$this->load->model('rs_dokter_klinik');
+		$this->load->model('Rs_patient');
+		$this->load->model('Rs_customer');
+		$this->load->model('Rs_unit');
+		$this->load->model('Rs_visit');
+		$this->load->model('Rs_dokter_klinik');
 		$this->load->helper('captcha');
 	}
 
@@ -61,7 +61,7 @@ class Daftar extends CI_Controller {
 	}
 
 	public function search_patient(){
-		$this->rs_patient->set_database($this->load->database('default',TRUE));
+		$this->Rs_patient->set_database($this->load->database('default',TRUE));
 
 		$response     = array();
 		$response['status'] = false;
@@ -74,7 +74,7 @@ class Daftar extends CI_Controller {
 		$format_date = explode("-", $parameter['tgl_lahir']);
 		$format_date = $format_date[2]."-".$format_date[1]."-".$format_date[0];
 
-		$response['patient'] = $this->rs_patient->get("*", array(
+		$response['patient'] = $this->Rs_patient->get("*", array(
 			'patient_code' 	=> $parameter['kd_pasien'],
 			'birth_date' 	=> $format_date,
 		));
@@ -88,11 +88,11 @@ class Daftar extends CI_Controller {
 	}
 
 	public function search_customer(){
-		$this->rs_customer->set_database($this->load->database('default',TRUE));
+		$this->Rs_customer->set_database($this->load->database('default',TRUE));
 		$response 	= array();
 		$response['status'] = false;
 
-		$response['customer'] = $this->rs_customer->get();
+		$response['customer'] = $this->Rs_customer->get();
 
 		if ($response['customer']->num_rows() > 0) {
 			$response['customer'] 	= $response['customer']->result();
@@ -103,14 +103,14 @@ class Daftar extends CI_Controller {
 	}
 
 	public function search_unit(){
-		$this->rs_unit->set_database($this->load->database('default',TRUE));
+		$this->Rs_unit->set_database($this->load->database('default',TRUE));
 		$response 	= array();
 		$response['status'] = false;
 
 		$parameter 	= array();
 		$criteria  	= json_decode($this->input->post('criteria'));
 		$parameter['unit_type'] = $criteria->unit_type;
-		$response['unit'] = $this->rs_unit->get("*", $parameter);
+		$response['unit'] = $this->Rs_unit->get("*", $parameter);
 
 		if ($response['unit']->num_rows() > 0) {
 			$response['unit'] 	= $response['unit']->result();
@@ -136,44 +136,44 @@ class Daftar extends CI_Controller {
 		$parameter['no_rujukan']	= $this->input->post('no_rujukan');
 		$parameter['data_rujukan']	= json_decode($this->input->post('data_rujukan'));
 
-		$this->rs_patient->set_database($this->load->database('default',TRUE));
-		$response['patient'] = $this->rs_patient->get("*", array('patient_code' => $parameter['patient_code']));
+		$this->Rs_patient->set_database($this->load->database('default',TRUE));
+		$response['patient'] = $this->Rs_patient->get("*", array('patient_code' => $parameter['patient_code']));
 		if ($response['patient']->num_rows()>0) {
 			$response['patient'] = $response['patient']->result();
 		}
 
-		$this->rs_unit->set_database($this->load->database('default',TRUE));
-		$response['unit'] = $this->rs_unit->get("*", array('unit_code' => $parameter['unit_code']));
+		$this->Rs_unit->set_database($this->load->database('default',TRUE));
+		$response['unit'] = $this->Rs_unit->get("*", array('unit_code' => $parameter['unit_code']));
 		if ($response['unit']->num_rows()>0) {
 			$response['unit'] = $response['unit']->result();
 
-			$this->rs_dokter_klinik->set_database($this->load->database('default',TRUE));
-			$parameter['id_dokter_klinik'] = $this->rs_dokter_klinik->get(" employee_id ", array( 'unit_id' => $response['unit'][0]->unit_id ) );
+			$this->Rs_dokter_klinik->set_database($this->load->database('default',TRUE));
+			$parameter['id_dokter_klinik'] = $this->Rs_dokter_klinik->get(" employee_id ", array( 'unit_id' => $response['unit'][0]->unit_id ) );
 			if ($parameter['id_dokter_klinik']->num_rows()>0) {
 				$parameter['id_dokter_klinik'] = $parameter['id_dokter_klinik']->row()->employee_id;
 			}		
 
-			$this->rs_visit->set_database($this->load->database('default',TRUE));
-			$parameter['no_antrian'] = $this->rs_visit->get(" coalesce(count(*),0) + 1 as no_antrian ", array( 'entry_date' =>  $parameter['tgl_kunjungan'], 'unit_id' => $response['unit'][0]->unit_id) );
+			$this->Rs_visit->set_database($this->load->database('default',TRUE));
+			$parameter['no_antrian'] = $this->Rs_visit->get(" coalesce(count(*),0) + 1 as no_antrian ", array( 'entry_date' =>  $parameter['tgl_kunjungan'], 'unit_id' => $response['unit'][0]->unit_id) );
 			if ($parameter['no_antrian']->num_rows()>0) {
 				$parameter['no_antrian'] = $parameter['no_antrian']->row()->no_antrian;
 			}
 		}
 
-		$this->rs_customer->set_database($this->load->database('default',TRUE));
-		$response['customer'] = $this->rs_customer->get("*", array('customer_code' => $parameter['kd_customer']));
+		$this->Rs_customer->set_database($this->load->database('default',TRUE));
+		$response['customer'] = $this->Rs_customer->get("*", array('customer_code' => $parameter['kd_customer']));
 		if ($response['customer']->num_rows()>0) {
 			$response['customer'] = $response['customer']->result();
 		}
 
-		$this->rs_visit->set_database($this->load->database('default',TRUE));
-		$parameter['id_visit'] = $this->rs_visit->get(" max(visit_id)+1 as id ", null);
+		$this->Rs_visit->set_database($this->load->database('default',TRUE));
+		$parameter['id_visit'] = $this->Rs_visit->get(" max(visit_id)+1 as id ", null);
 		if ($parameter['id_visit']->num_rows()>0) {
 			$parameter['id_visit'] = $parameter['id_visit']->row()->id;
 		}		
 
-		$this->rs_visit->set_database($this->load->database('default',TRUE));
-		$parameter['no_pendaftaran'] = $this->rs_visit->get(" coalesce(count(*),0) + 1 as no_pendaftaran ", array( 'tgl_daftar' => date('Y-m-d') ) );
+		$this->Rs_visit->set_database($this->load->database('default',TRUE));
+		$parameter['no_pendaftaran'] = $this->Rs_visit->get(" coalesce(count(*),0) + 1 as no_pendaftaran ", array( 'tgl_daftar' => date('Y-m-d') ) );
 		if ($parameter['no_pendaftaran']->num_rows()>0) {
 			$format 						= "000";
 			$parameter['no_pendaftaran'] 	= substr($format, 0,-strlen($parameter['no_pendaftaran']->row()->no_pendaftaran)).$parameter['no_pendaftaran']->row()->no_pendaftaran;
@@ -185,10 +185,10 @@ class Daftar extends CI_Controller {
 		if (count($response['patient'])>0 && count($response['unit'])>0 && count($response['customer'])>0) {
 			$response['message'] 	= "Proses simpan data kunjungan";
 
-			$this->rs_visit->set_database($this->load->database('default',TRUE));
-			$rs_visit = $this->rs_visit->get("*", array( 'patient_id' => $response['patient'][0]->patient_id, 'unit_id' => $response['unit'][0]->unit_id, 'entry_date' => $parameter['tgl_kunjungan'], 'hadir' => '0' ) );
-			if ($rs_visit->num_rows() == 0) {
-				$response['status'] 	= $this->rs_visit->create(
+			$this->Rs_visit->set_database($this->load->database('default',TRUE));
+			$Rs_visit = $this->Rs_visit->get("*", array( 'patient_id' => $response['patient'][0]->patient_id, 'unit_id' => $response['unit'][0]->unit_id, 'entry_date' => $parameter['tgl_kunjungan'], 'hadir' => '0' ) );
+			if ($Rs_visit->num_rows() == 0) {
+				$response['status'] 	= $this->Rs_visit->create(
 					array(
 						'visit_id' 				=> $parameter['id_visit'],
 						'patient_id' 			=> $response['patient'][0]->patient_id,
@@ -229,7 +229,7 @@ class Daftar extends CI_Controller {
 				);
 				$response['parameter']['no_pendaftaran']= substr(date('Y'), -2).date('m').date('d').$parameter['no_pendaftaran'];
 			}else{
-				$response['parameter']['no_pendaftaran'] = $rs_visit->row()->no_pendaftaran;
+				$response['parameter']['no_pendaftaran'] = $Rs_visit->row()->no_pendaftaran;
 				$response['status'] = true;
 			}
 		}

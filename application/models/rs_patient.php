@@ -1,6 +1,6 @@
 <?php 
 
-class rs_patient extends CI_Model {
+class Rs_patient extends CI_Model {
 	protected $table 		= "rs_patient";
 	protected $database 	= "";
 
