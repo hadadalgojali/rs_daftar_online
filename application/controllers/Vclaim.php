@@ -27,17 +27,20 @@ class Vclaim extends CI_Controller {
 		$res  	 = json_decode(file_get_contents($conf_app['bpjs']['url_rujukan'].$this->input->post('no_signature'),false,$context),false);
 		echo json_encode($res);*/
 
-		$url = $conf_app['bpjs']['url_rujukan'].$this->input->post('no_signature');
-		$curl = curl_init();
+		$url   = $conf_app['bpjs']['url_rujukan'].$this->input->post('no_signature');
+		$curl  = curl_init();
+		$proxy = '118.97.79.198:8080';
 		// curl_setopt($curl, CURLOPT_FOLLOWLOCATION, true);
 		curl_setopt($curl, CURLOPT_URL, $url);
 		// curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
 		curl_setopt($curl, CURLOPT_HEADER, false);
 		curl_setopt($curl, CURLOPT_PORT, 8080);
+		curl_setopt($curl, CURLOPT_PROXY, null);
 		curl_setopt($curl, CURLOPT_HTTPHEADER, $this->getSignature()); 
 		curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, false);
 		curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
-		curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);  
+		curl_setopt($curl, CURLOPT_FOLLOWLOCATION, 1);
+		curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
 		curl_setopt($curl, CURLOPT_USERAGENT, 'Mozilla/5.0 (Windows; U; Windows NT 6.1; rv:2.2) Gecko/20110201');
 
 		$data 	= curl_exec($curl);
@@ -66,9 +69,15 @@ class Vclaim extends CI_Controller {
 		$url = $conf_app['bpjs']['url_dokter_dpjp'].$this->input->post('pelayanan')."/tglPelayanan/".date("Y-m-d")."/Spesialis/".$this->input->post('spesialis');
 		$curl = curl_init();
 		curl_setopt($curl, CURLOPT_URL, $url);
+		curl_setopt($curl, CURLOPT_PORT, 8080);
 		curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
 		curl_setopt($curl, CURLOPT_HEADER, false);
 		curl_setopt($curl, CURLOPT_HTTPHEADER, $this->getSignature()); 
+		curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, false);
+		curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
+		curl_setopt($curl, CURLOPT_FOLLOWLOCATION, 1);
+		curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
+		curl_setopt($curl, CURLOPT_USERAGENT, 'Mozilla/5.0 (Windows; U; Windows NT 6.1; rv:2.2) Gecko/20110201');
 		$data = curl_exec($curl);
 		curl_close($curl);
 		echo $data;
