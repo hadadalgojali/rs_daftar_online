@@ -33,6 +33,7 @@ class Vclaim extends CI_Controller {
 		curl_setopt($curl, CURLOPT_URL, $url);
 		curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
 		curl_setopt($curl, CURLOPT_HEADER, false);
+		curl_setopt($curl, CURLOPT_PORT, 8080);
 		curl_setopt($curl, CURLOPT_HTTPHEADER, $this->getSignature()); 
 		curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, false);
 		curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
@@ -41,9 +42,9 @@ class Vclaim extends CI_Controller {
 		$err    = curl_errno( $curl );
 		$errmsg = curl_error( $curl );
 
-		var_dump($err)."<hr>";
-		var_dump($errmsg)."<hr>";
-		die;
+		// var_dump($err)."<hr>";
+		// var_dump($errmsg)."<hr>";
+		// die;
 		echo $data;
 	}
 
