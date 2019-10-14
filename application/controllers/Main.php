@@ -7,9 +7,7 @@ class Main extends CI_Controller {
 	public function __construct(){
 		parent::__construct();
 		$this->_ci = &get_instance();
-	}
 
-	public function index(){
 		include('./config.php');
 		$response = array();
 		$response['data_rs'] = $conf_db['rs'];
@@ -19,6 +17,20 @@ class Main extends CI_Controller {
 		$response['_footer']      = $this->_ci->load->view('partials/footer', $response, TRUE);
 		$response['_include_css'] = $this->_ci->load->view('partials/include_css', $response, TRUE);
 		$response['_include_js']  = $this->_ci->load->view('partials/include_js', $response, TRUE);
-		$this->load->view('index', $response);
+
+		if ($this->session->userdata('user_id') == null && $this->session->userdata('user_id') == '') {
+			$this->load->view('index', $response);
+		}else{
+			$this->load->view('pages/admin/index', $response);
+		}
 	}
+
+	public function index(){
+		// $this->load->view('index', $response);
+	}
+
+	// private function admin(){
+	// 	echo "Halaman login";
+	// 	$this->session->sess_destroy();
+	// }
 }
