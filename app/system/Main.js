@@ -133,7 +133,7 @@ Ext.define('App.system.Main', {
 		var $this = this,
 			menu = [],
 			iVar=null;
-		console.log(_menu);
+		// console.log(_menu);
 		for (var i = 0,iLen=_menu.length; i <iLen ; i++) {
 			iVar=_menu[i];
 			if(iVar.handler != undefined) {
@@ -144,7 +144,7 @@ Ext.define('App.system.Main', {
 			}else{
 				if (iVar.menu != undefined) {
 					menu.push($this.SettingMenu(iVar.menu));
-					console.log(iVar.menu);
+					// console.log(iVar.menu);
 				}
 			}
 		}

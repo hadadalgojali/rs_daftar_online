@@ -1,27 +1,14 @@
-Ext.define('App.store.App_employee', {
+Ext.define('App.store.App_religion', {
     autoLoad: false,
     extend: 'Ext.data.Store',
     fields : [ 
-        'employee_id',
-        'id_number',
-        'first_name',
-        'last_name',
-        'gender',
+        'id',
         'religion',
-        'birth_place',
-        'birth_date',
-        'address',
-        'email_address',
-        'phone_number1',
-        'phone_number2',
-        'fax_number1',
-        'job_id',
-        'job_name',
-        'active_flag',
+        'active',
     ],
     proxy: {
         type: 'ajax',
-        url: url+'app/C_app_employee/get',
+        url: url+'app/C_app_religion/get',
         reader: {
             successProperty: 'success', // if success property
             type: 'json',

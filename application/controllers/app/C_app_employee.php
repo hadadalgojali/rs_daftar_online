@@ -27,27 +27,51 @@ class C_app_employee extends CI_Controller {
 		);
 	}
 
+	private function convert_bit_bool($parameter){
+		if (is_numeric($parameter) === true) {
+			if ($parameter == 1 || $parameter == '1') {
+				return 'true';
+			}else{
+				return 'false';
+			}
+		}else{
+			if ($parameter === 'true' || $parameter === true) {
+				return 1;
+			}else if($parameter === 'false' || $parameter === false){
+				return 0;
+			}else if ($parameter == 1 || $parameter == '1') {
+				return 'true';
+			}else{
+				return 'false';
+			}
+		}
+	}
+
 	public function save(){
 		$response 	= array();
-		$parameter 	= array(
-			'role_id'		=> $this->input->post('id'),
-			'role_code' 	=> $this->input->post('role_code'),
-			'role_name' 	=> $this->input->post('role_name'),
-			'description' 	=> $this->input->post('description'),
-			'role_id' 		=> $this->session->userdata('role_id'),
-			'create_on' 	=> date('Y-m-d'),
-			'tenant_id' 	=> 1,
-			'active_flag' 	=> 1,
-			'create_by' 	=> $this->session->userdata('role_id'),
-			'update_on' 	=> date('Y-m-d'),
-			'update_by' 	=> $this->session->userdata('role_id'),
 
+		$parameter 	= array(
+			'id_number'     => $this->input->post('id_number'),
+			'first_name'    => $this->input->post('first_name'),
+			'last_name'   	=> $this->input->post('last_name'),
+			'gender'        => $this->convert_bit_bool($this->input->post('gender')),
+			'religion'      => $this->input->post('religion'),
+			'birth_place'   => $this->input->post('birth_place'),
+			'birth_date'    => $this->input->post('birth_date'),
+			'address'       => $this->input->post('address'),
+			'email_address' => $this->input->post('email'),
+			'phone_number1' => $this->input->post('phone_1'),
+			'phone_number2' => $this->input->post('phone_2'),
+			'fax_number1'   => $this->input->post('fax'),
+			'job_id'        => $this->input->post('job_id'),
+			'create_on' 	=> date("Y-m-d"),
+			'active_flag'   => $this->convert_bit_bool($this->input->post('active')),
 		);
 
 		$this->App_employee->set_database($this->load->database('default',TRUE));
-		$parameter['role_id'] = $this->App_employee->get(" max(role_id) as role_id");
-		if ($parameter['role_id']->num_rows() > 0) {
-			$parameter['role_id'] = $parameter['role_id']->row()->role_id + 1;
+		$parameter['employee_id'] = $this->App_employee->get(" max(employee_id) as id");
+		if ($parameter['employee_id']->num_rows() > 0) {
+			$parameter['employee_id'] = $parameter['employee_id']->row()->id + 1;
 		}
 
 		$result = $this->App_employee->create($parameter);
@@ -64,14 +88,24 @@ class C_app_employee extends CI_Controller {
 	public function update(){
 		$response 	= array();
 		$criteria 	= array(
-			'role_id'		=> $this->input->post('id'),
+			'employee_id'	=> $this->input->post('employee_id'),
 		);
 		$parameter 	= array(
-			'role_code' 	=> $this->input->post('role_code'),
-			'role_name' 	=> $this->input->post('role_name'),
-			'description' 	=> $this->input->post('description'),
-			'update_on' 	=> date('Y-m-d'),
-			'update_by' 	=> $this->session->userdata('role_id'),
+			'id_number'     => $this->input->post('id_number'),
+			'first_name'    => $this->input->post('first_name'),
+			'last_name'   	=> $this->input->post('last_name'),
+			'gender'        => $this->convert_bit_bool($this->input->post('gender')),
+			'religion'      => $this->input->post('religion'),
+			'birth_place'   => $this->input->post('birth_place'),
+			'birth_date'    => $this->input->post('birth_date'),
+			'address'       => $this->input->post('address'),
+			'email_address' => $this->input->post('email'),
+			'phone_number1' => $this->input->post('phone_1'),
+			'phone_number2' => $this->input->post('phone_2'),
+			'fax_number1'   => $this->input->post('fax'),
+			'job_id'        => $this->input->post('job_id'),
+			'create_on' 	=> date("Y-m-d"),
+			'active_flag'   => $this->convert_bit_bool($this->input->post('active')),
 		);
 
 		$this->App_employee->set_database($this->load->database('default',TRUE));
@@ -96,16 +130,16 @@ class C_app_employee extends CI_Controller {
 		$this->App_employee->set_database($this->load->database('default',TRUE));
 		if (count(json_decode($parameter['id'])) > 0) {
 			foreach (json_decode($parameter['id']) as $key => $value) {
-				$criteria 				= array();
-				$criteria['role_id'] 	= $value;
-				$response['status'] 	= $this->App_employee->delete($criteria);
+				$criteria 					= array();
+				$criteria['employee_id'] 	= $value;
+				$response['status'] 		= $this->App_employee->delete($criteria);
 				if ($response['status'] === false || $response['status'] == 0) {
 					break;
 				}
 			}
 		}else{
 			$criteria 				= array();
-			$criteria['role_id'] 	= $parameter['id'];
+			$criteria['employee_id'] 	= $parameter['id'];
 			$response['status'] 	= $this->App_employee->delete($criteria);
 		}
 

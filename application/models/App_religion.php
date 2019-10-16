@@ -1,7 +1,7 @@
 <?php 
 
-class App_role extends CI_Model {
-	protected $table 		= "app_role";
+class App_religion extends CI_Model {
+	protected $table 		= "app_religion";
 	protected $database 	= "";
 
 	public function set_database($database){

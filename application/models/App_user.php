@@ -8,21 +8,33 @@ class App_user extends CI_Model {
 		$this->database = $database;
 	}
 
-	public function get($select = "*", $criteria = null){
+	public function get($select = "*", $criteria = null, $limit = null, $start = null){
 		$this->database->select($select);
 		$this->database->from($this->table);
 		if ($criteria !== null) {
 			$this->database->where($criteria);
 		}
+
+		if (isset($limit) && isset($start)) {
+			if ($limit != "" && $start != "") {
+				$this->database->limit($limit, $start);
+			}
+		}
 		return $this->database->get();
 	}
 
-	public function get_with_employee($select = "*", $criteria = null){
+	public function get_with_employee($select = "*", $criteria = null, $limit = null, $start = null){
 		$this->database->select($select);
 		$this->database->from($this->table);
 		$this->database->join("app_employee", " app_employee.employee_id = ".$this->table.".employee_id", "INNER");
 		if ($criteria !== null) {
 			$this->database->where($criteria);
+		}
+		
+		if (isset($limit) && isset($start)) {
+			if ($limit != "" && $start != "") {
+				$this->database->limit($limit, $start);
+			}
 		}
 		return $this->database->get();
 	}
