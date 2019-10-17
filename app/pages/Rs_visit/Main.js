@@ -1,8 +1,8 @@
-var pageAppEmployee = {};
-pageAppEmployee.storeobj = Ext.create('App.store.App_employee');
-pageAppEmployee.getStore = function(params, start, limit){
-	pageAppEmployee.storeobj.removeAll();
-    pageAppEmployee.storeobj.load({
+var RsVisit = {};
+RsVisit.storeobj = Ext.create('App.store.Rs_visit');
+RsVisit.getStore = function(params, start, limit){
+	RsVisit.storeobj.removeAll();
+    RsVisit.storeobj.load({
         params : {
             params      : params,
             start       : start,
@@ -11,10 +11,10 @@ pageAppEmployee.getStore = function(params, start, limit){
     });
 }
 
-pageAppEmployee.paramsCriteria  = '';
-pageAppEmployee.grid 			= null;
-pageAppEmployee.getStore(pageAppEmployee.paramsCriteria, 0, 25);
-Ext.define('App.pages.App_employee.Main', {
+RsVisit.paramsCriteria  = '';
+RsVisit.grid 			= null;
+RsVisit.getStore(RsVisit.paramsCriteria, 0, 25);
+Ext.define('App.pages.Rs_visit.Main', {
 	extend : 'App.cmp.Panel',
 	layout :'fit',
 	tbar 		: [
@@ -30,7 +30,7 @@ Ext.define('App.pages.App_employee.Main', {
 					iconCls		: 'fa fa-plus fa-lg',
 					iconAlign	: 'top',
 					handler 	: function(a) {
-						Ext.create('App.pages.App_employee.form', {
+						Ext.create('App.pages.Rs_visit.form', {
 							fbar    : [
 								{
 									xtype   : 'button',
@@ -43,7 +43,7 @@ Ext.define('App.pages.App_employee.Main', {
 										}
 										Ext.Ajax.request({
 											method: 'post',
-											url: url+"app/C_App_employee/save",
+											url: url+"app/C_rs_visit/save",
 											waitTitle: 'Connecting',
 											waitMsg: 'Sending data...',
 											params: {
@@ -68,7 +68,7 @@ Ext.define('App.pages.App_employee.Main', {
 											success: function(res){
 												var cst = JSON.parse(res.responseText);
 												Ext.Msg.alert("Create", ""+cst.message+"");
-												pageAppEmployee.getStore(pageAppEmployee.paramsCriteria, 0, 25);
+												RsVisit.getStore(RsVisit.paramsCriteria, 0, 25);
 											},
 											failure: function(){
 												console.log('failure');
@@ -92,7 +92,7 @@ Ext.define('App.pages.App_employee.Main', {
 					iconCls		: 'fa fa-refresh fa-lg',
 					iconAlign	: 'top',
 					handler 	: function(a) {
-						pageAppEmployee.getStore(pageAppEmployee.paramsCriteria, 0, 25);
+						RsVisit.getStore(RsVisit.paramsCriteria, 0, 25);
 					}
 				},
 				{
@@ -101,7 +101,7 @@ Ext.define('App.pages.App_employee.Main', {
 					iconAlign	: 'top',
 					disabled 	: true,
 					handler 	: function(a) {
-						Ext.create('App.pages.App_employee.Search',{
+						Ext.create('App.pages.Rs_visit.Search',{
 							title   : "Search App Role",
 							fbar    : [
 								{
@@ -116,7 +116,7 @@ Ext.define('App.pages.App_employee.Main', {
 												// if (params != "") {
 												// 	params += " AND ";
 												// }
-												pageAppEmployee.paramsCriteria += " AND (lower(role_code) like lower('%"+win.items.items[0].lastValue+"%') OR lower(role_code) like lower('%"+win.items.items[0].lastValue+"%'))";
+												RsVisit.paramsCriteria += " AND (lower(role_code) like lower('%"+win.items.items[0].lastValue+"%') OR lower(role_code) like lower('%"+win.items.items[0].lastValue+"%'))";
 											}
 										}
 										if (win.items.items[1].lastValue != undefined) {
@@ -124,10 +124,10 @@ Ext.define('App.pages.App_employee.Main', {
 												// if (params != "") {
 												// 	params += " AND ";
 												// }
-												pageAppEmployee.paramsCriteria += " AND (lower(role_name) like lower('%"+win.items.items[1].lastValue+"%') OR lower(role_name) like lower('%"+win.items.items[1].lastValue+"%'))";
+												RsVisit.paramsCriteria += " AND (lower(role_name) like lower('%"+win.items.items[1].lastValue+"%') OR lower(role_name) like lower('%"+win.items.items[1].lastValue+"%'))";
 		                                    }
 										}
-		                                pageAppEmployee.getStore(params, 0, 25);
+		                                RsVisit.getStore(params, 0, 25);
 									}
 								},{
 									xtype   : 'button',
@@ -147,7 +147,7 @@ Ext.define('App.pages.App_employee.Main', {
 					iconAlign	: 'top',
 					handler 	: function(a) {
 						var tmp_id = [];
-						var selected        = pageAppEmployee.grid.getView().getSelectionModel().getSelection();
+						var selected        = RsVisit.grid.getView().getSelectionModel().getSelection();
 						Ext.each(selected, function (item) {
 							tmp_id.push(item.data.employee_id);
 						});
@@ -155,7 +155,7 @@ Ext.define('App.pages.App_employee.Main', {
 		                    if(btn === 'yes'){
 		                        Ext.Ajax.request({
 		                            method      : 'post',
-		                            url         : url+"app/C_App_employee/delete",
+		                            url         : url+"app/C_Rs_visit/delete",
 		                            waitTitle   : 'Connecting',
 		                            waitMsg     : 'Sending data...',
 		                            params      : {
@@ -163,7 +163,7 @@ Ext.define('App.pages.App_employee.Main', {
 		                            },
 		                            // scope:this,
 		                            success: function(res){
-		                                pageAppEmployee.getStore(pageAppEmployee.paramsCriteria, 0, 25);
+		                                RsVisit.getStore(RsVisit.paramsCriteria, 0, 25);
 		                            },
 		                            failure: function(){
 		                                console.log('failure');
@@ -200,129 +200,27 @@ Ext.define('App.pages.App_employee.Main', {
 		},
 	],
 	items : [
-		pageAppEmployee.grid = Ext.create('Ext.grid.Panel', {
-			store: pageAppEmployee.storeobj,
+		RsVisit.grid = Ext.create('Ext.grid.Panel', {
+			store: RsVisit.storeobj,
 			selModel: Ext.create('Ext.selection.CheckboxModel'),
 			columns: [
-				{ header: 'Name',  dataIndex: 'first_name', flex : 1,  editor : 'textfield'},
-                {
-                    header: 'Gender',
-                    dataIndex: 'gender',
-                    flex : 1,
-                    renderer    : function(a){
-                        if (a == 0 || a == 'f' || a == 'false') {
-                            return "Perempuan";
-                        }else{
-                            return "Laki - laki";
-                        }
-                    }
-                },
-				{ header: 'Birth date',  dataIndex: 'birth_date', flex : 1,  editor : 'textfield'},
-				{ header: 'Job',  dataIndex: 'job_name', flex : 1,  editor : 'textfield'},
-				{ header: 'Address',  dataIndex: 'address', flex : 1,  editor : 'textfield'},
-                {
-                    header: 'Activate',
-                    dataIndex: 'active_flag',
-                    flex : 1,
-                    renderer    : function(a){
-                        if (a == 0) {
-                            return "<i class='fa fa-close'></i>";
-                        }else{
-                            return "<i class='fa fa-check'></i>";
-                        }
-                    }
-                },{
-					xtype   : 'actioncolumn',
-					text    : 'Account',
-					width   : 200,
-					items   : [
-						{
-							tooltip 	: 'Operate User Account',
-							icon 		: './assets/image/icons/icons8-writer-male-24.png',
-							handler 	: function( view, rowIndex, colIndex , item, e, record, row ) {
-								Ext.create('App.pages.App_user.Form', {
-									fbar    : [
-										{
-											xtype   : 'button',
-											text    : 'Save',
-											handler : function(){
-
-											}
-										}
-									]
-								}).show();
-							}
-						},{
-							tooltip 	: 'View detail Employee',
-							icon 		: './assets/image/icons/icons8-profiles-24.png',
-							style 		: 'margin-left:5px;',
-							handler 	: function( view, rowIndex, colIndex , item, e, record, row ) {
-								Ext.create('App.pages.App_employee.form', {
-									fbar    : [
-										{
-											xtype   : 'button',
-											text    : 'Close',
-											handler : function(btn){
-												var win = btn.up('window');
-												win.close();
-											}
-										}
-									],
-									listeners: {
-										show: function(thisForm){
-
-											thisForm.items.items[0].items.items[0].items.items[0].setDisabled(true);
-											thisForm.items.items[0].items.items[0].items.items[1].setDisabled(true);
-											thisForm.items.items[0].items.items[0].items.items[2].setDisabled(true);
-											thisForm.items.items[0].items.items[0].items.items[3].setDisabled(true);
-											thisForm.items.items[0].items.items[0].items.items[5].setDisabled(true);
-											thisForm.items.items[0].items.items[0].items.items[6].setDisabled(true);
-											thisForm.items.items[0].items.items[0].items.items[7].setDisabled(true);
-											thisForm.items.items[0].items.items[0].items.items[8].setDisabled(true);
-											thisForm.items.items[0].items.items[1].items.items[0].setDisabled(true);
-											thisForm.items.items[0].items.items[1].items.items[1].setDisabled(true);
-											thisForm.items.items[0].items.items[1].items.items[2].setDisabled(true);
-											thisForm.items.items[0].items.items[1].items.items[3].setDisabled(true);
-											thisForm.items.items[0].items.items[0].items.items[4].setDisabled(true);
-											thisForm.dockedItems.items[1].items.items[0].items.items[0].setDisabled(true);
-											thisForm.dockedItems.items[1].items.items[0].items.items[1].setDisabled(true);
-
-											thisForm.items.items[0].items.items[0].items.items[0].setValue(record.data.employee_id);
-											thisForm.items.items[0].items.items[0].items.items[1].setValue(record.data.id_number);
-											thisForm.items.items[0].items.items[0].items.items[2].setValue(record.data.first_name);
-											thisForm.items.items[0].items.items[0].items.items[3].setValue(record.data.last_name);
-											if (record.data.gender == 'true' ) {
-												thisForm.items.items[0].items.items[0].items.items[4].items.items[0].setValue(true);
-											}else{
-												thisForm.items.items[0].items.items[0].items.items[4].items.items[1].setValue(true);
-											}
-											thisForm.items.items[0].items.items[0].items.items[5].setValue(record.data.religion);
-											thisForm.items.items[0].items.items[0].items.items[6].setValue(record.data.birth_place);
-											thisForm.items.items[0].items.items[0].items.items[7].setValue(record.data.birth_date);
-											thisForm.items.items[0].items.items[0].items.items[8].setValue(record.data.address);
-											thisForm.items.items[0].items.items[1].items.items[0].setValue(record.data.email_address);
-											thisForm.items.items[0].items.items[1].items.items[1].setValue(record.data.phone_number1);
-											thisForm.items.items[0].items.items[1].items.items[2].setValue(record.data.phone_number2);
-											thisForm.items.items[0].items.items[1].items.items[3].setValue(record.data.fax_number1);
-
-											thisForm.dockedItems.items[1].items.items[0].items.items[0].setValue(record.data.job_id);
-											if (record.data.active_flag == 1) {
-												thisForm.dockedItems.items[1].items.items[0].items.items[1].setValue(true);
-											}
-										}
-									}
-								}).show();
-							}
-						},
-					]
-				}
+				{ header: 'Medrec',  dataIndex: 'patient_code', width : 120,  editor : 'textfield'},
+				{ header: 'No pendaftaran',  dataIndex: 'no_pendaftaran', flex : 1,  editor : 'textfield'},
+				{ header: 'Nama',  dataIndex: 'name', flex : 1,  editor : 'textfield'},
+				{ header: 'Dokter',  dataIndex: 'first_name', flex : 1,  editor : 'textfield'},
+				{ header: 'Klinik',  dataIndex: 'unit_name', flex : 1,  editor : 'textfield'},
+				{ header: 'Tgl Kunjungan',  dataIndex: 'entry_date', flex : 1,  editor : 'textfield'},
+				{ header: 'Antrian',  dataIndex: 'no_antrian', flex : 1,  editor : 'textfield'},
+				{ header: 'Status',  dataIndex: 'status', flex : 1,  editor : 'textfield'},
+				{ header: 'Hadir',  dataIndex: 'hadir', flex : 1,  editor : 'textfield'},
+				{ header: 'Jenis Pasien',  dataIndex: 'customer_name', flex : 1,  editor : 'textfield'},
 			],
 			anchor  : '100% 100%',
 			width   : '100%',
 			height  : '100%',
 			dockedItems: [{
 				xtype: 'pagingtoolbar',
-				store: pageAppEmployee.storeobj,
+				store: RsVisit.storeobj,
 				pageSize: 10,
 				dock: 'bottom',
 				displayInfo: true
@@ -330,7 +228,7 @@ Ext.define('App.pages.App_employee.Main', {
             viewConfig: {
                 listeners: {
                     itemdblclick: function(dataview, index, item, e) {
-                        Ext.create('App.pages.App_employee.form', {
+                        Ext.create('App.pages.Rs_visit.form', {
                             fbar    : [
                                 {
                                     xtype   : 'button',
@@ -343,7 +241,7 @@ Ext.define('App.pages.App_employee.Main', {
 										}
                                         Ext.Ajax.request({
                                             method: 'post',
-                                            url: url+"app/C_App_employee/update",
+                                            url: url+"app/C_Rs_visit/update",
                                             waitTitle: 'Connecting',
                                             waitMsg: 'Sending data...',
                                             params: {
@@ -368,7 +266,7 @@ Ext.define('App.pages.App_employee.Main', {
                                             success: function(res){
                                                 var cst = JSON.parse(res.responseText);
                                                 Ext.Msg.alert("Update", ""+cst.message+"");
-                                                pageAppEmployee.getStore(pageAppEmployee.paramsCriteria, 0, 25);
+                                                RsVisit.getStore(RsVisit.paramsCriteria, 0, 25);
                                             },
                                             failure: function(){
                                                 console.log('failure');
@@ -423,7 +321,7 @@ Ext.define('App.pages.App_employee.Main', {
 	},
 	listeners: {
 		show : function(thisHeader){
-			pageAppEmployee.getStore(pageAppEmployee.paramsCriteria, 0, 25);
+			RsVisit.getStore(RsVisit.paramsCriteria, 0, 25);
 		},
 	},
 });

@@ -10,6 +10,6 @@ Ext.define('App.pages.App_user.employee.Lookup',{
     layout: 'form',
     bodyStyle: 'padding: 0px;margin: 0px;',
     items: [
-        Ext.create('App.pages.App_user.employee.List'),
+        // Ext.create('App.pages.App_user.employee.List'),
     ]
 });

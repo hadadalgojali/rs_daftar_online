@@ -19,6 +19,22 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 			margin : 0px;
 			padding: 0px;
 		}
+
+		.toggleBox {
+			background: transparent;
+			margin: 0;
+			width: auto;
+			padding: 0 7px;
+			height: 25px;
+			border: 1px solid #aaa;
+			color: #999;
+		}
+
+		.x-form-cb-checked .toggleBox {
+			border: 1px solid #393;
+			background: #7d7;
+			color: #fff;
+		}
 	</style>
 	<script type="text/javascript">
 		var url 	= "<?php echo base_url(); ?>";

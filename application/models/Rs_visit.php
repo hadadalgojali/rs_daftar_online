@@ -11,9 +11,23 @@ class Rs_visit extends CI_Model {
 	public function get($select = "*", $criteria = null){
 		$this->database->select($select);
 		$this->database->from($this->table);
-		if ($criteria !== null) {
+		if ($criteria !== null && $criteria !== '') {
 			$this->database->where($criteria);
 		}
+		return $this->database->get();
+	}
+
+	public function get_with_relation($select = "*", $criteria = null){
+		$this->database->select($select);
+		$this->database->from($this->table);
+		if ($criteria !== null && $criteria !== '') {
+			$this->database->where($criteria);
+		}
+		
+		$this->database->join("rs_unit", " rs_unit.unit_id = ".$this->table.".unit_id ", "INNER");
+		$this->database->join("rs_patient", " rs_patient.patient_id = ".$this->table.".patient_id ", "INNER");
+		$this->database->join("rs_customer", " rs_customer.customer_id = ".$this->table.".customer_id ", "INNER");
+		$this->database->join("app_employee", " app_employee.employee_id = ".$this->table.".dokter_id ", "LEFT");
 		return $this->database->get();
 	}
 
