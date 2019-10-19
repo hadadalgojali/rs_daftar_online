@@ -26,7 +26,7 @@ class Daftar extends CI_Controller {
 		include('./config.php');
 		$response = array();
 		$response['data_rs'] = $conf_db['rs'];
-		
+
 		$response['_header']      	= $this->_ci->load->view('partials/header', $response, TRUE);
 		$response['_menu']        	= $this->_ci->load->view('partials/menu', $response, TRUE);
 		$response['_footer']      	= $this->_ci->load->view('partials/footer', $response, TRUE);
@@ -43,7 +43,7 @@ class Daftar extends CI_Controller {
 			'img_url'    => base_url().'assets/image/captcha/',
 			'img_width'  => '160',
 			'img_height' => 40,
-			'border'     => 0, 
+			'border'     => 0,
 			'font_size'  => 30,
 			'expiration' => 4000,
 			'colors'     => array(
@@ -57,6 +57,8 @@ class Daftar extends CI_Controller {
 		$cap = create_captcha($vals);
 		$response['image_captcha'] 	= $cap['image'];
 		$response['word_captcha'] 	= $cap['word'];
+
+		// echo json_encode($cap);die;
 		$this->load->view('pages/registrasi/'.$page, $response);
 	}
 
@@ -151,7 +153,7 @@ class Daftar extends CI_Controller {
 			$parameter['id_dokter_klinik'] = $this->Rs_dokter_klinik->get(" employee_id ", array( 'unit_id' => $response['unit'][0]->unit_id ) );
 			if ($parameter['id_dokter_klinik']->num_rows()>0) {
 				$parameter['id_dokter_klinik'] = $parameter['id_dokter_klinik']->row()->employee_id;
-			}		
+			}
 
 			$this->Rs_visit->set_database($this->load->database('default',TRUE));
 			$parameter['no_antrian'] = $this->Rs_visit->get(" coalesce(count(*),0) + 1 as no_antrian ", array( 'entry_date' =>  $parameter['tgl_kunjungan'], 'unit_id' => $response['unit'][0]->unit_id) );
@@ -170,14 +172,14 @@ class Daftar extends CI_Controller {
 		$parameter['id_visit'] = $this->Rs_visit->get(" max(visit_id)+1 as id ", null);
 		if ($parameter['id_visit']->num_rows()>0) {
 			$parameter['id_visit'] = $parameter['id_visit']->row()->id;
-		}		
+		}
 
 		$this->Rs_visit->set_database($this->load->database('default',TRUE));
 		$parameter['no_pendaftaran'] = $this->Rs_visit->get(" coalesce(count(*),0) + 1 as no_pendaftaran ", array( 'tgl_daftar' => date('Y-m-d') ) );
 		if ($parameter['no_pendaftaran']->num_rows()>0) {
 			$format 						= "000";
 			$parameter['no_pendaftaran'] 	= substr($format, 0,-strlen($parameter['no_pendaftaran']->row()->no_pendaftaran)).$parameter['no_pendaftaran']->row()->no_pendaftaran;
-		}		
+		}
 
 		$response['parameter'] = $parameter;
 
@@ -235,7 +237,7 @@ class Daftar extends CI_Controller {
 		}
 
         $this->load->library('ciqrcode'); //pemanggilan library QR CODE
- 
+
         $config['cacheable']    = true; //boolean, the default is true
         $config['cachedir']     = './assets/'; //string, the default is application/cache/
         $config['errorlog']     = './assets/'; //string, the default is application/logs/
@@ -245,7 +247,7 @@ class Daftar extends CI_Controller {
         $config['black']        = array(224,255,255); // array, default is array(255,255,255)
         $config['white']        = array(70,130,180); // array, default is array(0,0,0)
         $this->ciqrcode->initialize($config);
- 
+
         $img_qrcode = $response['parameter']['no_pendaftaran'].'.png'; //buat name dari qr code sesuai dengan nim
 
 		$params['data'] 	= $response['parameter']['no_pendaftaran']; //data yang akan di jadikan QR CODE
@@ -253,7 +255,7 @@ class Daftar extends CI_Controller {
         $params['size'] 	= 10;
         $params['savename'] = FCPATH.$config['imagedir'].$img_qrcode; //simpan image QR CODE ke folder assets/images/
         $this->ciqrcode->generate($params); // fungsi untuk generate QR CODE
-        
+
 		$response['parameter']['tgl_kunjungan'] = date_format(date_create($response['parameter']['tgl_kunjungan']), "d/M/Y");
 		if ($response['status'] > 0) {
 			$response['status'] = true;
