@@ -29,6 +29,7 @@ Ext.define('App.pages.Rs_visit.Main', {
 					text		: 'Tambah',
 					iconCls		: 'fa fa-plus fa-lg',
 					iconAlign	: 'top',
+					disabled 	: true,
 					handler 	: function(a) {
 						Ext.create('App.pages.Rs_visit.form', {
 							fbar    : [
@@ -55,7 +56,7 @@ Ext.define('App.pages.Rs_visit.Main', {
 												'birth_place' 	: win.items.items[0].items.items[0].items.items[6].value,
 												'birth_date' 	: win.items.items[0].items.items[0].items.items[7].value,
 												'address' 		: win.items.items[0].items.items[0].items.items[8].value,
-												
+
 												'email' 		: win.items.items[0].items.items[1].items.items[0].value,
 												'phone_1' 		: win.items.items[0].items.items[1].items.items[1].value,
 												'phone_2' 		: win.items.items[0].items.items[1].items.items[2].value,
@@ -149,13 +150,13 @@ Ext.define('App.pages.Rs_visit.Main', {
 						var tmp_id = [];
 						var selected        = RsVisit.grid.getView().getSelectionModel().getSelection();
 						Ext.each(selected, function (item) {
-							tmp_id.push(item.data.employee_id);
+							tmp_id.push(item.data.visit_id);
 						});
 		                Ext.MessageBox.confirm('Delete', 'Apa anda yakin untuk menghapus ?', function(btn){
 		                    if(btn === 'yes'){
 		                        Ext.Ajax.request({
 		                            method      : 'post',
-		                            url         : url+"app/C_Rs_visit/delete",
+		                            url         : url+"app/C_rs_visit/delete",
 		                            waitTitle   : 'Connecting',
 		                            waitMsg     : 'Sending data...',
 		                            params      : {
@@ -163,7 +164,12 @@ Ext.define('App.pages.Rs_visit.Main', {
 		                            },
 		                            // scope:this,
 		                            success: function(res){
-		                                RsVisit.getStore(RsVisit.paramsCriteria, 0, 25);
+																	if (res.status == 200) {
+																		var obj = JSON.parse(res.responseText);
+																		if (obj.status == 200) {
+																			RsVisit.getStore(RsVisit.paramsCriteria, 0, 25);
+																		}
+																	}
 		                            },
 		                            failure: function(){
 		                                console.log('failure');
@@ -241,7 +247,7 @@ Ext.define('App.pages.Rs_visit.Main', {
 										}
                                         Ext.Ajax.request({
                                             method: 'post',
-                                            url: url+"app/C_Rs_visit/update",
+                                            url: url+"app/C_rs_visit/update",
                                             waitTitle: 'Connecting',
                                             waitMsg: 'Sending data...',
                                             params: {
@@ -254,7 +260,7 @@ Ext.define('App.pages.Rs_visit.Main', {
 												'birth_place' 	: win.items.items[0].items.items[0].items.items[6].value,
 												'birth_date' 	: win.items.items[0].items.items[0].items.items[7].value,
 												'address' 		: win.items.items[0].items.items[0].items.items[8].value,
-												
+
 												'email' 		: win.items.items[0].items.items[1].items.items[0].value,
 												'phone_1' 		: win.items.items[0].items.items[1].items.items[1].value,
 												'phone_2' 		: win.items.items[0].items.items[1].items.items[2].value,

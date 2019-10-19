@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 class Rs_visit extends CI_Model {
 	protected $table 		= "rs_visit";
@@ -23,7 +23,7 @@ class Rs_visit extends CI_Model {
 		if ($criteria !== null && $criteria !== '') {
 			$this->database->where($criteria);
 		}
-		
+
 		$this->database->join("rs_unit", " rs_unit.unit_id = ".$this->table.".unit_id ", "INNER");
 		$this->database->join("rs_patient", " rs_patient.patient_id = ".$this->table.".patient_id ", "INNER");
 		$this->database->join("rs_customer", " rs_customer.customer_id = ".$this->table.".customer_id ", "INNER");
@@ -34,7 +34,10 @@ class Rs_visit extends CI_Model {
 	public function create($parameter){
 		try {
 			$this->database->insert($this->table, $parameter);
-			return $this->database->affected_rows();
+			return array(
+				'result'	=> $this->database->affected_rows(),
+				'error'	  => $this->database->error(),
+			);
 		} catch (Exception $e) {
 			return $e;
 		}
@@ -44,7 +47,10 @@ class Rs_visit extends CI_Model {
 		try {
 			$this->database->where($criteria);
 			$this->database->update($this->table, $parameter);
-			return $this->database->affected_rows();
+			return array(
+				'result'	=> $this->database->affected_rows(),
+				'error'	  => $this->database->error(),
+			);
 		} catch (Exception $e) {
 			return $e;
 		}
@@ -54,9 +60,12 @@ class Rs_visit extends CI_Model {
 		try {
 			$this->database->where($criteria);
 			$this->database->delete($this->table);
-			return $this->database->affected_rows();
+			return array(
+				'result'	=> $this->database->affected_rows(),
+				'error'	  => $this->database->error(),
+			);
 		} catch (Exception $e) {
 			return $e;
 		}
 	}
-}	
+}

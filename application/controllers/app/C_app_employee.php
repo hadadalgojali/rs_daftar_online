@@ -77,12 +77,12 @@ class C_app_employee extends CI_Controller {
 		}
 
 		$result = $this->App_employee->create($parameter);
-		if ($result > 0 || $result === true) {
-			$response['message'] 	= "Berhasil disimpan";
+		if ($result['result'] > 0 || $result['result'] === true) {
 			$response['status'] 	= 200;
+			$response['message'] 	= "Update user account success";
 		}else{
-			$response['message'] 	= "Gagal disimpan";
-			$response['status'] = 401;
+			$response['status'] 	= 401;
+			$response['message'] 	= $query['error']['message'];
 		}
 		echo json_encode($response);
 	}
@@ -113,12 +113,12 @@ class C_app_employee extends CI_Controller {
 
 		$this->App_employee->set_database($this->load->database('default',TRUE));
 		$result = $this->App_employee->update($criteria, $parameter);
-		if ($result > 0 || $result === true) {
-			$response['message'] 	= "Berhasil disimpan";
+		if ($result['result'] > 0 || $result['result'] === true) {
 			$response['status'] 	= 200;
+			$response['message'] 	= "Update user account success";
 		}else{
-			$response['message'] 	= "Gagal disimpan";
 			$response['status'] 	= 401;
+			$response['message'] 	= $query['error']['message'];
 		}
 		echo json_encode($response);
 	}
@@ -135,25 +135,23 @@ class C_app_employee extends CI_Controller {
 			foreach (json_decode($parameter['id']) as $key => $value) {
 				$criteria 					= array();
 				$criteria['employee_id'] 	= $value;
-				$response['status'] 		= $this->App_employee->delete($criteria);
-				if ($response['status'] === false || $response['status'] == 0) {
+				$query = $this->App_employee->delete($criteria);
+				if ($query['result'] === false || $query['result'] == 0) {
 					break;
 				}
 			}
 		}else{
 			$criteria 				= array();
 			$criteria['employee_id'] 	= $parameter['id'];
-			$response['status'] 	= $this->App_employee->delete($criteria);
+			$query = $this->App_employee->delete($criteria);
 		}
 
-
-		if ($response['status']>0 || $response['status']===true) {
-			$response['message'] = "Data di hapus";
-			$response['status']  = 200;
+		if ($query['result'] > 0 || $query['result'] === true) {
+			$response['status'] 	= 200;
+			$response['message'] 	= "Update user account success";
 		}else{
-			$response['message'] = "Data gagal di hapus";
-			$response['status'] = 401;
-
+			$response['status'] 	= 401;
+			$response['message'] 	= $query['error']['message'];
 		}
 		echo json_encode($response);
 	}
@@ -192,12 +190,12 @@ class C_app_employee extends CI_Controller {
 						}
 
 						$query = $this->App_user->update($criteria, $params);
-						if ($query>0 || $query===true) {
-							$response['status'] = 200;
-							$response['message'] 	= "Update success";
-						}else{
+						if ($query['result'] > 0 || $query['result'] === true) {
 							$response['status'] 	= 200;
-							$response['message'] 	= "Update failure";
+							$response['message'] 	= "Update user account success";
+						}else{
+							$response['status'] 	= 401;
+							$response['message'] 	= $query['error']['message'];
 						}
 				}else{
 						$this->App_user->set_database($this->load->database('default',TRUE));
@@ -224,12 +222,12 @@ class C_app_employee extends CI_Controller {
 						$params['update_by'] 		= $this->session->userdata('user_id');
 
 						$query = $this->App_user->create($params);
-						if ($query>0 || $query===true) {
-							$response['status'] = 200;
-							$response['message'] 	= "Create user auth success";
-						}else{
+						if ($query['result'] > 0 || $query['result'] === true) {
 							$response['status'] 	= 200;
-							$response['message'] 	= "Create user auth failure";
+							$response['message'] 	= "Create user account success";
+						}else{
+							$response['status'] 	= 401;
+							$response['message'] 	= $query['error']['message'];
 						}
 				}
 		// }else{

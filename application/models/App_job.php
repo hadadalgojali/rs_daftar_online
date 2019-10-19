@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 class App_job extends CI_Model {
 	protected $table 		= "app_job";
@@ -23,11 +23,14 @@ class App_job extends CI_Model {
 
 		return $this->database->get();
 	}
-	
+
 	public function create($parameter){
 		try {
 			$this->database->insert($this->table, $parameter);
-			return $this->database->affected_rows();
+			return array(
+				'result'	=> $this->database->affected_rows(),
+				'error'	  => $this->database->error(),
+			);
 		} catch (Exception $e) {
 			return $e;
 		}
@@ -37,7 +40,10 @@ class App_job extends CI_Model {
 		try {
 			$this->database->where($criteria);
 			$this->database->update($this->table, $parameter);
-			return $this->database->affected_rows();
+			return array(
+				'result'	=> $this->database->affected_rows(),
+				'error'	  => $this->database->error(),
+			);
 		} catch (Exception $e) {
 			return $e;
 		}
@@ -47,9 +53,12 @@ class App_job extends CI_Model {
 		try {
 			$this->database->where($criteria);
 			$this->database->delete($this->table);
-			return $this->database->affected_rows();
+			return array(
+				'result'	=> $this->database->affected_rows(),
+				'error'	  => $this->database->error(),
+			);
 		} catch (Exception $e) {
 			return $e;
 		}
 	}
-}	
+}

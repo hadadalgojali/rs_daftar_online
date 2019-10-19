@@ -1,17 +1,15 @@
-Ext.define('App.store.App_role', {
+Ext.define('App.store.Rs_customer', {
     autoLoad: false,
     extend: 'Ext.data.Store',
     fields : [
-        'role_code',
-        'role_name',
-        'description',
-        'role_id',
-        'tenant_id',
-        'active_flag'
+        'customer_id',
+        'customer_name',
+        'customer_code',
+        'active_flag',
     ],
     proxy: {
         type: 'ajax',
-        url: url+'app/C_app_role/get',
+        url: url+'app/C_rs_customer/get',
         reader: {
             successProperty: 'success', // if success property
             type: 'json',

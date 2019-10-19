@@ -47,7 +47,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 									Pendaftaran Berhasil.<br>
 									Harap Catat Nomor Pendaftaran dibawah ini untuk kunjungan Rumah Sakit:
 									<h3><span id="result_no_pendaftaran">-</span></h3>
-									Atas : 
+									Atas :
 									<table border="0" width="100%">
 										<tr>
 											<td>Medrec</td>
@@ -288,7 +288,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 			</div>
 		</div>
 	</div>
-	
+
 	<?php echo $_footer; ?>
 	<?php echo $_include_js; ?>
 	<script type="text/javascript">
@@ -302,8 +302,8 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 	       t = t.split(/-/);
 	       st = st.split(/-/);
 	       et = et.split(/-/);
-	       return (t[0] < st[0] 
-	            || t[0] > et[0] 
+	       return (t[0] < st[0]
+	            || t[0] > et[0]
 	            || (t[0] == st[0] && t[1] < st[1])
 	            || (t[0] == et[0] && t[1] > et[1]));
 	    }
@@ -555,7 +555,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
 		$('#tgl_kunjungan').datepicker({
 			dateFormat 	: "dd-mm-yy",
-			minDate 	: '<?php echo $tanggal_at; ?>', 
+			minDate 	: '<?php echo $tanggal_at; ?>',
 			maxDate 	: '<?php echo $tanggal_to; ?>',
 			onSelect 	: function(dateText, inst) {
 				document.getElementById('ket_tgl_checkin').innerHTML = dateText;
@@ -570,7 +570,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 			if (text.originalEvent.target.value == "1") {
 				document.getElementById('ModalBody').innerHTML = "Episode Baru adalah pasien yang belum cetak SEP dan akan memulai pemeriksaan baru.";
 				$("#btn_no_rujukan").attr('disabled', false);
-			}else{	
+			}else{
 				document.getElementById('ModalBody').innerHTML = "Episode Lanjutan adalah Pasien yang sudah cetak SEP dan belum selesai pemeriksaan di hari yang sama kemudian dilanjutkan di hari berikutnya tanpa cetak SEP.";
 				$("#btn_no_rujukan").attr('disabled', true);
 			}
@@ -597,8 +597,8 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 						$.toast({
 							heading: 'Infomasi',
 							text: [
-								'Data tidak ditemukan', 
-								'Periksa kembali Kode Pasien dan Tanggal Lahir', 
+								'Data tidak ditemukan',
+								'Periksa kembali Kode Pasien dan Tanggal Lahir',
 							],
 							icon: 'info',
 							position: 'top-right',
@@ -621,7 +621,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
 		function applyDataMask(field) {
 			var mask = field.dataset.mask.split('');
-			
+
 			// For now, this just strips everything that's not a number
 			function stripMask(maskedData) {
 				function isDigit(char) {
@@ -629,7 +629,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 				}
 				return maskedData.split('').filter(isDigit);
 			}
-		    
+
 		    // Replace `_` characters with characters from `data`
 			function applyMask(data) {
 				return mask.map(function(char) {
@@ -638,21 +638,21 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 					return data.shift();
 				}).join('')
 			}
-		    
+
 			function reapplyMask(data) {
 				return applyMask(stripMask(data));
 			}
-		    
-			function changed() {   
+
+			function changed() {
 				var oldStart         = field.selectionStart;
 				var oldEnd           = field.selectionEnd;
-				
+
 				field.value          = reapplyMask(field.value);
-				
+
 				field.selectionStart = oldStart;
 				field.selectionEnd   = oldEnd;
 			}
-		    
+
 			field.addEventListener('click', changed)
 			field.addEventListener('keyup', changed)
 		}

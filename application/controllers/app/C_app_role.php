@@ -27,6 +27,26 @@ class C_app_role extends CI_Controller {
 		);
 	}
 
+	private function convert_bit_bool($parameter){
+		if (is_numeric($parameter) === true) {
+			if ($parameter == 1 || $parameter == '1') {
+				return 'true';
+			}else{
+				return 'false';
+			}
+		}else{
+			if ($parameter === 'true' || $parameter === true) {
+				return 1;
+			}else if($parameter === 'false' || $parameter === false){
+				return 0;
+			}else if ($parameter == 1 || $parameter == '1') {
+				return 'true';
+			}else{
+				return 'false';
+			}
+		}
+	}
+
 	public function save(){
 		$response 	= array();
 		$parameter 	= array(
@@ -36,8 +56,8 @@ class C_app_role extends CI_Controller {
 			'description' 	=> $this->input->post('description'),
 			'role_id' 		=> $this->session->userdata('role_id'),
 			'create_on' 	=> date('Y-m-d'),
-			'tenant_id' 	=> 1,
-			'active_flag' 	=> 1,
+			'tenant_id' 	=> $this->input->post('tenant_id'),
+			'active_flag' => $this->convert_bit_bool($this->input->post('active')),
 			'create_by' 	=> $this->session->userdata('role_id'),
 			'update_on' 	=> date('Y-m-d'),
 			'update_by' 	=> $this->session->userdata('role_id'),
@@ -51,12 +71,12 @@ class C_app_role extends CI_Controller {
 		}
 
 		$result = $this->App_role->create($parameter);
-		if ($result > 0 || $result === true) {
+		if ($result['result'] > 0 || $result['result'] === true) {
 			$response['message'] 	= "Berhasil disimpan";
 			$response['status'] 	= 200;
 		}else{
-			$response['message'] 	= "Gagal disimpan";
-			$response['status'] = 401;
+			$response['message'] 	= $result['error']['message'];
+			$response['status'] 	= $result['error']['code'];
 		}
 		echo json_encode($response);
 	}
@@ -72,51 +92,57 @@ class C_app_role extends CI_Controller {
 			'description' 	=> $this->input->post('description'),
 			'update_on' 	=> date('Y-m-d'),
 			'update_by' 	=> $this->session->userdata('role_id'),
+			'tenant_id' 	=> $this->input->post('tenant_id'),
+			'active_flag' => $this->convert_bit_bool($this->input->post('active')),
 		);
 
 		$this->App_role->set_database($this->load->database('default',TRUE));
 		$result = $this->App_role->update($criteria, $parameter);
-		if ($result > 0 || $result === true) {
-			$response['message'] 	= "Berhasil disimpan";
+		if ($result['result'] > 0 || $result['result'] === true) {
+			$response['message'] 	= "Update success";
 			$response['status'] 	= 200;
 		}else{
-			$response['message'] 	= "Gagal disimpan";
-			$response['status'] 	= 401;
+			if ($result['error']['code'] > 0) {
+				$response['message'] 	= $result['error']['message'];
+				$response['status'] 	= $result['error']['code'];
+			}else{
+				$response['message'] 	= "Update success";
+				$response['status'] 	= 200;
+			}
 		}
 		echo json_encode($response);
 	}
 
 	public function delete(){
 		$response 			= array();
-		$response['status'] = false;
+		$result 				= array();
 		$parameter = array(
 			'id' 	=> $this->input->post('id')
 		);
-		
+
 		$this->App_role->set_database($this->load->database('default',TRUE));
 		if (count(json_decode($parameter['id'])) > 0) {
 			foreach (json_decode($parameter['id']) as $key => $value) {
 				$criteria 				= array();
 				$criteria['role_id'] 	= $value;
-				$response['status'] 	= $this->App_role->delete($criteria);
-				if ($response['status'] === false || $response['status'] == 0) {
+				$result 	= $this->App_role->delete($criteria);
+				if ($result['result'] === false || $result['result'] == 0) {
 					break;
 				}
 			}
 		}else{
-			$criteria 				= array();
+			$criteria 						= array();
 			$criteria['role_id'] 	= $parameter['id'];
-			$response['status'] 	= $this->App_role->delete($criteria);
+			$result 							= $this->App_role->delete($criteria);
 		}
 
 
-		if ($response['status']>0 || $response['status']===true) {
-			$response['message'] = "Data di hapus";
-			$response['status']  = 200;
+		if ($result['result'] > 0 || $result['result'] === true) {
+			$response['message'] 	= "Berhasil disimpan";
+			$response['status'] 	= 200;
 		}else{
-			$response['message'] = "Data gagal di hapus";
-			$response['status'] = 401;
-
+			$response['message'] 	= $result['error']['message'];
+			$response['status'] 	= $result['error']['code'];
 		}
 		echo json_encode($response);
 	}

@@ -51,12 +51,12 @@ class C_rs_visit extends CI_Controller {
 		}
 
 		$result = $this->Rs_visit->create($parameter);
-		if ($result > 0 || $result === true) {
-			$response['message'] 	= "Berhasil disimpan";
+		if ($result['result'] > 0 || $result['result'] === true) {
 			$response['status'] 	= 200;
+			$response['message'] 	= "Update user account success";
 		}else{
-			$response['message'] 	= "Gagal disimpan";
-			$response['status'] = 401;
+			$response['status'] 	= 401;
+			$response['message'] 	= $query['error']['message'];
 		}
 		echo json_encode($response);
 	}
@@ -76,12 +76,12 @@ class C_rs_visit extends CI_Controller {
 
 		$this->Rs_visit->set_database($this->load->database('default',TRUE));
 		$result = $this->Rs_visit->update($criteria, $parameter);
-		if ($result > 0 || $result === true) {
-			$response['message'] 	= "Berhasil disimpan";
+		if ($result['result'] > 0 || $result['result'] === true) {
 			$response['status'] 	= 200;
+			$response['message'] 	= "Update user account success";
 		}else{
-			$response['message'] 	= "Gagal disimpan";
 			$response['status'] 	= 401;
+			$response['message'] 	= $query['error']['message'];
 		}
 		echo json_encode($response);
 	}
@@ -92,31 +92,29 @@ class C_rs_visit extends CI_Controller {
 		$parameter = array(
 			'id' 	=> $this->input->post('id')
 		);
-		
+
 		$this->Rs_visit->set_database($this->load->database('default',TRUE));
 		if (count(json_decode($parameter['id'])) > 0) {
 			foreach (json_decode($parameter['id']) as $key => $value) {
 				$criteria 				= array();
-				$criteria['role_id'] 	= $value;
-				$response['status'] 	= $this->Rs_visit->delete($criteria);
-				if ($response['status'] === false || $response['status'] == 0) {
+				$criteria['visit_id'] 	= $value;
+				$result 	= $this->Rs_visit->delete($criteria);
+				if ($result['result'] === false || $result['result'] == 0) {
 					break;
 				}
 			}
 		}else{
 			$criteria 				= array();
-			$criteria['role_id'] 	= $parameter['id'];
-			$response['status'] 	= $this->Rs_visit->delete($criteria);
+			$criteria['visit_id'] 	= $parameter['id'];
+			$result = $this->Rs_visit->delete($criteria);
 		}
 
-
-		if ($response['status']>0 || $response['status']===true) {
-			$response['message'] = "Data di hapus";
-			$response['status']  = 200;
+		if ($result['result'] > 0 || $result['result'] === true) {
+			$response['status'] 	= 200;
+			$response['message'] 	= "Update user account success";
 		}else{
-			$response['message'] = "Data gagal di hapus";
-			$response['status'] = 401;
-
+			$response['status'] 	= 401;
+			$response['message'] 	= $query['error']['message'];
 		}
 		echo json_encode($response);
 	}

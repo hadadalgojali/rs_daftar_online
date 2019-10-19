@@ -4,7 +4,7 @@ pageAppRole.getStore = function(params, start, limit){
 	pageAppRole.storeobj.removeAll();
     pageAppRole.storeobj.load({
         params : {
-            params      : ' active_flag = 1 '+params,
+            params      : params,
             start       : start,
             limit       : limit,
         }
@@ -37,17 +37,26 @@ Ext.define('App.pages.App_role.Main', {
 									text    : 'Save',
 									handler : function(btn){
 										var win = btn.up('window'), form = win.down('form');
-
+										/*
+											win.items.items[0] = id
+											win.items.items[1] = Role Code
+											win.items.items[2] = Role Name
+											win.items.items[3] = Description
+											win.items.items[4] = Combo Tenant
+											win.items.items[5] = Checkbox active
+										*/
 										Ext.Ajax.request({
 											method: 'post',
 											url: url+"app/C_app_role/save",
 											waitTitle: 'Connecting',
 											waitMsg: 'Sending data...',
 											params: {
-												'id'        	: win.items.items[0].lastValue,
-												'role_code' 	: win.items.items[1].lastValue,
-												'role_name' 	: win.items.items[2].lastValue,
+												'id'        		: win.items.items[0].lastValue,
+												'role_code' 		: win.items.items[1].lastValue,
+												'role_name' 		: win.items.items[2].lastValue,
 												'description'   : win.items.items[3].lastValue,
+												'tenant_id'     : win.items.items[4].value,
+												'active'   		  : win.items.items[5].value,
 											},
 											success: function(res){
 												var cst = JSON.parse(res.responseText);
@@ -221,6 +230,8 @@ Ext.define('App.pages.App_role.Main', {
 												'role_code' 	: win.items.items[1].lastValue,
 												'role_name' 	: win.items.items[2].lastValue,
 												'description'   : win.items.items[3].lastValue,
+												'tenant_id'     : win.items.items[4].value,
+												'active'   		  : win.items.items[5].value,
                                             },
                                             success: function(res){
                                                 var cst = JSON.parse(res.responseText);
@@ -248,13 +259,17 @@ Ext.define('App.pages.App_role.Main', {
                                     thisForm.items.items[1].setValue(index.data.role_code);
                                     thisForm.items.items[2].setValue(index.data.role_name);
                                     thisForm.items.items[3].setValue(index.data.description);
+                                    thisForm.items.items[4].setValue(index.data.tenant_id);
+																		if (index.data.active_flag == 1 || index.data.active_flag == '1') {
+																			thisForm.items.items[5].setValue(true);
+																		}
                                 },
                             }
                         }).show();
                     }
                 }
             },
-			renderTo: Ext.getBody()
+						renderTo: Ext.getBody()
         }),
 	],
 	initComponent:function(){

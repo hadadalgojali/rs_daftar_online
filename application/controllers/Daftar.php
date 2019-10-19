@@ -236,7 +236,7 @@ class Daftar extends CI_Controller {
 			}
 		}
 
-        $this->load->library('ciqrcode'); //pemanggilan library QR CODE
+        $this->load->library('Ciqrcode'); //pemanggilan library QR CODE
 
         $config['cacheable']    = true; //boolean, the default is true
         $config['cachedir']     = './assets/'; //string, the default is application/cache/
@@ -250,7 +250,7 @@ class Daftar extends CI_Controller {
 
         $img_qrcode = $response['parameter']['no_pendaftaran'].'.png'; //buat name dari qr code sesuai dengan nim
 
-		$params['data'] 	= $response['parameter']['no_pendaftaran']; //data yang akan di jadikan QR CODE
+				$params['data'] 	= $response['parameter']['no_pendaftaran']; //data yang akan di jadikan QR CODE
         $params['level']	= 'H'; //H=High
         $params['size'] 	= 10;
         $params['savename'] = FCPATH.$config['imagedir'].$img_qrcode; //simpan image QR CODE ke folder assets/images/
