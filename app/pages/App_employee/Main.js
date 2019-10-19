@@ -13,7 +13,6 @@ pageAppEmployee.getStore = function(params, start, limit){
 
 pageAppEmployee.paramsCriteria  = '';
 pageAppEmployee.grid 			= null;
-pageAppEmployee.getStore(pageAppEmployee.paramsCriteria, 0, 25);
 Ext.define('App.pages.App_employee.Main', {
 	extend : 'App.cmp.Panel',
 	layout :'fit',
@@ -43,7 +42,7 @@ Ext.define('App.pages.App_employee.Main', {
 										}
 										Ext.Ajax.request({
 											method: 'post',
-											url: url+"app/C_App_employee/save",
+											url: url+"app/C_app_employee/save",
 											waitTitle: 'Connecting',
 											waitMsg: 'Sending data...',
 											params: {
@@ -55,7 +54,7 @@ Ext.define('App.pages.App_employee.Main', {
 												'birth_place' 	: win.items.items[0].items.items[0].items.items[6].value,
 												'birth_date' 	: win.items.items[0].items.items[0].items.items[7].value,
 												'address' 		: win.items.items[0].items.items[0].items.items[8].value,
-												
+
 												'email' 		: win.items.items[0].items.items[1].items.items[0].value,
 												'phone_1' 		: win.items.items[0].items.items[1].items.items[1].value,
 												'phone_2' 		: win.items.items[0].items.items[1].items.items[2].value,
@@ -63,6 +62,7 @@ Ext.define('App.pages.App_employee.Main', {
 
 												'job_id' 		: win.dockedItems.items[1].items.items[0].items.items[0].value,
 												'active' 		: win.dockedItems.items[1].items.items[0].items.items[1].value,
+												'tenant_id' : win.dockedItems.items[1].items.items[0].items.items[2].value,
 
 											},
 											success: function(res){
@@ -155,7 +155,7 @@ Ext.define('App.pages.App_employee.Main', {
 		                    if(btn === 'yes'){
 		                        Ext.Ajax.request({
 		                            method      : 'post',
-		                            url         : url+"app/C_App_employee/delete",
+		                            url         : url+"app/C_app_employee/delete",
 		                            waitTitle   : 'Connecting',
 		                            waitMsg     : 'Sending data...',
 		                            params      : {
@@ -245,11 +245,65 @@ Ext.define('App.pages.App_employee.Main', {
 										{
 											xtype   : 'button',
 											text    : 'Save',
-											handler : function(){
+											handler : function(btn){
+												var win = btn.up('window');
+												// form.items[0] => username
+												// form.items[1] => checkbox using password or not
+												// form.items[2] => password
+												// form.items[3] => retype password
+												// form.items[4] => Combo role
+												// form.items[5] => Combo tenant
+												// form.items[6] => Checkbox Active
+												var form = win.items.items[0].items;
+												if (form.items[2].getValue() !== form.items[3].getValue()) {
+													Ext.Msg.alert("Peringatan", " Password not same ");
+												}else{
 
+																							Ext.Ajax.request({
+																									method: 'post',
+																									url: url+"app/C_app_employee/user_generate",
+																									waitTitle: 'Connecting',
+																									waitMsg: 'Sending data...',
+																									params: {
+																										employee_id 		: record.data.employee_id,
+																										username 				: form.items[0].getValue(),
+																										change_password : form.items[1].getValue(),
+																										password 				: form.items[2].getValue(),
+																										role 						: form.items[4].getValue(),
+																										tenant_id 			: form.items[5].getValue(),
+																										active					: form.items[6].getValue(),
+																									},
+																									success: function(res){
+																											var cst = JSON.parse(res.responseText);
+																											Ext.Msg.alert("Update", ""+cst.message+"");
+																											pageAppEmployee.getStore(pageAppEmployee.paramsCriteria, 0, 25);
+																									},
+																									failure: function(){
+																											console.log('failure');
+																									}
+																							});
+												}
+												console.log(form.items[0].getValue());
 											}
+										},{
+												xtype   : 'button',
+												text    : 'Close',
+												handler : function(btn){
+													var win = btn.up('window');
+													win.close();
+												}
 										}
-									]
+									],
+									listeners: {
+										show: function(thisForm){
+											// thisForm.items.items[0].items.items[0].items.items[5].setValue(record.data.religion);
+											thisForm.items.items[0].items.items[0].setValue(record.data.user_code);
+											thisForm.items.items[0].items.items[4].setValue(record.data.role_id);
+											thisForm.items.items[0].items.items[5].setValue(record.data.tenant_id);
+											thisForm.items.items[0].items.items[6].setValue(record.data.active_flag_user);
+											console.log(thisForm.items.items[0].items);
+										}
+									}
 								}).show();
 							}
 						},{
@@ -270,7 +324,6 @@ Ext.define('App.pages.App_employee.Main', {
 									],
 									listeners: {
 										show: function(thisForm){
-
 											thisForm.items.items[0].items.items[0].items.items[0].setDisabled(true);
 											thisForm.items.items[0].items.items[0].items.items[1].setDisabled(true);
 											thisForm.items.items[0].items.items[0].items.items[2].setDisabled(true);
@@ -286,6 +339,7 @@ Ext.define('App.pages.App_employee.Main', {
 											thisForm.items.items[0].items.items[0].items.items[4].setDisabled(true);
 											thisForm.dockedItems.items[1].items.items[0].items.items[0].setDisabled(true);
 											thisForm.dockedItems.items[1].items.items[0].items.items[1].setDisabled(true);
+											thisForm.dockedItems.items[1].items.items[0].items.items[2].setDisabled(true);
 
 											thisForm.items.items[0].items.items[0].items.items[0].setValue(record.data.employee_id);
 											thisForm.items.items[0].items.items[0].items.items[1].setValue(record.data.id_number);
@@ -306,6 +360,7 @@ Ext.define('App.pages.App_employee.Main', {
 											thisForm.items.items[0].items.items[1].items.items[3].setValue(record.data.fax_number1);
 
 											thisForm.dockedItems.items[1].items.items[0].items.items[0].setValue(record.data.job_id);
+											thisForm.dockedItems.items[1].items.items[0].items.items[2].setValue(record.data.tenant_id);
 											if (record.data.active_flag == 1) {
 												thisForm.dockedItems.items[1].items.items[0].items.items[1].setValue(true);
 											}
@@ -343,27 +398,28 @@ Ext.define('App.pages.App_employee.Main', {
 										}
                                         Ext.Ajax.request({
                                             method: 'post',
-                                            url: url+"app/C_App_employee/update",
+                                            url: url+"app/C_app_employee/update",
                                             waitTitle: 'Connecting',
                                             waitMsg: 'Sending data...',
                                             params: {
-												'employee_id'  	: win.items.items[0].items.items[0].items.items[0].value,
-												'id_number'  	: win.items.items[0].items.items[0].items.items[1].value,
-												'first_name' 	: win.items.items[0].items.items[0].items.items[2].value,
-												'last_name' 	: win.items.items[0].items.items[0].items.items[3].value,
-												'gender' 		: tmp_gender,
-												'religion' 		: win.items.items[0].items.items[0].items.items[5].value,
-												'birth_place' 	: win.items.items[0].items.items[0].items.items[6].value,
-												'birth_date' 	: win.items.items[0].items.items[0].items.items[7].value,
-												'address' 		: win.items.items[0].items.items[0].items.items[8].value,
-												
-												'email' 		: win.items.items[0].items.items[1].items.items[0].value,
-												'phone_1' 		: win.items.items[0].items.items[1].items.items[1].value,
-												'phone_2' 		: win.items.items[0].items.items[1].items.items[2].value,
-												'fax' 			: win.items.items[0].items.items[1].items.items[3].value,
+																							'employee_id'  	: win.items.items[0].items.items[0].items.items[0].value,
+																							'id_number'  	: win.items.items[0].items.items[0].items.items[1].value,
+																							'first_name' 	: win.items.items[0].items.items[0].items.items[2].value,
+																							'last_name' 	: win.items.items[0].items.items[0].items.items[3].value,
+																							'gender' 		: tmp_gender,
+																							'religion' 		: win.items.items[0].items.items[0].items.items[5].value,
+																							'birth_place' 	: win.items.items[0].items.items[0].items.items[6].value,
+																							'birth_date' 	: win.items.items[0].items.items[0].items.items[7].value,
+																							'address' 		: win.items.items[0].items.items[0].items.items[8].value,
 
-												'job_id' 		: win.dockedItems.items[1].items.items[0].items.items[0].value,
-												'active' 		: win.dockedItems.items[1].items.items[0].items.items[1].value,
+																							'email' 		: win.items.items[0].items.items[1].items.items[0].value,
+																							'phone_1' 		: win.items.items[0].items.items[1].items.items[1].value,
+																							'phone_2' 		: win.items.items[0].items.items[1].items.items[2].value,
+																							'fax' 			: win.items.items[0].items.items[1].items.items[3].value,
+
+																							'job_id' 		: win.dockedItems.items[1].items.items[0].items.items[0].value,
+																							'active' 		: win.dockedItems.items[1].items.items[0].items.items[1].value,
+																							'tenant_id'	: win.dockedItems.items[1].items.items[0].items.items[2].value,
                                             },
                                             success: function(res){
                                                 var cst = JSON.parse(res.responseText);
@@ -391,7 +447,7 @@ Ext.define('App.pages.App_employee.Main', {
                                     thisForm.items.items[0].items.items[0].items.items[1].setValue(index.data.id_number);
                                     thisForm.items.items[0].items.items[0].items.items[2].setValue(index.data.first_name);
                                     thisForm.items.items[0].items.items[0].items.items[3].setValue(index.data.last_name);
-                                    if (index.data.gender == 'true' ) {
+                                    if (index.data.gender == 'true' || index.data.gender == 't' ) {
                                     	thisForm.items.items[0].items.items[0].items.items[4].items.items[0].setValue(true);
                                     }else{
                                     	thisForm.items.items[0].items.items[0].items.items[4].items.items[1].setValue(true);
@@ -409,21 +465,18 @@ Ext.define('App.pages.App_employee.Main', {
                                     if (index.data.active_flag == 1) {
                                     	thisForm.dockedItems.items[1].items.items[0].items.items[1].setValue(true);
                                     }
+																		thisForm.dockedItems.items[1].items.items[0].items.items[2].setValue(index.data.tenant_id);
                                 },
                             }
                         }).show();
                     }
                 }
             },
-			renderTo: Ext.getBody()
+			// renderTo: Ext.getBody()
         }),
 	],
 	initComponent:function(){
 		this.callParent();
-	},
-	listeners: {
-		show : function(thisHeader){
-			pageAppEmployee.getStore(pageAppEmployee.paramsCriteria, 0, 25);
-		},
+		pageAppEmployee.getStore(pageAppEmployee.paramsCriteria, 0, 25);
 	},
 });

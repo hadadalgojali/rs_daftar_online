@@ -19,6 +19,16 @@ App_employee.getStoreAppReligion = function(params, start, limit){
         }
     });
 };
+App_employee.storeAppTenant    = Ext.create('App.store.App_tenant');
+App_employee.getStoreAppTenant = function(params, start, limit){
+    App_employee.storeAppTenant.load({
+        params : {
+            params  : params,
+            start   : start,
+            limit   : limit,
+        }
+    });
+};
 Ext.define('App.pages.App_employee.form',{
     extend : 'Ext.window.Window',
     title: 'Form',
@@ -100,7 +110,7 @@ Ext.define('App.pages.App_employee.form',{
                                     App_employee.getStoreAppReligion(" active = 1 ", null, null);
                                 },
                                 change      : function(a, b){
-                
+
                                 }
                             }
                         },
@@ -166,7 +176,6 @@ Ext.define('App.pages.App_employee.form',{
                 {
                     xtype: 'form',
                     flex: 1,
-                    height: 71,
                     bodyPadding: 10,
                     items: [
                         {
@@ -183,7 +192,7 @@ Ext.define('App.pages.App_employee.form',{
                                     App_employee.getStoreAppJob(" active_flag = 1 ", null, null);
                                 },
                                 change      : function(a, b){
-                
+
                                 }
                             }
                         },
@@ -192,7 +201,25 @@ Ext.define('App.pages.App_employee.form',{
                             anchor: '100%',
                             fieldLabel: 'Active',
                             boxLabel: ''
-                        }
+                        },
+                            {
+                                xtype           : 'combo',
+                                store           : App_employee.storeAppTenant,
+                                forceSelection  : false,
+                                valueField      : "tenant_id",
+                                emptyText       : 'Select ...',
+                                displayField    : "tenant_name",
+                                fieldLabel      : "Tenant",
+                                queryMode       : 'local',
+                                listeners       : {
+                                    afterrender : function(){
+                                        App_employee.getStoreAppTenant(" active_flag = 1 ", null, null);
+                                    },
+                                    change      : function(a, b){
+
+                                    }
+                                }
+                            },
                     ]
                 }
             ]

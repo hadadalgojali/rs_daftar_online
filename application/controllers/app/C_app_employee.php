@@ -8,6 +8,7 @@ class C_app_employee extends CI_Controller {
 		parent::__construct();
 		$this->_ci = &get_instance();
 		$this->load->model('App_employee');
+		$this->load->model('App_user');
 	}
 
 	public function index(){
@@ -17,7 +18,7 @@ class C_app_employee extends CI_Controller {
 	public function get($criteria = null){
 		$this->App_employee->set_database($this->load->database('default',TRUE));
 
-		$App_employee = $this->App_employee->get_with_job(" app_job.job_name, app_employee.* ", $this->input->get('params'),$this->input->get('limit'),$this->input->get('start'));
+		$App_employee = $this->App_employee->get_with_join(" app_job.job_name, app_employee.*, app_user.user_code, app_role.role_id, app_role.role_name, app_user.active_flag as active_flag_user ", $this->input->get('params'),$this->input->get('limit'),$this->input->get('start'));
 		echo json_encode(
 			array(
 				'results' 	=> $App_employee->result(),
@@ -64,6 +65,7 @@ class C_app_employee extends CI_Controller {
 			'phone_number2' => $this->input->post('phone_2'),
 			'fax_number1'   => $this->input->post('fax'),
 			'job_id'        => $this->input->post('job_id'),
+			'tenant_id'     => $this->input->post('tenant_id'),
 			'create_on' 	=> date("Y-m-d"),
 			'active_flag'   => $this->convert_bit_bool($this->input->post('active')),
 		);
@@ -104,6 +106,7 @@ class C_app_employee extends CI_Controller {
 			'phone_number2' => $this->input->post('phone_2'),
 			'fax_number1'   => $this->input->post('fax'),
 			'job_id'        => $this->input->post('job_id'),
+			'tenant_id'     => $this->input->post('tenant_id'),
 			'create_on' 	=> date("Y-m-d"),
 			'active_flag'   => $this->convert_bit_bool($this->input->post('active')),
 		);
@@ -126,7 +129,7 @@ class C_app_employee extends CI_Controller {
 		$parameter = array(
 			'id' 	=> $this->input->post('id')
 		);
-		
+
 		$this->App_employee->set_database($this->load->database('default',TRUE));
 		if (count(json_decode($parameter['id'])) > 0) {
 			foreach (json_decode($parameter['id']) as $key => $value) {
@@ -152,6 +155,88 @@ class C_app_employee extends CI_Controller {
 			$response['status'] = 401;
 
 		}
+		echo json_encode($response);
+	}
+
+	public function user_generate(){
+		$response 	= array();
+		$parameter 	= array(
+			'employee_id' 		=> $this->input->post('employee_id'),
+			'username' 				=> $this->input->post('username'),
+			'change_password' => $this->input->post('change_password'),
+			'password' 				=> $this->input->post('password'),
+			'role_id' 				=> $this->input->post('role'),
+			'tenant_id'				=> $this->input->post('tenant_id'),
+			'active' 					=> $this->input->post('active'),
+		);
+
+		// $this->App_user->set_database($this->load->database('default',TRUE));
+		// $query = $this->App_user->get("*", array( 'user_code' => $parameter['username'] ));
+		// if($query->num_rows() == 0){
+				$this->App_user->set_database($this->load->database('default',TRUE));
+				$query = $this->App_user->get("*", array( 'employee_id' => $parameter['employee_id'] ));
+				if ($query->num_rows() > 0) {
+						$params 	= array();
+						$criteria = array();
+						$criteria['employee_id'] 	= $parameter['employee_id'];
+						$criteria['user_id'] 			= $query->row()->user_id;
+
+						$params['user_code'] 		= $parameter['username'];
+						$params['active_flag'] 	= $this->convert_bit_bool($parameter['active']);
+						$params['tenant_id'] 		= $parameter['tenant_id'];
+						$params['role_id'] 			= $parameter['role_id'];
+						$params['update_on'] 		= date("Y-m-d H:i:s");
+						$params['update_by'] 		= $this->session->userdata('user_id');
+						if ($parameter['change_password'] === true || $parameter['change_password'] === 'true') {
+								$params['password'] 	= md5($parameter['password']);
+						}
+
+						$query = $this->App_user->update($criteria, $params);
+						if ($query>0 || $query===true) {
+							$response['status'] = 200;
+							$response['message'] 	= "Update success";
+						}else{
+							$response['status'] 	= 200;
+							$response['message'] 	= "Update failure";
+						}
+				}else{
+						$this->App_user->set_database($this->load->database('default',TRUE));
+						$query = $this->App_user->get(" max(user_id) as id ");
+						if ($query->num_rows() > 0) {
+							$parameter['user_id'] = (int)$query->row()->id + 1;
+						}else{
+							$parameter['user_id'] = 1;
+						}
+
+						if ($parameter['change_password'] === true || $parameter['change_password'] === 'true') {
+							$params['password'] 	= md5($parameter['password']);
+						}else{
+							$params['password'] 	= md5('123456');
+						}
+						$params['user_id'] 			= $parameter['user_id'];
+						$params['user_code'] 		= $parameter['username'];
+						$params['user_code'] 		= $parameter['username'];
+						$params['employee_id']	= $parameter['employee_id'];
+						$params['role_id'] 			= $parameter['role_id'];
+						$params['tenant_id'] 		= $parameter['tenant_id'];
+						$params['active_flag'] 	= $this->convert_bit_bool($parameter['active']);
+						$params['update_on'] 		= date("Y-m-d H:i:s");
+						$params['update_by'] 		= $this->session->userdata('user_id');
+
+						$query = $this->App_user->create($params);
+						if ($query>0 || $query===true) {
+							$response['status'] = 200;
+							$response['message'] 	= "Create user auth success";
+						}else{
+							$response['status'] 	= 200;
+							$response['message'] 	= "Create user auth failure";
+						}
+				}
+		// }else{
+		// 	$response['status'] 	= 401;
+		// 	$response['message']	= "Username is already";
+		// }
+
 		echo json_encode($response);
 	}
 }

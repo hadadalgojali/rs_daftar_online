@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 class App_user extends CI_Model {
 	protected $table 		= "app_user";
@@ -30,13 +30,28 @@ class App_user extends CI_Model {
 		if ($criteria !== null) {
 			$this->database->where($criteria);
 		}
-		
+
 		if (isset($limit) && isset($start)) {
 			if ($limit != "" && $start != "") {
 				$this->database->limit($limit, $start);
 			}
 		}
 		return $this->database->get();
+	}
+	public function get_with_join($select = "*", $criteria = null, $limit = null, $start = null){
+			$this->database->select($select);
+			$this->database->from($this->table);
+			$this->database->join("app_employee", " app_employee.employee_id = ".$this->table.".employee_id", "INNER");
+			if ($criteria !== null) {
+				$this->database->where($criteria);
+			}
+
+			if (isset($limit) && isset($start)) {
+				if ($limit != "" && $start != "") {
+					$this->database->limit($limit, $start);
+				}
+			}
+			return $this->database->get();
 	}
 
 	public function create($parameter){
@@ -67,4 +82,4 @@ class App_user extends CI_Model {
 			return $e;
 		}
 	}
-}	
+}

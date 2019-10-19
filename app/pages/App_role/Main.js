@@ -52,7 +52,7 @@ Ext.define('App.pages.App_role.Main', {
 											success: function(res){
 												var cst = JSON.parse(res.responseText);
 												Ext.Msg.alert("Create", ""+cst.message+"");
-												pageAppRole.getStore(null, 0, 25);
+												pageAppRole.getStore(pageAppRole.paramsCriteria, 0, 25);
 											},
 											failure: function(){
 												console.log('failure');
@@ -146,7 +146,7 @@ Ext.define('App.pages.App_role.Main', {
 		                            },
 		                            // scope:this,
 		                            success: function(res){
-		                                pageAppRole.getStore(null, 0, 25);
+		                                pageAppRole.getStore(pageAppRole.paramsCriteria, 0, 25);
 		                            },
 		                            failure: function(){
 		                                console.log('failure');
@@ -225,7 +225,7 @@ Ext.define('App.pages.App_role.Main', {
                                             success: function(res){
                                                 var cst = JSON.parse(res.responseText);
                                                 Ext.Msg.alert("Update", ""+cst.message+"");
-                                                pageAppRole.getStore(null, 0, 25);
+                                                pageAppRole.getStore(pageAppRole.paramsCriteria, 0, 25);
                                             },
                                             failure: function(){
                                                 console.log('failure');

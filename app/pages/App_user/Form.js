@@ -1,8 +1,9 @@
 var App_user_Form = {};
-App_user_Form.storeobj = Ext.create('App.store.App_role');
-App_user_Form.getStore = function(params, start, limit){
-    App_user_Form.storeobj.removeAll();
-    App_user_Form.storeobj.load({
+App_user_Form.storeObjRole    = Ext.create('App.store.App_role');
+App_user_Form.storeObjTenant  = Ext.create('App.store.App_tenant');
+App_user_Form.getStoreRole    = function(params, start, limit){
+    App_user_Form.storeObjRole.removeAll();
+    App_user_Form.storeObjRole.load({
         params : {
             params      : ' app_role.active_flag = 1 '+params,
             start       : start,
@@ -11,7 +12,19 @@ App_user_Form.getStore = function(params, start, limit){
     });
 }
 
-App_user_Form.paramsCriteria  = '';
+App_user_Form.getStoreTenant    = function(params, start, limit){
+    App_user_Form.storeObjTenant.removeAll();
+    App_user_Form.storeObjTenant.load({
+        params : {
+            params      : ' app_tenant.active_flag = 1 '+params,
+            start       : start,
+            limit       : limit,
+        }
+    });
+}
+
+App_user_Form.paramsCriteriaRole    = '';
+App_user_Form.paramsCriteriaTenant  = '';
 Ext.define('App.pages.App_user.Form',{
     extend : 'Ext.window.Window',
     title: 'Form',
@@ -107,7 +120,7 @@ Ext.define('App.pages.App_user.Form',{
                 },
                 {
                     xtype           : 'combo',
-                    store           : App_user_Form.storeobj,
+                    store           : App_user_Form.storeObjRole,
                     forceSelection  : false,
                     valueField      : "role_id",
                     emptyText       : 'Select ...',
@@ -116,11 +129,30 @@ Ext.define('App.pages.App_user.Form',{
                     queryMode       : 'local',
                     anchor          : '100%',
                     listeners       : {
-                        afterrender : function(){
-                            App_user_Form.getStore("", null, null);
-                        },
+                        // afterrender : function(){
+                        //     App_user_Form.getStoreRole("", null, null);
+                        // },
                         change      : function(a, b){
-                
+
+                        }
+                    }
+                },
+                {
+                    xtype           : 'combo',
+                    store           : App_user_Form.storeObjTenant,
+                    forceSelection  : false,
+                    valueField      : "tenant_id",
+                    emptyText       : 'Select ...',
+                    displayField    : "tenant_name",
+                    fieldLabel      : "Tenant",
+                    queryMode       : 'local',
+                    anchor          : '100%',
+                    listeners       : {
+                        // afterrender : function(){
+                        //     App_user_Form.getStoreTenant("", null, null);
+                        // },
+                        change      : function(a, b){
+
                         }
                     }
                 },
@@ -135,7 +167,8 @@ Ext.define('App.pages.App_user.Form',{
     ],
     listeners : {
         show    : function(){
-            App_user_Form.getStore(App_user_Form.paramsCriteria, null, null);
+            App_user_Form.getStoreRole(App_user_Form.paramsCriteriaRole, null, null);
+            App_user_Form.getStoreTenant(App_user_Form.paramsCriteriaTenant, null, null)
         }
     }
 });

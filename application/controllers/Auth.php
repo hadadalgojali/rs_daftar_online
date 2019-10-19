@@ -30,10 +30,11 @@ class Auth extends CI_Controller {
 
 		$this->App_user->set_database($this->load->database('default',TRUE));
 		$response['app_user'] = $this->App_user->get_with_employee(" app_user.user_id, app_user.user_code, app_user.role_id, app_employee.* ", array(
-			'app_user.user_code' 	=> $parameter['user_code'],
-			'app_user.password' 	=> $parameter['password'],
+			'app_user.user_code' 		=> $parameter['user_code'],
+			'app_user.password' 		=> $parameter['password'],
+			'app_user.active_flag' 	=> '1',
 		));
-		
+
 		if ($response['app_user']->num_rows() > 0) {
 			$response['app_user'] = $response['app_user']->result();
 			$new_session = array(
@@ -65,7 +66,7 @@ class Auth extends CI_Controller {
 					$_menu['menu']	= array();
 					$_menu['text']  = $res_menu->menu_name;
 
-					$_menu_parent = array(); 
+					$_menu_parent = array();
 					foreach ($menu->result() as $res_menu_parent) {
 						if ($res_menu_parent->parent_id ==  $res_menu->menu_id ) {
 							$_menu_parent['code'] 		= $res_menu_parent->menu_code;

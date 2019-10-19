@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 class App_employee extends CI_Model {
 	protected $table 		= "app_employee";
@@ -23,7 +23,7 @@ class App_employee extends CI_Model {
 
 		return $this->database->get();
 	}
-	
+
 	public function get_with_job($select = "*", $criteria = null, $limit = null, $start = null){
 		$this->database->select($select);
 		$this->database->from($this->table);
@@ -40,7 +40,26 @@ class App_employee extends CI_Model {
 
 		return $this->database->get();
 	}
-	
+
+	public function get_with_join($select = "*", $criteria = null, $limit = null, $start = null){
+		$this->database->select($select);
+		$this->database->from($this->table);
+		if ($criteria !== null && $criteria !== "") {
+			$this->database->where($criteria);
+		}
+
+		$this->database->join("app_job", " app_job.job_id = ".$this->table.".job_id ", "LEFT");
+		$this->database->join("app_user", " app_user.employee_id = ".$this->table.".employee_id ", "LEFT");
+		$this->database->join("app_role", " app_role.role_id = app_user.role_id ", "LEFT");
+		if (isset($limit) && isset($start)) {
+			if ($limit != "" && $start != "") {
+				$this->database->limit($limit, $start);
+			}
+		}
+
+		return $this->database->get();
+	}
+
 	public function create($parameter){
 		try {
 			$this->database->insert($this->table, $parameter);
@@ -69,4 +88,4 @@ class App_employee extends CI_Model {
 			return $e;
 		}
 	}
-}	
+}
