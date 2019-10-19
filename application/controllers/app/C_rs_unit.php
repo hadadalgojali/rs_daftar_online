@@ -1,0 +1,134 @@
+<?php
+defined('BASEPATH') OR exit('No direct script access allowed');
+
+class C_rs_unit extends CI_Controller {
+	protected $_ci;
+
+	public function __construct(){
+		parent::__construct();
+		$this->_ci = &get_instance();
+		$this->load->model('Rs_unit');
+	}
+
+	public function index(){
+		// $this->load->view('index', $response);
+	}
+
+	public function get($criteria = null){
+		$this->Rs_unit->set_database($this->load->database('default',TRUE));
+
+		$result = $this->Rs_unit->get("*", $this->input->get('params'), $this->input->get('limit'), $this->input->get('start'));
+		echo json_encode(
+			array(
+				'results' => $result->result(),
+				'total' 	=> $this->Rs_unit->get(" COALESCE(count(*),0) as count ")->row()->count,
+				'status'	=> 200,
+			)
+		);
+	}
+
+	public function save(){
+		$response 	= array();
+		$parameter 	= array(
+			'unit_id'				=> $this->input->post('id'),
+			'unit_type'			=> $this->input->post('unit_type'),
+			'unit_code'			=> $this->input->post('unit_code'),
+			'unit_name'			=> $this->input->post('unit_name'),
+			'kd_unit_bpjs'	=> $this->input->post('kd_unit_bpjs'),
+			'active_flag'		=> $this->convert_bit_bool($this->input->post('active')),
+		);
+
+		$this->Rs_unit->set_database($this->load->database('default',TRUE));
+		$parameter['unit_id'] = $this->Rs_unit->get(" max(unit_id) as id");
+		if ($parameter['unit_id']->num_rows() > 0) {
+			$parameter['unit_id'] = $parameter['unit_id']->row()->id + 1;
+		}
+
+		$result = $this->Rs_unit->create($parameter);
+		if ($result['result'] > 0 || $result['result'] === true) {
+			$response['status'] 	= 200;
+			$response['message'] 	= "Create customer success";
+		}else{
+			$response['status'] 	= 401;
+			$response['message'] 	= $query['error']['message'];
+		}
+		echo json_encode($response);
+	}
+
+	public function update(){
+		$response 	= array();
+		$criteria 	= array(
+			'unit_id'			=> $this->input->post('id'),
+		);
+		$parameter 	= array(
+			'unit_type'			=> $this->input->post('unit_type'),
+			'unit_code'			=> $this->input->post('unit_code'),
+			'unit_name'			=> $this->input->post('unit_name'),
+			'kd_unit_bpjs'	=> $this->input->post('kd_unit_bpjs'),
+			'active_flag'		=> $this->convert_bit_bool($this->input->post('active')),
+		);
+
+		$this->Rs_unit->set_database($this->load->database('default',TRUE));
+		$result = $this->Rs_unit->update($criteria, $parameter);
+		if ($result['result'] > 0 || $result['result'] === true) {
+			$response['status'] 	= 200;
+			$response['message'] 	= "Update customer success";
+		}else{
+			$response['status'] 	= 401;
+			$response['message'] 	= $result['error']['message'];
+		}
+		echo json_encode($response);
+	}
+
+	public function delete(){
+		$response 			= array();
+		$parameter = array(
+			'id' 	=> $this->input->post('id')
+		);
+
+		$this->Rs_unit->set_database($this->load->database('default',TRUE));
+		if (count(json_decode($parameter['id'])) > 0) {
+			foreach (json_decode($parameter['id']) as $key => $value) {
+				$criteria 				= array();
+				$criteria['unit_id'] 	= $value;
+				$result 	= $this->Rs_unit->delete($criteria);
+				if ($result['result'] === false || $result['result'] == 0) {
+					break;
+				}
+			}
+		}else{
+			$criteria 				= array();
+			$criteria['unit_id'] 	= $parameter['id'];
+			$result = $this->Rs_unit->delete($criteria);
+		}
+		
+		if ($result['result'] > 0 || $result['result'] === true) {
+			$response['status'] 	= 200;
+			$response['message'] 	= "Delete customer success";
+		}else{
+			$response['status'] 	= 401;
+			$response['message'] 	= $result['error']['message'];
+		}
+		echo json_encode($response);
+	}
+
+		private function convert_bit_bool($parameter){
+			if (is_numeric($parameter) === true) {
+				if ($parameter == 1 || $parameter == '1') {
+					return 'true';
+				}else{
+					return 'false';
+				}
+			}else{
+				if ($parameter === 'true' || $parameter === true) {
+					return 1;
+				}else if($parameter === 'false' || $parameter === false){
+					return 0;
+				}else if ($parameter == 1 || $parameter == '1') {
+					return 'true';
+				}else{
+					return 'false';
+				}
+			}
+		}
+}
