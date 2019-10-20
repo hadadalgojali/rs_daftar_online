@@ -173,8 +173,8 @@ Ext.define('App.pages.Rs_customer.Main', function(){
 						xtype		: 'buttongroup',
 						columns		: 2,
 						title		: 'Export',
-						bodyStyle	: 'margin:0px;padding:0px;',
-						style		: 'margin:0px;padding:0px;',
+						bodyStyle	: 'margin:0px;margin-right:10px;padding:0px;',
+						style		: 'margin:0px;margin-right:10px;padding:0px;',
 						items: [
 							{
 								text		: 'Excel',
@@ -191,7 +191,54 @@ Ext.define('App.pages.Rs_customer.Main', function(){
 								}
 							},
 						]
-					},
+					},{
+						xtype			: 'buttongroup',
+						columns		: 2,
+						title			: 'Data',
+						bodyStyle	: 'margin:0px;margin-right:10px;padding:0px;',
+						style		: 'margin:0px;margin-right:10px;padding:0px;',
+						items: [
+							{
+								text			: 'Migrate',
+								iconCls		: 'fa fa-exchange fa-lg',
+								iconAlign	: 'top',
+								handler 	: function(a) {
+									Ext.create('App.pages.Rs_customer.Migrate', {
+										fbar 	: [
+	                    {
+	                      xtype   : "button",
+	                      text    : "Migrate",
+	                      handler : function(btn){
+													
+													var win = btn.up('window');
+													var data_grid_second 	= win.items.items[0].items.items[0].items.items[0].store.data.items;
+													var data_grid_default = win.items.items[0].items.items[2].items.items[0].store.data.items;
+													console.log(data_grid_second);
+													console.log(data_grid_default);
+	                       //  Ext.MessageBox.show({
+	                       //     msg: 'Saving your data, please wait...',
+	                       //     progressText: 'Saving...',
+	                       //     width:300,
+	                       //     wait:true,
+	                       //     icon:'fa fa-arraow-circle-up',
+	                       //     animEl: 'buttonID'
+	                       // });
+	                      }
+	                    },{
+												xtype 	: 'button',
+												text 	  : 'close',
+												handler : function(btn){
+													var win = btn.up('window');
+													win.close();
+												}
+											}
+
+										]
+									}).show();
+								}
+							},
+						]
+					}
 				],
 				items : [
 					Variable.grid = Ext.create('Ext.grid.Panel', {

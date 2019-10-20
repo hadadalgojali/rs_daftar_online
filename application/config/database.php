@@ -96,3 +96,27 @@ $db['default'] = array(
 	'failover'     => array(),
 	'save_queries' => TRUE
 );
+
+$db['second'] = array(
+	'dsn'          => '',
+	'hostname'     => $conf_db['second']['hostname'],
+	'username'     => $conf_db['second']['username'],
+	'password'     => $conf_db['second']['password'],
+	'database'     => $conf_db['second']['database'],
+	'dbdriver'     => $conf_db['second']['dbdriver'],
+	'port'         => $conf_db['second']['port'],
+	'dbprefix'     => '',
+	'pconnect'     => FALSE,
+	'db_debug'     => (ENVIRONMENT !== 'production'),
+	// 'db_debug'     => FALSE,
+	'cache_on'     => FALSE,
+	'cachedir'     => '',
+	'char_set'     => 'utf8',
+	'dbcollat'     => 'utf8_general_ci',
+	'swap_pre'     => '',
+	'encrypt'      => FALSE,
+	'compress'     => FALSE,
+	'stricton'     => FALSE,
+	'failover'     => array(),
+	'save_queries' => TRUE
+);

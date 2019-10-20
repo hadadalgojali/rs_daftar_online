@@ -32,7 +32,7 @@ App_employee.getStoreAppTenant = function(params, start, limit){
 Ext.define('App.pages.App_employee.form',{
     extend : 'Ext.window.Window',
     title: 'Form',
-    closable: true,
+    // closable: true,
     width: 600,
     modal:true,
     constrain: true,
