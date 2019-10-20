@@ -254,7 +254,7 @@ class Daftar extends CI_Controller {
         $params['level']	= 'H'; //H=High
         $params['size'] 	= 10;
         $params['savename'] = FCPATH.$config['imagedir'].$img_qrcode; //simpan image QR CODE ke folder assets/images/
-        $this->ciqrcode->generate($params); // fungsi untuk generate QR CODE
+        // $this->ciqrcode->generate($params); // fungsi untuk generate QR CODE
 
 		$response['parameter']['tgl_kunjungan'] = date_format(date_create($response['parameter']['tgl_kunjungan']), "d/M/Y");
 		if ($response['status'] > 0) {
