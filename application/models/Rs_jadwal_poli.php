@@ -27,7 +27,7 @@ class Rs_jadwal_poli extends CI_Model {
 		$this->database->select($select);
 		$this->database->from($this->table);
 		$this->database->join("app_employee", "app_employee.employee_id = ".$this->table.".dokter_id", "inner");
-		$this->database->join("app_employee", "app_employee.employee_id = ".$this->table.".dokter_id", "inner");
+		$this->database->join("rs_unit", "rs_unit.unit_id = ".$this->table.".unit_id", "inner");
 		if ($criteria !== null && $criteria !== "") {
 			$this->database->where($criteria);
 		}

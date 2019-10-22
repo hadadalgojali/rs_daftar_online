@@ -13,6 +13,9 @@ Ext.define('App.store.Rs_jadwal_poli', {
       'durasi_periksa',
       'klinik',
       'dokter',
+      'first_name',
+      'unit_name',
+      'active_flag',
     ],
     proxy: {
         type: 'ajax',

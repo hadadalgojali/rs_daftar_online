@@ -1,4 +1,28 @@
-Ext.define('App.pages.Rs_unit.Form',function(){
+Ext.define('App.pages.Rs_jadwal_poli.Form',function(){
+    var Variable = {};
+    Variable.storeObjPoli     = Ext.create('App.store.Rs_unit');
+    Variable.storeObjEmployee = Ext.create('App.store.App_employee');
+    Variable.getStorePoli = function(params, start, limit){
+      Variable.storeObjPoli.removeAll();
+        Variable.storeObjPoli.load({
+            params : {
+                params      : params,
+                start       : start,
+                limit       : limit,
+            },
+        });
+    }
+
+    Variable.getStoreEmployee = function(params, start, limit){
+      Variable.storeObjEmployee.removeAll();
+        Variable.storeObjEmployee.load({
+            params : {
+                params      : params,
+                start       : start,
+                limit       : limit,
+            },
+        });
+    }
     return{
       extend : 'Ext.window.Window',
       title: 'Form',
@@ -15,39 +39,58 @@ Ext.define('App.pages.Rs_unit.Form',function(){
               hidden      : true,
           },{
               xtype           : 'combo',
-          		store : new Ext.data.SimpleStore({
-          			data : [
-                  [0, 'UNITTYPE_UGD'],
-                  [1, 'UNITTYPE_RWJ'],
-                  [2, 'UNITTYPE_RWI'],
-                  [3, 'UNITTYPE_LAB'],
-                  [4, 'UNITTYPE_RAD'],
-                  [5, 'UNITTYPE_PEN'],
+              store           : Variable.storeObjPoli,
+              forceSelection  : false,
+              valueField      : "unit_id",
+              emptyText       : 'Select ...',
+              displayField    : "unit_name",
+              fieldLabel      : "Klinik",
+              queryMode       : 'local',
+              anchor          : '100%',
+          },{
+              xtype           : 'combo',
+              store           : Variable.storeObjEmployee,
+              forceSelection  : false,
+              valueField      : "employee_id",
+              emptyText       : 'Select ...',
+              displayField    : "first_name",
+              fieldLabel      : "Employee",
+              queryMode       : 'local',
+              anchor          : '100%',
+          },{
+              xtype           : 'combo',
+              store : new Ext.data.SimpleStore({
+                data : [
+                  [0, 'Senin'],
+                  [1, 'Selasa'],
+                  [2, 'Rabu'],
+                  [3, 'Kamis'],
+                  [4, 'Jumat'],
+                  [5, 'Sabtu'],
+                  [6, 'Minggu'],
                 ],
-          			id : 0,
-          			fields : ['value', 'text']
-          		}),
+                id : 0,
+                fields : ['value', 'text']
+              }),
               forceSelection  : false,
               valueField      : "text",
               emptyText       : 'Select ...',
               displayField    : "text",
-              fieldLabel      : "Unit Type",
+              fieldLabel      : "Hari",
               queryMode       : 'local',
               anchor          : '100%',
-              listeners       : {
-                  change      : function(a, b){
-
-                  }
-              }
+          },{
+              xtype       : 'timefield',
+              fieldLabel  : 'Jam Mulai',
+          },{
+              xtype       : 'timefield',
+              fieldLabel  : 'Jam Akhir',
           },{
               xtype       : 'textfield',
-              fieldLabel  : 'Unit Code',
+              fieldLabel  : 'Max Daftar',
           },{
               xtype       : 'textfield',
-              fieldLabel  : 'Unit Name',
-          },{
-              xtype       : 'textfield',
-              fieldLabel  : 'Code BPJS',
+              fieldLabel  : 'Durasi Periksa',
           },{
               xtype: 'checkboxfield',
               anchor: '100%',
@@ -56,6 +99,8 @@ Ext.define('App.pages.Rs_unit.Form',function(){
           }
       ],
     	initComponent:function(){
+        Variable.getStorePoli('', null, null);
+        Variable.getStoreEmployee('', null, null);
     		this.callParent();
     	},
     }

@@ -17,11 +17,11 @@ class C_rs_jadwal_poli extends CI_Controller {
 	public function get($criteria = null){
 		$this->Rs_jadwal_poli->set_database($this->load->database('default',TRUE));
 
-		$result = $this->Rs_jadwal_poli->get("*", $this->input->get('params'), $this->input->get('limit'), $this->input->get('start'));
+		$result = $this->Rs_jadwal_poli->get_with_join("rs_jadwal_poli.*, app_employee.first_name, rs_unit.unit_name", $this->input->get('params'), $this->input->get('limit'), $this->input->get('start'));
 		echo json_encode(
 			array(
-				'results' => $result->result(),
-				'total' 	=> $this->Rs_jadwal_poli->get(" COALESCE(count(*),0) as count ")->row()->count,
+				'results' 	=> $result->result(),
+				'total' 	=> $this->Rs_jadwal_poli->get_with_join(" COALESCE(count(*),0) as count ", $this->input->get('params'))->row()->count,
 				'status'	=> 200,
 			)
 		);
@@ -30,18 +30,21 @@ class C_rs_jadwal_poli extends CI_Controller {
 	public function save(){
 		$response 	= array();
 		$parameter 	= array(
-			'unit_id'				=> $this->input->post('id'),
-			'unit_type'			=> $this->input->post('unit_type'),
-			'unit_code'			=> $this->input->post('unit_code'),
-			'unit_name'			=> $this->input->post('unit_name'),
-			'kd_unit_bpjs'	=> $this->input->post('kd_unit_bpjs'),
+			// 'unit_id'			=> $this->input->post('id'),
+			'unit_id'			=> $this->input->post('unit_id'),
+			'dokter_id'			=> $this->input->post('employee_id'),
+			'hari'				=> $this->input->post('day'),
+			'start'				=> date_format(date_create($this->input->post('start')), "H:i:s"),
+			'end'				=> date_format(date_create($this->input->post('end')), "H:i:s"),
+			'max_pelayanan'		=> $this->input->post('max'),
+			'durasi_periksa'	=> $this->input->post('duration'),
 			'active_flag'		=> $this->convert_bit_bool($this->input->post('active')),
 		);
 
 		$this->Rs_jadwal_poli->set_database($this->load->database('default',TRUE));
-		$parameter['unit_id'] = $this->Rs_jadwal_poli->get(" max(unit_id) as id");
-		if ($parameter['unit_id']->num_rows() > 0) {
-			$parameter['unit_id'] = $parameter['unit_id']->row()->id + 1;
+		$parameter['id_jadwal_poli'] = $this->Rs_jadwal_poli->get(" max(id_jadwal_poli) as id");
+		if ($parameter['id_jadwal_poli']->num_rows() > 0) {
+			$parameter['id_jadwal_poli'] = $parameter['id_jadwal_poli']->row()->id + 1;
 		}
 
 		$result = $this->Rs_jadwal_poli->create($parameter);
@@ -58,13 +61,16 @@ class C_rs_jadwal_poli extends CI_Controller {
 	public function update(){
 		$response 	= array();
 		$criteria 	= array(
-			'unit_id'			=> $this->input->post('id'),
+			'id_jadwal_poli'	=> $this->input->post('id'),
 		);
 		$parameter 	= array(
-			'unit_type'			=> $this->input->post('unit_type'),
-			'unit_code'			=> $this->input->post('unit_code'),
-			'unit_name'			=> $this->input->post('unit_name'),
-			'kd_unit_bpjs'	=> $this->input->post('kd_unit_bpjs'),
+			'unit_id'			=> $this->input->post('unit_id'),
+			'dokter_id'			=> $this->input->post('employee_id'),
+			'hari'				=> $this->input->post('day'),
+			'start'				=> date_format(date_create($this->input->post('start')), "H:i:s"),
+			'end'				=> date_format(date_create($this->input->post('end')), "H:i:s"),
+			'durasi_periksa'	=> $this->input->post('duration'),
+			'max_pelayanan'		=> $this->input->post('max'),
 			'active_flag'		=> $this->convert_bit_bool($this->input->post('active')),
 		);
 
@@ -89,16 +95,16 @@ class C_rs_jadwal_poli extends CI_Controller {
 		$this->Rs_jadwal_poli->set_database($this->load->database('default',TRUE));
 		if (count(json_decode($parameter['id'])) > 0) {
 			foreach (json_decode($parameter['id']) as $key => $value) {
-				$criteria 				= array();
-				$criteria['unit_id'] 	= $value;
+				$criteria 						= array();
+				$criteria['id_jadwal_poli'] 	= $value;
 				$result 	= $this->Rs_jadwal_poli->delete($criteria);
 				if ($result['result'] === false || $result['result'] == 0) {
 					break;
 				}
 			}
 		}else{
-			$criteria 				= array();
-			$criteria['unit_id'] 	= $parameter['id'];
+			$criteria 						= array();
+			$criteria['id_jadwal_poli'] 	= $parameter['id'];
 			$result = $this->Rs_jadwal_poli->delete($criteria);
 		}
 		
