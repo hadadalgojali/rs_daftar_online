@@ -31,5 +31,5 @@ user_guide_src/cilexer/pycilexer.egg-info/*
 /tests/results/
 /config.php
 
-/assets/image/captcha/*
-/assets/image/qrcode/*
+/assets/image/captcha/
+/assets/image/qrcode/
