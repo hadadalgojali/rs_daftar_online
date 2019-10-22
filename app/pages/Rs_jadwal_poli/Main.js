@@ -1,6 +1,6 @@
-Ext.define('App.pages.Rs_customer.Main', function(){
+Ext.define('App.pages.Rs_jadwal_poli.Main', function(){
 	var Variable = {};
-	Variable.storeobj = Ext.create('App.store.Rs_customer');
+	Variable.storeobj = Ext.create('App.store.Rs_jadwal_poli');
 	Variable.getStore = function(params, start, limit){
 		Variable.storeobj.removeAll();
 	    Variable.storeobj.load({
@@ -8,11 +8,15 @@ Ext.define('App.pages.Rs_customer.Main', function(){
 	            params      : params,
 	            start       : start,
 	            limit       : limit,
-	        }
+	        },
 	    });
 	}
 	Variable.grid  = null;
 	Variable.paramsCriteria  = '';
+	Variable.pagging = {};
+	Variable.pagging.currentPage = 1;
+	Variable.pagging.limit 			 = 25;
+	Variable.pagging.totalPage   = 25;
 	return {
 		extend : 'App.cmp.Panel',
 		layout :'fit',
@@ -29,7 +33,7 @@ Ext.define('App.pages.Rs_customer.Main', function(){
 						iconCls		: 'fa fa-plus fa-lg',
 						iconAlign	: 'top',
 						handler 	: function(a) {
-							Ext.create('App.pages.Rs_customer.Form', {
+							Ext.create('App.pages.Rs_unit.Form', {
 								fbar    : [
 									{
 										xtype   : 'button',
@@ -38,21 +42,25 @@ Ext.define('App.pages.Rs_customer.Main', function(){
 											var win = btn.up('window'), form = win.down('form');
 											var tmp_gender = 0;
 											/*
-												win.items.items[0] == id
-												win.items.items[1] == code
-												win.items.items[2] == name
-												win.items.items[3] == active
+												win.items.items[0] == unit_id
+												win.items.items[1] == unit_type
+												win.items.items[2] == unit_code
+												win.items.items[3] == unit_name
+												win.items.items[4] == kd_unit_bpjs
+												win.items.items[5] == active_flag
 											*/
 											Ext.Ajax.request({
 												method: 'post',
-												url: url+"app/C_rs_customer/save",
+												url: url+"app/C_rs_unit/save",
 												waitTitle: 'Connecting',
 												waitMsg: 'Sending data...',
 												params: {
-													id 			: win.items.items[0].value,
-													code 		: win.items.items[1].value,
-													name 		: win.items.items[2].value,
-													active 	: win.items.items[3].value,
+													id 					: win.items.items[0].value,
+													unit_type 	: win.items.items[1].value,
+													unit_code		: win.items.items[2].value,
+													unit_name 	: win.items.items[3].value,
+													kd_unit_bpjs: win.items.items[4].value,
+													active 			: win.items.items[5].value,
 												},
 												success: function(res){
 													var cst = JSON.parse(res.responseText);
@@ -90,7 +98,7 @@ Ext.define('App.pages.Rs_customer.Main', function(){
 						iconAlign	: 'top',
 						disabled 	: true,
 						handler 	: function(a) {
-							Ext.create('App.pages.Rs_visit.Search',{
+							Ext.create('App.pages.Rs_unit.Search',{
 								title   : "Search App Role",
 								fbar    : [
 									{
@@ -138,13 +146,13 @@ Ext.define('App.pages.Rs_customer.Main', function(){
 									var tmp_id = [];
 									var selected        = Variable.grid.getView().getSelectionModel().getSelection();
 									Ext.each(selected, function (item) {
-										tmp_id.push(item.data.customer_id);
+										tmp_id.push(item.data.unit_id);
 									});
 									Ext.MessageBox.confirm('Delete', 'Apa anda yakin untuk menghapus ?', function(btn){
 										if(btn === 'yes'){
 											Ext.Ajax.request({
 												method      : 'post',
-												url         : url+"app/C_rs_customer/delete",
+												url         : url+"app/C_rs_unit/delete",
 												waitTitle   : 'Connecting',
 												waitMsg     : 'Sending data...',
 												params      : {
@@ -173,8 +181,8 @@ Ext.define('App.pages.Rs_customer.Main', function(){
 						xtype		: 'buttongroup',
 						columns		: 2,
 						title		: 'Export',
-						bodyStyle	: 'margin:0px;margin-right:10px;padding:0px;',
-						style		: 'margin:0px;margin-right:10px;padding:0px;',
+						bodyStyle	: 'margin:0px;padding:0px;',
+						style		: 'margin:0px;padding:0px;',
 						items: [
 							{
 								text		: 'Excel',
@@ -191,96 +199,17 @@ Ext.define('App.pages.Rs_customer.Main', function(){
 								}
 							},
 						]
-					},{
-						xtype			: 'buttongroup',
-						columns		: 2,
-						title			: 'Data',
-						bodyStyle	: 'margin:0px;margin-right:10px;padding:0px;',
-						style		: 'margin:0px;margin-right:10px;padding:0px;',
-						items: [
-							{
-								text			: 'Migrate',
-								iconCls		: 'fa fa-exchange fa-lg',
-								iconAlign	: 'top',
-								handler 	: function(a) {
-									Ext.create('App.pages.Rs_customer.Migrate', {
-										fbar 	: [
-						                    {
-												xtype   : "button",
-												text    : "Migrate",
-												handler : function(btn){
-													var win               = btn.up('window');
-													var data_grid_second  = win.items.items[0].items.items[0].items.items[0].store.data.items;
-													var data_grid_default = win.items.items[0].items.items[2].items.items[0].store.data.items;
-
-													console.log(data_grid_second);
-													console.log(data_grid_default);
-													var variabel = {};
-													variabel.second 	= [];
-													variabel.default 	= [];
-													for (var i = 0; i < data_grid_second.length; i++) {
-														variabel.second.push(data_grid_second[i].data.column_name);
-													}
-													for (var i = 0; i < data_grid_default.length; i++) {
-														variabel.default.push(data_grid_default[i].data.column_name);
-													}
-
-
-												//  Ext.MessageBox.show({
-												//     msg: 'Saving your data, please wait...',
-												//     progressText: 'Saving...',
-												//     width:300,
-												//     wait:true,
-												//     icon:'fa fa-arraow-circle-up',
-												//     animEl: 'buttonID'
-												// });
-													
-													
-													Ext.Ajax.request({
-														method: 'post',
-														url: url+"Structure/migrate",
-														waitTitle: 'Connecting',
-														waitMsg: 'Sending data...',
-														params: {
-															second 			: JSON.stringify(variabel.second),
-															default 		: JSON.stringify(variabel.default),
-															db_second 		: 'customer',
-															db_default 		: 'rs_customer',
-														},
-														success: function(res){
-															var cst = JSON.parse(res.responseText);
-															Ext.Msg.alert("Update", ""+cst.message+"");
-															Variable.getStore(Variable.paramsCriteria, 0, 25);
-														},
-														failure: function(){
-															console.log('failure');
-														}
-													});
-													
-												}
-											},{
-												xtype 	: 'button',
-												text 	  : 'close',
-												handler : function(btn){
-													var win = btn.up('window');
-													win.close();
-												}
-											}
-
-										]
-									}).show();
-								}
-							},
-						]
-					}
+					},
 				],
 				items : [
 					Variable.grid = Ext.create('Ext.grid.Panel', {
 						store: Variable.storeobj,
 						selModel: Ext.create('Ext.selection.CheckboxModel'),
 						columns: [
-							{ header: 'Customer Code',  dataIndex: 'customer_code', width : 120,  editor : 'textfield'},
-							{ header: 'Customer name',  dataIndex: 'customer_name', flex : 1,  editor : 'textfield'},
+							{ header: 'Unit Type',  dataIndex: 'unit_type', width : 120,  editor : 'textfield'},
+							{ header: 'Unit Code',  dataIndex: 'unit_code', width : 120,  editor : 'textfield'},
+							{ header: 'Unit name',  dataIndex: 'unit_name', flex : 1,  editor : 'textfield'},
+							{ header: 'Kode BPJS',  dataIndex: 'kd_unit_bpjs', flex : 1,  editor : 'textfield'},
 			                {
 			                    header: 'Activate',
 			                    dataIndex: 'active_flag',
@@ -300,14 +229,13 @@ Ext.define('App.pages.Rs_customer.Main', function(){
 						dockedItems: [{
 							xtype: 'pagingtoolbar',
 							store: Variable.storeobj,
-							pageSize: 10,
 							dock: 'bottom',
-							displayInfo: true
+							displayInfo: true,
 						}],
 						viewConfig: {
 							listeners: {
 								itemdblclick: function(dataview, index, item, e) {
-									Ext.create('App.pages.Rs_customer.Form', {
+									Ext.create('App.pages.Rs_unit.Form', {
 										fbar    : [
 											{
 												xtype   : 'button',
@@ -316,14 +244,16 @@ Ext.define('App.pages.Rs_customer.Main', function(){
 													var win = btn.up('window'), form = win.down('form');
 													Ext.Ajax.request({
 														method: 'post',
-														url: url+"app/C_rs_customer/update",
+														url: url+"app/C_rs_unit/update",
 														waitTitle: 'Connecting',
 														waitMsg: 'Sending data...',
 														params: {
-															id 			: win.items.items[0].value,
-															code 		: win.items.items[1].value,
-															name 		: win.items.items[2].value,
-															active 	: win.items.items[3].value,
+															id 					: win.items.items[0].value,
+															unit_type 	: win.items.items[1].value,
+															unit_code		: win.items.items[2].value,
+															unit_name 	: win.items.items[3].value,
+															kd_unit_bpjs: win.items.items[4].value,
+															active 			: win.items.items[5].value,
 														},
 														success: function(res){
 															var cst = JSON.parse(res.responseText);
@@ -347,11 +277,13 @@ Ext.define('App.pages.Rs_customer.Main', function(){
 										listeners: {
 											show: function(thisForm){
 												console.log(thisForm);
-												thisForm.items.items[0].setValue(index.data.customer_id);
-												thisForm.items.items[1].setValue(index.data.customer_code);
-												thisForm.items.items[2].setValue(index.data.customer_name);
+												thisForm.items.items[0].setValue(index.data.unit_id);
+												thisForm.items.items[1].setValue(index.data.unit_type);
+												thisForm.items.items[2].setValue(index.data.unit_code);
+												thisForm.items.items[3].setValue(index.data.unit_name);
+												thisForm.items.items[4].setValue(index.data.kd_unit_bpjs);
 												if (index.data.active_flag == 1) {
-													thisForm.items.items[3].setValue(true);
+													thisForm.items.items[5].setValue(true);
 												}
 											},
 										}
@@ -359,7 +291,7 @@ Ext.define('App.pages.Rs_customer.Main', function(){
 								}
 							}
 						},
-						renderTo: Ext.getBody()
+						// renderTo: Ext.getBody()
 					}),
 				],
 				initComponent:function(){

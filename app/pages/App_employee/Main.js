@@ -324,22 +324,22 @@ Ext.define('App.pages.App_employee.Main', {
 									],
 									listeners: {
 										show: function(thisForm){
-											thisForm.items.items[0].items.items[0].items.items[0].setDisabled(true);
-											thisForm.items.items[0].items.items[0].items.items[1].setDisabled(true);
-											thisForm.items.items[0].items.items[0].items.items[2].setDisabled(true);
-											thisForm.items.items[0].items.items[0].items.items[3].setDisabled(true);
-											thisForm.items.items[0].items.items[0].items.items[5].setDisabled(true);
-											thisForm.items.items[0].items.items[0].items.items[6].setDisabled(true);
-											thisForm.items.items[0].items.items[0].items.items[7].setDisabled(true);
-											thisForm.items.items[0].items.items[0].items.items[8].setDisabled(true);
-											thisForm.items.items[0].items.items[1].items.items[0].setDisabled(true);
-											thisForm.items.items[0].items.items[1].items.items[1].setDisabled(true);
-											thisForm.items.items[0].items.items[1].items.items[2].setDisabled(true);
-											thisForm.items.items[0].items.items[1].items.items[3].setDisabled(true);
-											thisForm.items.items[0].items.items[0].items.items[4].setDisabled(true);
-											thisForm.dockedItems.items[1].items.items[0].items.items[0].setDisabled(true);
-											thisForm.dockedItems.items[1].items.items[0].items.items[1].setDisabled(true);
-											thisForm.dockedItems.items[1].items.items[0].items.items[2].setDisabled(true);
+											thisForm.items.items[0].items.items[0].items.items[0].setReadOnly(true);
+											thisForm.items.items[0].items.items[0].items.items[1].setReadOnly(true);
+											thisForm.items.items[0].items.items[0].items.items[2].setReadOnly(true);
+											thisForm.items.items[0].items.items[0].items.items[3].setReadOnly(true);
+											thisForm.items.items[0].items.items[0].items.items[5].setReadOnly(true);
+											thisForm.items.items[0].items.items[0].items.items[6].setReadOnly(true);
+											thisForm.items.items[0].items.items[0].items.items[7].setReadOnly(true);
+											thisForm.items.items[0].items.items[0].items.items[8].setReadOnly(true);
+											thisForm.items.items[0].items.items[1].items.items[0].setReadOnly(true);
+											thisForm.items.items[0].items.items[1].items.items[1].setReadOnly(true);
+											thisForm.items.items[0].items.items[1].items.items[2].setReadOnly(true);
+											thisForm.items.items[0].items.items[1].items.items[3].setReadOnly(true);
+											thisForm.items.items[0].items.items[0].items.items[4].setReadOnly(true);
+											thisForm.dockedItems.items[1].items.items[0].items.items[0].setReadOnly(true);
+											thisForm.dockedItems.items[1].items.items[0].items.items[1].setReadOnly(true);
+											thisForm.dockedItems.items[1].items.items[0].items.items[2].setReadOnly(true);
 
 											thisForm.items.items[0].items.items[0].items.items[0].setValue(record.data.employee_id);
 											thisForm.items.items[0].items.items[0].items.items[1].setValue(record.data.id_number);

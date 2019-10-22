@@ -154,6 +154,8 @@ Ext.define('App.pages.Rs_customer.Migrate',function(){
         Variable.getStoreSecond(" TABLE_NAME = 'customer' ");
         Variable.storeObjTablePrimary.removeAll();
         Variable.storeObjTableSecondary.removeAll();
+        Variable.storeCMBTablePrimary.removeAll();
+        Variable.storeCMBTableSecondary.removeAll();
     		this.callParent();
     	},
     }
