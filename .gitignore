@@ -33,3 +33,5 @@ user_guide_src/cilexer/pycilexer.egg-info/*
 
 /assets/image/captcha/
 /assets/image/qrcode/
+/assets/image/captcha
+/assets/image/qrcode
