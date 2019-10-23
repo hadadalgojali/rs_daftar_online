@@ -1,7 +1,7 @@
 <?php
 
-class App_religion extends CI_Model {
-	protected $table 		= "app_religion";
+class App_education extends CI_Model {
+	protected $table 		= "app_education";
 	protected $database 	= "";
 
 	public function set_database($database){
@@ -21,7 +21,7 @@ class App_religion extends CI_Model {
 			}
 		}
 
-		$this->database->order_by('religion', $order_by);
+		$this->database->order_by('education', $order_by);
 		return $this->database->get();
 	}
 
