@@ -492,7 +492,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 				// console.log(ui.item);
 
 				parameter.penjamin  		= ui.item.value;
-				if (ui.item.value !== '0000000001') {
+				if (ui.item.value == '0000000002' || ui.item.value == '0000000009'){
 					parameter.jenis_penjamin = "0";
 					document.getElementById('select_jenis_kunjungan').style.display = '';
 					document.getElementById('form-bpjs').style.display = '';
