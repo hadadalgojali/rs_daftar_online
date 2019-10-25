@@ -212,13 +212,20 @@ Ext.define('App.pages.App_education.Main', function(){
 			                {
 			                    header: 'Activate',
 			                    dataIndex: 'active_flag',
-			                    width : 120,
-			                    renderer    : function(a){
-			                        if (a == 0) {
+			                    width : 100,
+			                    renderer    : function(value, meta){
+			                        if (value == 0) {
 			                            return "<i class='fa fa-close'></i>";
 			                        }else{
 			                            return "<i class='fa fa-check'></i>";
 			                        }
+
+									// if(value == 0) {
+									// 	meta.style = "background-color:#c24b36;";
+									// } else {
+									// 	meta.style = "background-color:#36c25c;";
+									// }
+								    // return value;
 			                    }
 			                },
 						],
