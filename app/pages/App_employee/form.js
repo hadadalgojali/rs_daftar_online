@@ -107,7 +107,7 @@ Ext.define('App.pages.App_employee.form',{
                             anchor          : '100%',
                             listeners       : {
                                 afterrender : function(){
-                                    App_employee.getStoreAppReligion(" active = 1 ", null, null);
+                                    App_employee.getStoreAppReligion(" active_flag = 1 ", null, null);
                                 },
                                 change      : function(a, b){
 
