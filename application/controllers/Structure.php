@@ -71,11 +71,27 @@ class Structure extends CI_Controller {
 						$params[$default->row()->column_name] = (int)$this->get_last_id($this->input->post('db_default'), $default->row()->column_name) + 1;
 					}
 
+					if(strtoupper($default->row()->data_type)  == "DATE"){
+						$params[$default->row()->column_name] = date_format(date_create($params[$default->row()->column_name]), 'Y-m-d');
+						// echo $params[$default->row()->column_name]."<br>";die;
+					}
+
 					if (!in_array($default->row()->column_name, $parameter['default'])) {
 						if ($default->row()->data_type  == "BIT" || $default->row()->data_type  == "INT" || $default->row()->data_type  == "INTEGER" || $default->row()->data_type  == "FLOAT") {
 							$params[$default->row()->column_name] = 0;
 						}else if($default->row()->data_type  == "STRING" || $default->row()->data_type  == "VARCHAR" || $default->row()->data_type  == "CHARACTER VARYING" || $default->row()->data_type  == "CHAR"){
 							$params[$default->row()->column_name] = "";
+						}else if($default->row()->data_type  == "DATE")
+							$params[$default->row()->column_name] = "0000-00-00";{
+						}
+					}
+				}
+
+				$default = $this->M_structure->get(" WHERE TABLE_NAME = '".$this->input->post('db_default')."' AND COLUMN_NAME in (".$criteria_default.")", " DISTINCT(COLUMN_NAME) as column_name, DATA_TYPE as data_type, COLUMN_KEY as column_key ");
+				if ($default->num_rows() > 0) {
+					foreach ($default->result() as $res) {
+						if(strtoupper($res->data_type)  == "DATE"){
+							$params[$res->column_name] = date_format(date_create($params[$res->column_name]), 'Y-m-d');
 						}
 					}
 				}

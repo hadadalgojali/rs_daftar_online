@@ -38,38 +38,49 @@ Ext.define('App.pages.Rs_patient.Main', function(){
 						iconCls		: 'fa fa-plus fa-lg',
 						iconAlign	: 'top',
 						handler 	: function(a) {
-							Ext.create('App.pages.Rs_unit.Form', {
+							Ext.create('App.pages.Rs_patient.Form', {
 								fbar    : [
 									{
 										xtype   : 'button',
 										text    : 'Save',
 										handler : function(btn){
 											var win = btn.up('window'), form = win.down('form');
-											var tmp_gender = 0;
-											/*
-												win.items.items[0] == unit_id
-												win.items.items[1] == unit_type
-												win.items.items[2] == unit_code
-												win.items.items[3] == unit_name
-												win.items.items[4] == kd_unit_bpjs
-												win.items.items[5] == active_flag
-											*/
+											var form_1 = win.items.items[0].items.items[0].items;
+											var form_2 = win.items.items[0].items.items[1].items;
+											var tmp_gender = 1;
+
+											if (form_1.items[6].items.items[0].value === false) {
+												tmp_gender = 0;
+											}
 											Ext.Ajax.request({
 												method: 'post',
-												url: url+"app/C_rs_unit/save",
+												url: url+"app/C_rs_patient/save",
 												waitTitle: 'Connecting',
 												waitMsg: 'Sending data...',
 												params: {
-													id 					: win.items.items[0].value,
-													unit_type 	: win.items.items[1].value,
-													unit_code		: win.items.items[2].value,
-													unit_name 	: win.items.items[3].value,
-													kd_unit_bpjs: win.items.items[4].value,
-													active 			: win.items.items[5].value,
+													patient_id 		: form_1.items[0].value,
+													patient_code 	: form_1.items[1].value,
+													title 			: form_1.items[2].value,
+													name 			: form_1.items[3].value,
+													birth_place		: form_1.items[4].value,
+													birth_date		: form_1.items[5].value,
+													address			: form_1.items[7].value,
+													telepon			: form_1.items[8].value,
+													pos_code		: form_1.items[9].value,
+													gender 			: tmp_gender,
+
+													religion_id		: form_2.items[0].value,
+													education_id	: form_2.items[1].value,
+													jobdesk_id		: form_2.items[2].value,
+													country_id		: form_2.items[3].value,
+													province_id		: form_2.items[4].value,
+													district_id		: form_2.items[5].value,
+													districts_id	: form_2.items[6].value,
+													kelurahan_id	: form_2.items[7].value,
 												},
 												success: function(res){
 													var cst = JSON.parse(res.responseText);
-													Ext.Msg.alert("Create", ""+cst.message+"");
+													Ext.Msg.alert("Informasi", ""+cst.message+"");
 													Variable.getStore(Variable.paramsCriteria, 0, 25);
 												},
 												failure: function(){
@@ -85,7 +96,29 @@ Ext.define('App.pages.Rs_patient.Main', function(){
 											win.close();
 										}
 									},
-								]
+								],
+								listeners 	: {
+									show 	: function(thisForm){
+									var form_1 = thisForm.items.items[0].items.items[0].items;
+	                                  Ext.Ajax.request({
+	                                    method    : 'post',
+	                                    url       : url+"app/C_rs_patient/get_last_medrec",
+	                                    waitTitle : 'Connecting',
+	                                    waitMsg   : 'Sending data...',
+	                                    params    : {
+	                                      id  : null
+	                                    },
+	                                    success: function(res){
+											var cst = JSON.parse(res.responseText);
+											// a.setValue(cst.medrec);
+											form_1.items[1].setValue(cst.medrec);
+	                                    },
+	                                    failure: function(){
+	                                      console.log('failure');
+	                                    }
+	                                  });
+									}
+								}
 							}).show();
 						}
 					},
@@ -151,13 +184,13 @@ Ext.define('App.pages.Rs_patient.Main', function(){
 									var tmp_id = [];
 									var selected        = Variable.grid.getView().getSelectionModel().getSelection();
 									Ext.each(selected, function (item) {
-										tmp_id.push(item.data.unit_id);
+										tmp_id.push(item.data.patient_id);
 									});
 									Ext.MessageBox.confirm('Delete', 'Apa anda yakin untuk menghapus ?', function(btn){
 										if(btn === 'yes'){
 											Ext.Ajax.request({
 												method      : 'post',
-												url         : url+"app/C_rs_unit/delete",
+												url         : url+"app/C_rs_patient/delete",
 												waitTitle   : 'Connecting',
 												waitMsg     : 'Sending data...',
 												params      : {
@@ -181,13 +214,12 @@ Ext.define('App.pages.Rs_patient.Main', function(){
 								}
 							},
 						]
-					},
-					{
+					},{
 						xtype		: 'buttongroup',
 						columns		: 2,
 						title		: 'Export',
-						bodyStyle	: 'margin:0px;padding:0px;',
-						style		: 'margin:0px;padding:0px;',
+						bodyStyle	: 'margin:0px;margin-right:10px;padding:0px;',
+						style		: 'margin:0px;margin-right:10px;padding:0px;',
 						items: [
 							{
 								text		: 'Excel',
@@ -204,26 +236,118 @@ Ext.define('App.pages.Rs_patient.Main', function(){
 								}
 							},
 						]
-					},
+					},{
+						xtype		: 'buttongroup',
+						columns		: 2,
+						title		: 'Data',
+						bodyStyle	: 'margin:0px;margin-right:10px;padding:0px;',
+						style		: 'margin:0px;margin-right:10px;padding:0px;',
+						items: [
+							{
+								text			: 'Migrate',
+								iconCls		: 'fa fa-exchange fa-lg',
+								iconAlign	: 'top',
+								handler 	: function(a) {
+									Ext.create('App.pages.Rs_patient.Migrate', {
+										fbar 	: [
+						                    {
+												xtype   : "button",
+												text    : "Migrate",
+												handler : function(btn){
+													var win               = btn.up('window');
+													var data_grid_second  = win.items.items[0].items.items[0].items.items[0].store.data.items;
+													var data_grid_default = win.items.items[0].items.items[2].items.items[0].store.data.items;
+													var result 			 	= true;
+													var variabel = {};
+													variabel.second 	= [];
+													variabel.default 	= [];
+
+													for (var i = 0; i < data_grid_second.length; i++) {
+														if (data_grid_second[i].data.column_name == null || data_grid_second[i].data.column_name == undefined) {
+															Ext.Msg.alert("Informasi", "Ada field yg kosong");
+															result = false;
+															break;
+														}
+													}
+
+													for (var i = 0; i < data_grid_default.length; i++) {
+														if (data_grid_default[i].data.column_name == null || data_grid_default[i].data.column_name == undefined) {
+															Ext.Msg.alert("Informasi", "Ada field yg kosong");
+															result = false;
+															break;
+														}
+													}
+
+													for (var i = 0; i < data_grid_second.length; i++) {
+														if (data_grid_second[i].data.column_name !== null && data_grid_second[i].data.column_name !== undefined) {
+															variabel.second.push(data_grid_second[i].data.column_name);
+														}
+													}
+
+													for (var i = 0; i < data_grid_default.length; i++) {
+														if (data_grid_default[i].data.column_name !== null && data_grid_default[i].data.column_name !== undefined) {
+															variabel.default.push(data_grid_default[i].data.column_name);
+														}
+													}
+													
+													if (result === true) {
+														Ext.Ajax.request({
+															method: 'post',
+															url: url+"Structure/migrate",
+															waitTitle: 'Connecting',
+															waitMsg: 'Sending data...',
+															params: {
+																second 			: JSON.stringify(variabel.second),
+																default 		: JSON.stringify(variabel.default),
+																db_second 		: 'pasien',
+																db_default 		: 'rs_patient',
+															},
+															success: function(res){
+																var cst = JSON.parse(res.responseText);
+																Ext.Msg.alert("Update", ""+cst.message+"");
+																Variable.getStore(Variable.paramsCriteria, 0, 25);
+															},
+															failure: function(){
+																console.log('failure');
+															}
+														});
+													}
+												}
+											},{
+												xtype 	: 'button',
+												text 	  : 'close',
+												handler : function(btn){
+													var win = btn.up('window');
+													win.close();
+												}
+											}
+
+										]
+									}).show();
+								}
+							},
+						]
+					}
 				],
 				items : [
 					Variable.grid = Ext.create('Ext.grid.Panel', {
 						store: Variable.storeobj,
 						selModel: Ext.create('Ext.selection.CheckboxModel'),
 						columns: [
-							{ header: 'Unit Type',  dataIndex: 'unit_type', width : 120,  editor : 'textfield'},
-							{ header: 'Unit Code',  dataIndex: 'unit_code', width : 120,  editor : 'textfield'},
-							{ header: 'Unit name',  dataIndex: 'unit_name', flex : 1,  editor : 'textfield'},
-							{ header: 'Kode BPJS',  dataIndex: 'kd_unit_bpjs', flex : 1,  editor : 'textfield'},
+							{ header: 'Medrec',  dataIndex: 'patient_code', width : 120,  editor : 'textfield'},
+							{ header: 'Nama',  dataIndex: 'name', width : 120,  editor : 'textfield'},
+							{ header: 'Alamat ',  dataIndex: 'address', width : 120,  editor : 'textfield'},
+							{ header: 'Telepon',  dataIndex: 'phone_number', flex : 1,  editor : 'textfield'},
+							{ header: 'Tgl Lahir',  dataIndex: 'birth_date', flex : 1,  editor : 'textfield'},
 			                {
-			                    header: 'Activate',
-			                    dataIndex: 'active_flag',
+			                    header: 'Kelamin',
+			                    dataIndex: 'gender',
 			                    flex : 1,
 			                    renderer    : function(a){
 			                        if (a == 0) {
-			                            return "<i class='fa fa-close'></i>";
+			                            return "Perempuan";
 			                        }else{
-			                            return "<i class='fa fa-check'></i>";
+			                            return "Laki-laki";
 			                        }
 			                    }
 			                },
@@ -240,25 +364,46 @@ Ext.define('App.pages.Rs_patient.Main', function(){
 						viewConfig: {
 							listeners: {
 								itemdblclick: function(dataview, index, item, e) {
-									Ext.create('App.pages.Rs_unit.Form', {
+									Ext.create('App.pages.Rs_patient.Form', {
 										fbar    : [
 											{
 												xtype   : 'button',
 												text    : 'Update',
 												handler : function(btn){
 													var win = btn.up('window'), form = win.down('form');
+													var form_1 = win.items.items[0].items.items[0].items;
+													var form_2 = win.items.items[0].items.items[1].items;
+													var tmp_gender = 1;
+
+													if (form_1.items[6].items.items[0].value === false) {
+														tmp_gender = 0;
+													}
+													
 													Ext.Ajax.request({
 														method: 'post',
-														url: url+"app/C_rs_unit/update",
+														url: url+"app/C_rs_patient/update",
 														waitTitle: 'Connecting',
 														waitMsg: 'Sending data...',
 														params: {
-															id 					: win.items.items[0].value,
-															unit_type 	: win.items.items[1].value,
-															unit_code		: win.items.items[2].value,
-															unit_name 	: win.items.items[3].value,
-															kd_unit_bpjs: win.items.items[4].value,
-															active 			: win.items.items[5].value,
+															patient_id 		: form_1.items[0].value,
+															patient_code 	: form_1.items[1].value,
+															title 			: form_1.items[2].value,
+															name 			: form_1.items[3].value,
+															birth_place		: form_1.items[4].value,
+															birth_date		: form_1.items[5].value,
+															address			: form_1.items[7].value,
+															telepon			: form_1.items[8].value,
+															pos_code		: form_1.items[9].value,
+															gender 			: tmp_gender,
+
+															religion_id		: form_2.items[0].value,
+															education_id	: form_2.items[1].value,
+															jobdesk_id		: form_2.items[2].value,
+															country_id		: form_2.items[3].value,
+															province_id		: form_2.items[4].value,
+															district_id		: form_2.items[5].value,
+															districts_id	: form_2.items[6].value,
+															kelurahan_id	: form_2.items[7].value,
 														},
 														success: function(res){
 															var cst = JSON.parse(res.responseText);
@@ -281,15 +426,31 @@ Ext.define('App.pages.Rs_patient.Main', function(){
 										],
 										listeners: {
 											show: function(thisForm){
-												console.log(thisForm);
-												thisForm.items.items[0].setValue(index.data.unit_id);
-												thisForm.items.items[1].setValue(index.data.unit_type);
-												thisForm.items.items[2].setValue(index.data.unit_code);
-												thisForm.items.items[3].setValue(index.data.unit_name);
-												thisForm.items.items[4].setValue(index.data.kd_unit_bpjs);
-												if (index.data.active_flag == 1) {
-													thisForm.items.items[5].setValue(true);
+												var form_1 = thisForm.items.items[0].items.items[0].items;
+												var form_2 = thisForm.items.items[0].items.items[1].items;
+
+												if (index.data.gender == '0' || index.data.gender == 0) {
+													form_1.items[6].items.items[1].setValue(true);
 												}
+												form_1.items[0].setValue(index.data.patient_id);
+												form_1.items[1].setValue(index.data.patient_code);
+												form_1.items[2].setValue(index.data.title);
+												form_1.items[3].setValue(index.data.name);
+												form_1.items[4].setValue(index.data.birth_place);
+												form_1.items[5].setValue(index.data.birth_date);
+												form_1.items[7].setValue(index.data.address);
+												form_1.items[8].setValue(index.data.phone_number);
+												form_1.items[9].setValue(index.data.postal_code);
+
+
+												form_2.items[0].setValue(index.data.religion_id);
+												form_2.items[1].setValue(index.data.education_id);
+												form_2.items[2].setValue(index.data.jobdesk_id);
+												form_2.items[3].setValue(index.data.country_id);
+												form_2.items[4].setValue(index.data.province_id);
+												form_2.items[5].setValue(index.data.district_id);
+												form_2.items[6].setValue(index.data.districts_id);
+												form_2.items[7].setValue(index.data.kelurahan_id);
 											},
 										}
 									}).show();

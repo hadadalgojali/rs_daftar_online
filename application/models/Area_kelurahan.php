@@ -1,21 +1,27 @@
-<?php 
+<?php
 
-class Rs_patient extends CI_Model {
-	protected $table 		= "rs_patient";
+class Area_kelurahan extends CI_Model {
+	protected $table 		= "area_kelurahan";
 	protected $database 	= "";
 
 	public function set_database($database){
 		$this->database = $database;
 	}
 
-	public function get($select = "*", $criteria = null, $order_by = "asc"){
+	public function get($select = "*", $criteria = null, $limit = null, $start = null, $order_by = "asc"){
 		$this->database->select($select);
 		$this->database->from($this->table);
-		if ($criteria !== null && $criteria !== '') {
+		if ($criteria !== null && $criteria !== "") {
 			$this->database->where($criteria);
 		}
-		$this->database->order_by('name', $order_by);
 
+		if (isset($limit) && isset($start)) {
+			if ($limit != "" && $start != "") {
+				$this->database->limit($limit, $start);
+			}
+		}
+
+		$this->database->order_by('kelurahan', $order_by);
 		return $this->database->get();
 	}
 
@@ -24,7 +30,7 @@ class Rs_patient extends CI_Model {
 			$this->database->insert($this->table, $parameter);
 			return array(
 				'result'	=> $this->database->affected_rows(),
-				'error'	  	=> $this->database->error(),
+				'error'	  => $this->database->error(),
 			);
 		} catch (Exception $e) {
 			return $e;
@@ -36,8 +42,8 @@ class Rs_patient extends CI_Model {
 			$this->database->where($criteria);
 			$this->database->update($this->table, $parameter);
 			return array(
-				'result'	=> $this->database->affected_rows(),
-				'error'	  	=> $this->database->error(),
+				'result'  => $this->database->affected_rows(),
+				'error'	  => $this->database->error(),
 			);
 		} catch (Exception $e) {
 			return $e;
@@ -50,10 +56,10 @@ class Rs_patient extends CI_Model {
 			$this->database->delete($this->table);
 			return array(
 				'result'	=> $this->database->affected_rows(),
-				'error'	  	=> $this->database->error(),
+				'error'	  => $this->database->error(),
 			);
 		} catch (Exception $e) {
 			return $e;
 		}
 	}
-}	
+}

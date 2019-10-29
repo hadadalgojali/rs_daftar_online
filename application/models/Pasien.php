@@ -1,7 +1,7 @@
 <?php 
 
-class Rs_patient extends CI_Model {
-	protected $table 		= "rs_patient";
+class Pasien extends CI_Model {
+	protected $table 		= "pasien";
 	protected $database 	= "";
 
 	public function set_database($database){
@@ -14,7 +14,7 @@ class Rs_patient extends CI_Model {
 		if ($criteria !== null && $criteria !== '') {
 			$this->database->where($criteria);
 		}
-		$this->database->order_by('name', $order_by);
+		$this->database->order_by('nama', $order_by);
 
 		return $this->database->get();
 	}

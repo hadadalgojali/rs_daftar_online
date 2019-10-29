@@ -224,17 +224,6 @@ Ext.define('App.pages.Rs_customer.Main', function(){
 													for (var i = 0; i < data_grid_default.length; i++) {
 														variabel.default.push(data_grid_default[i].data.column_name);
 													}
-
-
-												//  Ext.MessageBox.show({
-												//     msg: 'Saving your data, please wait...',
-												//     progressText: 'Saving...',
-												//     width:300,
-												//     wait:true,
-												//     icon:'fa fa-arraow-circle-up',
-												//     animEl: 'buttonID'
-												// });
-													
 													
 													Ext.Ajax.request({
 														method: 'post',
