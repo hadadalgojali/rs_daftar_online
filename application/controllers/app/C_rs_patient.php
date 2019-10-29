@@ -129,8 +129,13 @@ class C_rs_patient extends CI_Controller {
 			$response['status'] 	= 200;
 			$response['message'] 	= "Update success";
 		}else{
-			$response['status'] 	= 401;
-			$response['message'] 	= $result['error']['message'];
+			if ($result['error']['message'] == "") {
+				$response['status'] 	= 200;
+				$response['message'] 	= "Update success";
+			}else{
+				$response['status'] 	= 401;
+				$response['message'] 	= $result['error']['message'];
+			}
 		}
 		echo json_encode($response);
 	}

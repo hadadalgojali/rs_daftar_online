@@ -14,7 +14,7 @@ class Rs_patient extends CI_Model {
 		if ($criteria !== null && $criteria !== '') {
 			$this->database->where($criteria);
 		}
-		$this->database->order_by('name', $order_by);
+		$this->database->order_by('patient_code, name', $order_by);
 
 		return $this->database->get();
 	}

@@ -335,14 +335,14 @@ Ext.define('App.pages.Rs_patient.Main', function(){
 						selModel: Ext.create('Ext.selection.CheckboxModel'),
 						columns: [
 							{ header: 'Medrec',  dataIndex: 'patient_code', width : 120,  editor : 'textfield'},
-							{ header: 'Nama',  dataIndex: 'name', width : 120,  editor : 'textfield'},
-							{ header: 'Alamat ',  dataIndex: 'address', width : 120,  editor : 'textfield'},
-							{ header: 'Telepon',  dataIndex: 'phone_number', flex : 1,  editor : 'textfield'},
-							{ header: 'Tgl Lahir',  dataIndex: 'birth_date', flex : 1,  editor : 'textfield'},
+							{ header: 'Nama',  dataIndex: 'name', flex : 1,  editor : 'textfield'},
+							{ header: 'Alamat ',  dataIndex: 'address', flex : 1,  editor : 'textfield'},
+							{ header: 'Telepon',  dataIndex: 'phone_number', width : 120,  editor : 'textfield'},
+							{ header: 'Tgl Lahir',  dataIndex: 'birth_date', width : 120,  editor : 'textfield'},
 			                {
 			                    header: 'Kelamin',
 			                    dataIndex: 'gender',
-			                    flex : 1,
+			                    width : 120,
 			                    renderer    : function(a){
 			                        if (a == 0) {
 			                            return "Perempuan";
@@ -378,7 +378,7 @@ Ext.define('App.pages.Rs_patient.Main', function(){
 													if (form_1.items[6].items.items[0].value === false) {
 														tmp_gender = 0;
 													}
-													
+
 													Ext.Ajax.request({
 														method: 'post',
 														url: url+"app/C_rs_patient/update",
