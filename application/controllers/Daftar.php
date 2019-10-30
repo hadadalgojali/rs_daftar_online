@@ -12,6 +12,7 @@ class Daftar extends CI_Controller {
 		$this->load->model('Rs_unit');
 		$this->load->model('Rs_visit');
 		$this->load->model('Rs_dokter_klinik');
+		$this->load->model('Rs_jadwal_poli');
 		$this->load->helper('captcha');
 	}
 
@@ -122,6 +123,96 @@ class Daftar extends CI_Controller {
 		echo json_encode($response);
 	}
 
+
+	public function search_dokter(){
+		$this->Rs_dokter_klinik->set_database($this->load->database('default',TRUE));
+		$response 	= array();
+		$response['status'] = false;
+
+		$parameter 	= array();
+		$criteria  	= json_decode($this->input->post('criteria'));
+		// $parameter['active_flag'] = $criteria->active_flag;
+		// $parameter['job_id'] 	  = $criteria->job_id;
+		$parameter['unit_id'] 	  = $criteria->unit_id;
+		$response['dokter'] = $this->Rs_dokter_klinik->get_with_employee("*", $parameter);
+
+		if ($response['dokter']->num_rows() > 0) {
+			$response['dokter'] 	= $response['dokter']->result();
+			$response['status'] 	= true;
+		}else{
+			$response['dokter'] 	= array();
+			$response['status'] 	= true;
+		}
+
+		echo json_encode($response);
+	}
+
+	public function get_jam(){
+		$this->Rs_jadwal_poli->set_database($this->load->database('default',TRUE));
+		$response 	= array();
+		$response['status'] = false;
+		$parameter 	= array();
+		$criteria  	= json_decode($this->input->post('criteria'));
+		$parameter['unit_id'] 	= $criteria->unit_id;
+		$parameter['dokter_id'] = $criteria->employee_id;
+		$parameter['hari'] 		= $criteria->day;
+		if (strtolower($parameter['hari']) == 'sunday') {
+			$parameter['hari'] = "Minggu";
+		}else if (strtolower($parameter['hari']) == 'monday') {
+			$parameter['hari'] = "Senin";
+		}else if (strtolower($parameter['hari']) == 'tuesday') {
+			$parameter['hari'] = "Selasa";
+		}else if (strtolower($parameter['hari']) == 'wednesday') {
+			$parameter['hari'] = "Rabu";
+		}else if (strtolower($parameter['hari']) == 'thursday') {
+			$parameter['hari'] = "Kamis";
+		}else if (strtolower($parameter['hari']) == 'friday') {
+			$parameter['hari'] = "Jumat";
+		}else if (strtolower($parameter['hari']) == 'saturday') {
+			$parameter['hari'] = "Sabtu";
+		}
+
+		$response['jadwal'] 	= $this->Rs_jadwal_poli->get("*", $parameter);
+
+		if ($response['jadwal']->num_rows() > 0) {
+			$response['jadwal'] 	= $response['jadwal']->result();
+			$response['start_date'] = substr($response['jadwal']->result()[0]->start, 0, strlen($response['jadwal']->result()[0]->start)-3);
+			$response['end_date'] 	= substr($response['jadwal']->result()[0]->end, 0, strlen($response['jadwal']->result()[0]->end)-3);;
+			$response['status'] 	= true;
+		}else{
+			$response['start_date'] = "";
+			$response['end_date'] 	= "";
+			$response['status'] 	= true;
+		}
+
+		echo json_encode($response);
+	}
+
+	public function search_jadwal(){
+		$this->Rs_jadwal_poli->set_database($this->load->database('default',TRUE));
+		$response 	= array();
+		$response['status'] = false;
+
+		$parameter 	= array();
+		$criteria  	= json_decode($this->input->post('criteria'));
+		// $parameter['active_flag'] = $criteria->active_flag;
+		$parameter['dokter_id'] = $criteria->employee_id;
+		$parameter['unit_id']   = $criteria->unit_id;
+		$response['jadwal'] 	= $this->Rs_jadwal_poli->get("*", $parameter);
+
+		if ($response['jadwal']->num_rows() > 0) {
+			$response['jadwal'] 	= $response['jadwal']->result();
+			$response['status'] 	= true;
+		}else{
+			$response['jadwal'] 	= array();
+			$response['status'] 	= true;
+		}
+
+		echo json_encode($response);
+	}
+
+
+
 	public function create(){
 		$response 	= array();
 		$response['status'] = false;
@@ -145,7 +236,7 @@ class Daftar extends CI_Controller {
 		}
 
 		$this->Rs_unit->set_database($this->load->database('default',TRUE));
-		$response['unit'] = $this->Rs_unit->get("*", array('unit_code' => $parameter['unit_code']));
+		$response['unit'] = $this->Rs_unit->get("*", array('unit_id' => $parameter['unit_code']));
 		if ($response['unit']->num_rows()>0) {
 			$response['unit'] = $response['unit']->result();
 

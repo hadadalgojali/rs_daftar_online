@@ -17,6 +17,16 @@ class Rs_dokter_klinik extends CI_Model {
 		return $this->database->get();
 	}
 
+	public function get_with_employee($select = "*", $criteria = null, $order_by = "asc"){
+		$this->database->select($select);
+		$this->database->from($this->table);
+		$this->database->join("app_employee", "app_employee.employee_id = ".$this->table.".employee_id", "INNER");
+		if ($criteria !== null) {
+			$this->database->where($criteria);
+		}
+		return $this->database->get();
+	}
+
 	public function create($parameter){
 		try {
 			$this->db->insert($this->table, $parameter);

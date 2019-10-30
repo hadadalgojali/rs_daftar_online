@@ -9,6 +9,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
     <meta name="author" content="">
 	<title>Pendaftaran Online</title>
 	<?php echo $_include_css; ?>
+	<!-- <link href="http://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.3.0/css/datepicker.css" rel="stylesheet" type="text/css" /> -->
 	<style type="text/css">
 		.ui-selectmenu-menu .ui-menu {max-height: 160px;}
 	</style>
@@ -101,7 +102,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 													<div class="input-group-prepend">
 														<span class="input-group-text" style="width: 100px;">Tgl Lahir</span>
 													</div>
-													<input type="text" class="form-control" id="tgl_lahir" name="tgl_lahir" value="__-__-____" data-date-format="dd/mm/yyyy" data-mask="__-__-____" required>
+													<input type="text" class="form-control" id="tgl_lahir" name="tgl_lahir" value="__-__-____" data-date-format="dd-mm-yyyy" data-mask="__-__-____" required>
 												</div>
 											</div>
 											<div class="col-md-6 mb-3">
@@ -157,21 +158,27 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 													</div>
 												</div>
 												<div class="form-group row">
-													<label for="inputPassword" class="col-sm-3 col-form-label">Tanggal</label>
-													<div class="col-sm-9">
-														<input type="text" class="form-control" id="tgl_kunjungan" readonly name="tgl_kunjungan" value="<?php echo date("d-m-Y"); ?>" data-date-format="dd/mm/yyyy" data-mask="__-__-____" required>
-													</div>
-												</div>
-												<div class="form-group row">
 													<label for="inputPassword" class="col-sm-3 col-form-label">Telepon</label>
 													<div class="col-sm-9">
 														<input type="text" class="form-control" id="telepon" name="telepon" required>
 													</div>
 												</div>
 												<div class="form-group row">
-													<label for="staticEmail" class="col-sm-3 col-form-label">Poliklinik</label>
+													<label for="staticKlinik" class="col-sm-3 col-form-label">Poliklinik</label>
 													<div class="col-sm-9">
 														<select name="poliklinik" id="poliklinik" class="form-control"></select>
+													</div>
+												</div>
+												<div class="form-group row">
+													<label for="staticDokter" class="col-sm-3 col-form-label">Dokter</label>
+													<div class="col-sm-9">
+														<select name="dokter" id="dokter" class="form-control"></select>
+													</div>
+												</div>
+												<div class="form-group row">
+													<label for="inputTglMasuk" class="col-sm-3 col-form-label">Tanggal</label>
+													<div class="col-sm-9">
+														<input type="text" class="form-control" id="tgl_kunjungan" readonly name="tgl_kunjungan" data-date-format="dd-mm-yyyy" data-mask="__-__-____" value="__-__-____" placeholder="__/__/____" required>
 													</div>
 												</div>
 												<div class="form-group">
@@ -291,7 +298,49 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
 	<?php echo $_footer; ?>
 	<?php echo $_include_js; ?>
+	<!-- <script src="http://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.3.0/js/bootstrap-datepicker.js"></script> -->
 	<script type="text/javascript">
+		Array.prototype.forEach.call(document.body.querySelectorAll("*[data-mask]"), applyDataMask);
+
+		function applyDataMask(field) {
+			var mask = field.dataset.mask.split('');
+
+			// For now, this just strips everything that's not a number
+			function stripMask(maskedData) {
+				function isDigit(char) {
+					return /\d/.test(char);
+				}
+				return maskedData.split('').filter(isDigit);
+			}
+
+		    // Replace `_` characters with characters from `data`
+			function applyMask(data) {
+				return mask.map(function(char) {
+					if (char        != '_') return char;
+					if (data.length == 0) return char;
+					return data.shift();
+				}).join('')
+			}
+
+			function reapplyMask(data) {
+				return applyMask(stripMask(data));
+			}
+
+			function changed() {
+				var oldStart         = field.selectionStart;
+				var oldEnd           = field.selectionEnd;
+
+				field.value          = reapplyMask(field.value);
+
+				field.selectionStart = oldStart;
+				field.selectionEnd   = oldEnd;
+			}
+
+			field.addEventListener('click', changed)
+			field.addEventListener('keyup', changed)
+			field.addEventListener('keydown', changed)
+		}
+
 		function hide_btn_modal(){
 			document.getElementById('btnModal_save').style.display   = 'none';
 			document.getElementById('btnModal_update').style.display = 'none';
@@ -534,36 +583,151 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 					success: function(data) {
 						if (data.status === true) {
 							$.each(data.unit, function (index, data) {
-								$("#poliklinik").append("<option value='" + data.unit_code + "'>" + data.unit_name + "</option>");
+								$("#poliklinik").append("<option value='" + data.unit_id + "'>" + data.unit_name + "</option>");
 							});
 						}
 					}
 				});
 			},
 			select : function(evt, ui){
-				// console.log(ui.item);
 				document.getElementById('ket_klinik').innerHTML = ui.item.label;
 				parameter.klinik = ui.item.value;
+
+				// $("#dokter").empty();
+				// $('#dokter option').remove();
+				// document.getElementById('dokter').value = '';
+				$("dokter option").each(function(){$(this).remove();});
+				$("#dokter option[value='']").attr('selected', true);
+
+				document.getElementById("dokter").innerHTML = "";
+				$.ajax({
+					url 		: "<?php echo base_url()?>Daftar/search_dokter",
+					dataType 	: 'json',
+					delay 		: 2000,
+					type 		: "POST",
+					data 		: {
+						criteria: JSON.stringify({ active_flag : '1', job_id : '2', unit_id : ui.item.value }),
+					},
+					success: function(data) {
+						if (data.status === true) {
+							$.each(data.dokter, function (index, data) {
+								$("#dokter").append("<option value='" + data.employee_id + "'>" + data.first_name+ " " +data.last_name + "</option>");
+							});
+						}
+					}
+				});
+			},
+			style: 'dropdown',
+			width:'100%',
+		});
+
+		function get_jadwal(tmp_unit_id = null, tmp_dokter_id = null){
+			$.ajax({
+				url 		: "<?php echo base_url()?>Daftar/search_jadwal",
+				dataType 	: 'json',
+				delay 		: 2000,
+				type 		: "POST",
+				data 		: {
+					criteria: JSON.stringify({ unit_id : tmp_unit_id, employee_id : tmp_dokter_id }),
+				},
+				success: function(data) {
+					if (data.status === true) {
+						var tmp_days = [];
+						$.each(data.jadwal, function (index, data) {
+							var tmp_day = data.hari;
+							console.log(tmp_day.toLowerCase());
+							if (tmp_day.toLowerCase() == "senin") {
+								tmp_days.push(1);
+								console.log(1);
+							}else if (tmp_day.toLowerCase() == "selasa") {
+								tmp_days.push(2);
+							}else if (tmp_day.toLowerCase() == "rabu") {
+								tmp_days.push(3);
+							}else if (tmp_day.toLowerCase() == "kamis") {
+								tmp_days.push(4);
+							}else if (tmp_day.toLowerCase() == "jumat") {
+								tmp_days.push(5);
+							}else if (tmp_day.toLowerCase() == "sabtu") {
+								tmp_days.push(6);
+							}else if (tmp_day.toLowerCase() == "minggu") {
+								tmp_days.push(0);
+							}
+							// $("#dokter").append("<option value='" + data.employee_id + "'>" + data.first_name+ " " +data.last_name + "</option>");
+						});
+
+						// console.log(tmp_days);
+						var tmp_date_disable = [0,1,2,3,4,5,6];
+						$.each(tmp_days, function (index, data) {
+							for(var i in tmp_date_disable){
+								if(tmp_date_disable[i]==data){
+									tmp_date_disable.splice(i,1);
+								}
+							}
+						});
+
+						console.log(tmp_date_disable);
+						$('#tgl_kunjungan').datepicker('setDaysOfWeekDisabled',tmp_date_disable);
+						$('#tgl_kunjungan').datepicker('minDate', new Date());
+					}
+				}
+			});
+		}
+
+		$('#dokter').selectmenu({
+			select : function(evt, ui){
+				parameter.employee_id = ui.item.value;
+				get_jadwal(parameter.klinik, ui.item.value);
+
+			},
+			change : function(evt, ui){
 			},
 			style: 'dropdown',
 			width:'100%',
 		});
 
 		$('#tgl_lahir').datepicker({
-			dateFormat: "dd-mm-yy"
+			dateFormat 	: "dd-mm-yyyy",
 		});
 
-		$('#tgl_kunjungan').datepicker({
-			dateFormat 	: "dd-mm-yy",
-			minDate 	: '<?php echo $tanggal_at; ?>',
-			maxDate 	: '<?php echo $tanggal_to; ?>',
+		/*$('#tgl_kunjungan').datepicker({
+			dateFormat 	: "dd/mm/yyyy",
+			minDate 	: '<?php //echo $tanggal_at; ?>',
+			maxDate 	: '<?php //echo $tanggal_to; ?>',
+			// daysOfWeekDisabled: "0,6",
+			// daysOfWeekDisabled: [0,1,2,3,4,5,6],
 			onSelect 	: function(dateText, inst) {
 				document.getElementById('ket_tgl_checkin').innerHTML = dateText;
 			}
+		});*/
+
+		$('#tgl_kunjungan').datepicker({
+			dateFormat 	: "dd-mm-yy",
+			startDate 	: new Date(),
+			onSelect 	: function(dateText, inst) {
+				document.getElementById('ket_tgl_checkin').innerHTML = dateText;
+			}
+		}).on('changeDate', function(evt){
+			// console.log(evt);
+			var dateTypeVar = $('#tgl_kunjungan').datepicker('getDate');
+			dateTypeVar = $.datepicker.formatDate('DD', dateTypeVar);
+
+			$.ajax({
+				url 		: "<?php echo base_url()?>Daftar/get_jam",
+				dataType 	: 'json',
+				delay 		: 2000,
+				type 		: "POST",
+				data 		: {
+					criteria: JSON.stringify({ unit_id : parameter.klinik, employee_id : parameter.employee_id, day : dateTypeVar }),
+				},
+				success: function(data) {
+					if (data.status === true) {
+					}
+				}
+			});
 		});
+        // $("#tgl_kunjungan").datepicker("setDate", '');
 
 		$("#jenis_kunjungan").change(function(text, evt){
-			// console.log(text);
 			parameter.jenis_penjamin  	= text.originalEvent.target.value;
 			hide_btn_modal();
 			document.getElementById('ModalTitle').innerHTML = "Informasi";
@@ -617,45 +781,6 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 		});
 
 
-		Array.prototype.forEach.call(document.body.querySelectorAll("*[data-mask]"), applyDataMask);
-
-		function applyDataMask(field) {
-			var mask = field.dataset.mask.split('');
-
-			// For now, this just strips everything that's not a number
-			function stripMask(maskedData) {
-				function isDigit(char) {
-					return /\d/.test(char);
-				}
-				return maskedData.split('').filter(isDigit);
-			}
-
-		    // Replace `_` characters with characters from `data`
-			function applyMask(data) {
-				return mask.map(function(char) {
-					if (char        != '_') return char;
-					if (data.length == 0) return char;
-					return data.shift();
-				}).join('')
-			}
-
-			function reapplyMask(data) {
-				return applyMask(stripMask(data));
-			}
-
-			function changed() {
-				var oldStart         = field.selectionStart;
-				var oldEnd           = field.selectionEnd;
-
-				field.value          = reapplyMask(field.value);
-
-				field.selectionStart = oldStart;
-				field.selectionEnd   = oldEnd;
-			}
-
-			field.addEventListener('click', changed)
-			field.addEventListener('keyup', changed)
-		}
 	</script>
 </body>
 </html>
