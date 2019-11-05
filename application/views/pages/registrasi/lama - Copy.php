@@ -9,7 +9,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
     <meta name="author" content="">
 	<title>Pendaftaran Online</title>
 	<?php echo $_include_css; ?>
-	<link href="<?php echo base_url(); ?>/assets/bootstrap/css/step-form.css" rel="stylesheet" type="text/css" />
+	<!-- <link href="http://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.3.0/css/datepicker.css" rel="stylesheet" type="text/css" /> -->
 	<style type="text/css">
 		.ui-selectmenu-menu .ui-menu {max-height: 160px;}
 	</style>
@@ -127,154 +127,13 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 							</div>
 						</div>
 
-        <form id="msform" action="javascript:;" method="post">
-        <!-- progressbar -->
-        <ul id="progressbar">
-            <li class="active">Detail kunjungan</li>
-            <li>Formulir Rujukan</li>
-            <li>Detail informasi</li>
-        </ul>
-<div class="row" style="text-align: left;">
-	<div class="col-md-12 py-2">
-		<div class="card">
-			<div class="card-header">
-				<b>DATA</b> KUNJUNGAN :
-			</div>
-
-            <!-- fieldsets -->
-<div class="card-body">
-	<div class="row">
-		<div class="col-md-12">
-            <fieldset>
-            	<div class="form-group row">
-					<label for="staticEmail" class="col-sm-3 col-form-label">Penjamin</label>
-					<div class="col-sm-9">
-						<select name="kelompok" id="kelompok" class="form-control"></select>
-					</div>
-				</div>
-				<div class="form-group row" style="display: none;" id="select_jenis_kunjungan">
-					<label for="staticEmail" class="col-sm-3 col-form-label">Jenis Kunj</label>
-					<div class="col-sm-9">
-						<select name="jenis_kunjungan" id="jenis_kunjungan" class="form-control">
-							<option value="1" selected="selected">Episode Baru</option>
-							<option value="2">Episode Lanjutan</option>
-						</select>
-					</div>
-				</div>
-				<div class="form-group row">
-					<label for="inputPassword" class="col-sm-3 col-form-label">Keluhan</label>
-					<div class="col-sm-9">
-						<textarea class="form-control" style="height: 95px;" id="keluhan"></textarea>
-					</div>
-				</div>
-				<div class="form-group row">
-					<label for="inputPassword" class="col-sm-3 col-form-label">Telepon</label>
-					<div class="col-sm-9">
-						<input type="text" class="form-control" id="telepon" name="telepon" required>
-					</div>
-				</div>
-				<div class="form-group row">
-					<label for="staticKlinik" class="col-sm-3 col-form-label">Poliklinik</label>
-					<div class="col-sm-9">
-						<select name="poliklinik" id="poliklinik" class="form-control"></select>
-					</div>
-				</div>
-				<div class="form-group row">
-					<label for="staticDokter" class="col-sm-3 col-form-label">Dokter</label>
-					<div class="col-sm-9">
-						<select name="dokter" id="dokter" class="form-control"></select>
-					</div>
-				</div>
-				<div class="form-group row">
-					<label for="inputTglMasuk" class="col-sm-3 col-form-label">Tanggal</label>
-					<div class="col-sm-9">
-						<input type="text" class="form-control" id="tgl_kunjungan" readonly name="tgl_kunjungan" data-date-format="dd-mm-yyyy" data-mask="__-__-____" value="__-__-____" placeholder="__/__/____" required>
-					</div>
-				</div>
-			    <input type="button" name="next" class="next action-button" value="Next"/>
-            </fieldset>
-            <fieldset>
-				<div class="col-md-12" id="form-bpjs" >
-					<div class="form-group row">
-						<label class="col-sm-4 col-form-label">No Rujuk</label>
-						<div class="col-sm-8">
-							<div class="input-group">
-								<input type="text" class="form-control" id="no_rujukan" name="no_rujukan">
-								<div class="input-group-prepend">
-									<button class="btn btn-primary" id="btn_no_rujukan"><span id="check_btn_no_rujukan">Cek</span> <i class="fa fa-spinner fa-spin" style="display: none;" id="check_load_no_rujukan"></i></button>
-								</div>
-							</div>
-						</div>
-					</div>
-					<div class="form-group row">
-						<label class="col-sm-4 col-form-label">Tgl Rujuk</label>
-						<div class="col-sm-8">
-							<input type="text" class="form-control" id="tgl_rujukan" name="tgl_rujukan" readonly>
-						</div>
-					</div>
-					<div class="form-group row">
-						<label class="col-sm-4 col-form-label">Faskes</label>
-						<div class="col-sm-8">
-							<input type="text" class="form-control" id="faskes" name="faskes" readonly>
-						</div>
-					</div>
-					<div class="form-group row">
-						<label class="col-sm-4 col-form-label">Kelas</label>
-						<div class="col-sm-8">
-							<input type="text" class="form-control" id="kelas" name="kelas" readonly>
-						</div>
-					</div>
-					<div class="form-group row">
-						<label class="col-sm-4 col-form-label">Diagnosa</label>
-						<div class="col-sm-8">
-							<input type="text" class="form-control" id="diagnosa" name="diagnosa" readonly>
-						</div>
-					</div>
-					<div class="form-group row">
-						<label class="col-sm-4 col-form-label">Klinik Rujukan</label>
-						<div class="col-sm-8">
-							<input type="text" class="form-control" id="klinik_rujukan" name="klinik_rujukan" readonly>
-						</div>
-					</div>
-					<div class="form-group row">
-						<label class="col-sm-4 col-form-label">Pemberi surat</label>
-						<div class="col-sm-8">
-							<select id="pemberi_surat" class="form-control"></select>
-						</div>
-					</div>
-				</div>
-			    <input type="button" name="previous" class="previous action-button-previous" value="Previous"/>
-			    <input type="button" name="next" class="next action-button" value="Next"/>
-            </fieldset>
-            <fieldset>
-				<div class="form-group row">
-					<label for="inputTglMasuk" class="col-sm-3 col-form-label"><?php echo $image_captcha; ?></label>
-					<div class="col-sm-9"><input type="text" class="form-control" id="captcha" name="captcha"></div>
-				</div>
-				<div class="alert alert-success" role="alert">
-					<table>
-						<tr>
-							<td width="120">Hari/ Tanggal</td>
-							<td>: <span id="ket_tgl_checkin"><?php echo date('d-m-Y'); ?></span></td>
-						</tr>
-						<tr>
-							<td>Jam Checkin</td>
-							<td>: <span id="ket_jam_checkin"><?php echo $check_in_at." - ".$check_in_to; ?></span></td>
-						</tr>
-						<tr>
-							<td>Klinik</td>
-							<td>: <span id="ket_klinik"></span></td>
-						</tr>
-					</table>
-				</div>
-                <input type="button" name="previous" class="previous action-button-previous" value="Previous"/>
-                <button class="action-button" id="btn_save"><i class="fa fa-save" id="btn_load_save"></i> Simpan</button>
-            </fieldset>
-        </div>
-    </div>
-</div>
-        </form>
-									<!-- <div class="card-body">
+						<div class="row">
+							<div class="col-md-12 py-2">
+								<div class="card">
+									<div class="card-header">
+										<b>DATA</b> KUNJUNGAN :
+									</div>
+									<div class="card-body">
 										<div class="row">
 											<div class="col-md-6">
 												<div class="form-group row">
@@ -404,7 +263,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 											<button class="btn btn-primary" id="btn_save"><i class="fa fa-save" id="btn_load_save"></i> Simpan</button>
 										</div>
 
-									</div> -->
+									</div>
 								</div>
 							</div>
 						</div>
@@ -440,7 +299,6 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 	<?php echo $_footer; ?>
 	<?php echo $_include_js; ?>
 	<!-- <script src="http://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.3.0/js/bootstrap-datepicker.js"></script> -->
-	<script type="text/javascript" src="<?php echo base_url(); ?>/assets/bootstrap/js/step-form.js"></script>
 	<script type="text/javascript">
 		Array.prototype.forEach.call(document.body.querySelectorAll("*[data-mask]"), applyDataMask);
 
@@ -686,14 +544,10 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 				if (ui.item.value == '0000000002' || ui.item.value == '0000000009'){
 					parameter.jenis_penjamin = "0";
 					document.getElementById('select_jenis_kunjungan').style.display = '';
-					// document.getElementById('form-bpjs').style.display = '';
-					// $("#form-bpjs *").enable();
-					$('#form-bpjs *').prop('disabled',false);
+					document.getElementById('form-bpjs').style.display = '';
 				}else{
 					document.getElementById('select_jenis_kunjungan').style.display = 'none';
-					// $("#form-bpjs *").disable();
-					$('#form-bpjs *').prop('disabled',true);
-					// document.getElementById('form-bpjs').style.display = 'none';
+					document.getElementById('form-bpjs').style.display = 'none';
 
 					_rujukan.kd_kelas 		= "";
 					_rujukan.kd_poli 		= "";
@@ -742,7 +596,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 				// $("#dokter").empty();
 				// $('#dokter option').remove();
 				// document.getElementById('dokter').value = '';
-				$("#dokter option").each(function(){$(this).remove();});
+				$("dokter option").each(function(){$(this).remove();});
 				$("#dokter option[value='']").attr('selected', true);
 
 				document.getElementById("dokter").innerHTML = "";
@@ -756,13 +610,9 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 					},
 					success: function(data) {
 						if (data.status === true) {
-							if (data.dokter.length > 0) {
-								$("#dokter option").each(function(){$(this).remove();});
-								$("#dokter option[value='']").attr('selected', true);
-								$.each(data.dokter, function (index, data) {
-									$("#dokter").append("<option value='" + data.employee_id + "'>" + data.first_name+ " " +data.last_name + "</option>");
-								});
-							}
+							$.each(data.dokter, function (index, data) {
+								$("#dokter").append("<option value='" + data.employee_id + "'>" + data.first_name+ " " +data.last_name + "</option>");
+							});
 						}
 					}
 				});
@@ -827,6 +677,9 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 			select : function(evt, ui){
 				parameter.employee_id = ui.item.value;
 				get_jadwal(parameter.klinik, ui.item.value);
+
+			},
+			change : function(evt, ui){
 			},
 			style: 'dropdown',
 			width:'100%',

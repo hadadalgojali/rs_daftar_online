@@ -133,8 +133,8 @@ class Daftar extends CI_Controller {
 		$criteria  	= json_decode($this->input->post('criteria'));
 		// $parameter['active_flag'] = $criteria->active_flag;
 		// $parameter['job_id'] 	  = $criteria->job_id;
-		$parameter['unit_id'] 	  = $criteria->unit_id;
-		$response['dokter'] = $this->Rs_dokter_klinik->get_with_employee("*", $parameter);
+		$parameter['unit_id'] 	= $criteria->unit_id;
+		$response['dokter'] 	= $this->Rs_dokter_klinik->get_with_employee("*", $parameter);
 
 		if ($response['dokter']->num_rows() > 0) {
 			$response['dokter'] 	= $response['dokter']->result();
