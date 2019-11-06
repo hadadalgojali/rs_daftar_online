@@ -8,6 +8,7 @@ class Structure extends CI_Controller {
 		parent::__construct();
 		$this->_ci = &get_instance();
 		$this->load->model("M_structure");
+		$this->load->model("Pasien");
 	}
 
 	public function get(){
@@ -32,6 +33,27 @@ class Structure extends CI_Controller {
 			$response['results']= array();
 		}
 		echo json_encode($response);
+	}
+
+	public function count_migrate(){
+		$result 	= true;
+		$data 		= 0;
+		$parameter 	= array(
+			'db_second' => $this->input->post('db_second'),
+		);
+
+		$this->Pasien->set_database($this->load->database('second', TRUE));
+		$query = $this->Pasien->count();
+		if ($query->num_rows() > 0) {
+			$data = $query->row()->count;
+		}
+		echo json_encode(
+			array(
+				'status' 	=> $result,
+				'code' 	 	=> 200,
+				'count' 	=> $data,
+			)
+		);
 	}
 
 	public function migrate(){

@@ -293,7 +293,7 @@ Ext.define('App.pages.Rs_patient.Main', function(){
 													if (result === true) {
 														Ext.Ajax.request({
 															method: 'post',
-															url: url+"Structure/migrate",
+															url: url+"Structure/count_migrate",
 															waitTitle: 'Connecting',
 															waitMsg: 'Sending data...',
 															params: {
@@ -304,8 +304,11 @@ Ext.define('App.pages.Rs_patient.Main', function(){
 															},
 															success: function(res){
 																var cst = JSON.parse(res.responseText);
-																Ext.Msg.alert("Update", ""+cst.message+"");
-																Variable.getStore(Variable.paramsCriteria, 0, 25);
+																// Ext.Msg.alert("Update", ""+cst.message+"");
+																// Variable.getStore(Variable.paramsCriteria, 0, 25);
+																if (cst.code == 200) {
+																	win.close();
+																}
 															},
 															failure: function(){
 																console.log('failure');

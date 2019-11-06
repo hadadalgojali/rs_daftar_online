@@ -19,6 +19,15 @@ class Pasien extends CI_Model {
 		return $this->database->get();
 	}
 
+	public function count($criteria = null){
+		$this->database->select("count(*) as count");
+		$this->database->from($this->table);
+		if ($criteria !== null && $criteria !== '') {
+			$this->database->where($criteria);
+		}
+		return $this->database->get();
+	}
+
 	public function create($parameter){
 		try {
 			$this->database->insert($this->table, $parameter);
