@@ -9,7 +9,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
     <meta name="author" content="">
 	<title>Pendaftaran Online</title>
 	<?php echo $_include_css; ?>
-	<link href="<?php echo base_url(); ?>/assets/bootstrap/css/step-form-v2.css" rel="stylesheet" type="text/css" />
+	<link href="<?php echo base_url(); ?>/assets/bootstrap/css/step-form.css" rel="stylesheet" type="text/css" />
 	<style type="text/css">
 		.ui-selectmenu-menu .ui-menu {max-height: 160px;}
 	</style>
@@ -82,6 +82,14 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 							</div>
 						</div>
 
+        <form id="msform" action="javascript:;" method="post">
+        <!-- progressbar -->
+        <ul id="progressbar">
+            <li class="active">Pencarian pasien</li>
+            <li>Detail kunjungan</li>
+            <li>Formulir Rujukan</li>
+            <li>Detail informasi</li>
+        </ul>
 <div class="row" style="text-align: left;">
 	<div class="col-md-12 py-2">
 		<div class="card">
@@ -93,191 +101,314 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 <div class="card-body">
 	<div class="row">
 		<div class="col-md-12">
-        <form id="regForm" action="javascript:;" method="post">
-<!-- One "tab" for each step in the form: -->
-<div class="tab">
-	<div class="row">
-		<div class="col-md-12 mb-3">
-			<div class="input-group">
-				<div class="input-group-prepend">
-					<span class="input-group-text" style="width: 100px;">No Medrec</span>
-				</div>
-				<input type="text" class="form-control" id="kd_pasien" name="kd_pasien" placeholder="" value="_-__-__-__" data-mask="_-__-__-__" required>
-			</div>
-		</div>
-		<div class="col-md-12 mb-3" >
-			<div class="input-group">
-				<div class="input-group-prepend">
-					<span class="input-group-text" style="width: 100px;">Tgl Lahir</span>
-				</div>
-				<input type="text" class="form-control" id="tgl_lahir" name="tgl_lahir" value="__-__-____" data-date-format="dd-mm-yyyy" data-mask="__-__-____" required>
-			</div>
-		</div>
-		<div class="col-md-12 mb-3">
-			<div class="input-group">
-				<div class="input-group-prepend">
-					<span class="input-group-text" style="width: 100px;">Nama</span>
-				</div>
-				<input type="text" class="form-control" id="nama" name="nama" required disabled>
-			</div>
-		</div>
-		<div class="col-md-12 mb-3">
-			<div class="input-group">
-				<div class="input-group-prepend">
-					<span class="input-group-text" style="width: 100px;">Alamat</span>
-				</div>
-				<input type="text" class="form-control" id="alamat" required disabled>
-			</div>
-		</div>
-	</div>
-</div>
+			<fieldset>
+				
+										<div class="row">
+											<div class="col-md-6 mb-3">
+												<div class="input-group">
+													<div class="input-group-prepend">
+														<span class="input-group-text" style="width: 100px;">No Medrec</span>
+													</div>
+													<input type="text" class="form-control" id="kd_pasien" name="kd_pasien" placeholder="" value="_-__-__-__" data-mask="_-__-__-__" required>
+												</div>
+											</div>
+											<div class="col-md-6 mb-3" >
+												<div class="input-group">
+													<div class="input-group-prepend">
+														<span class="input-group-text" style="width: 100px;">Tgl Lahir</span>
+													</div>
+													<input type="text" class="form-control" id="tgl_lahir" name="tgl_lahir" value="__-__-____" data-date-format="dd-mm-yyyy" data-mask="__-__-____" required>
+												</div>
+											</div>
+										</div>
+										<div class="row">
+											<div class="col-md-6 mb-3">
+												<div class="input-group">
+													<div class="input-group-prepend">
+														<span class="input-group-text" style="width: 100px;">Nama</span>
+													</div>
+													<input type="text" class="form-control" id="nama" name="nama" required disabled="disabled">
+												</div>
+											</div>
+											<div class="col-md-6 mb-3">
+												<div class="input-group">
+													<div class="input-group-prepend">
+														<span class="input-group-text" style="width: 100px;">Alamat</span>
+													</div>
+													<input type="text" class="form-control" id="alamat" required disabled="disabled">
+												</div>
+											</div>
+										</div>
 
-<div class="tab">
- 	<div class="form-group row">
-		<label for="staticEmail" class="col-sm-3 col-form-label">Penjamin</label>
-		<div class="col-sm-9">
-			<select name="kelompok" id="kelompok" class="form-control"></select>
-		</div>
-	</div>
-	<div class="form-group row" style="display: none;" id="select_jenis_kunjungan">
-		<label for="staticEmail" class="col-sm-3 col-form-label">Jenis Kunj</label>
-		<div class="col-sm-9">
-			<select name="jenis_kunjungan" id="jenis_kunjungan" class="form-control">
-				<option value="1" selected="selected">Episode Baru</option>
-				<option value="2">Episode Lanjutan</option>
-			</select>
-		</div>
-	</div>
-	<div class="form-group row">
-		<label for="inputPassword" class="col-sm-3 col-form-label">Keluhan</label>
-		<div class="col-sm-9">
-			<textarea class="form-control" style="height: 95px;" id="keluhan"></textarea>
-		</div>
-	</div>
-	<div class="form-group row">
-		<label for="inputPassword" class="col-sm-3 col-form-label">Telepon</label>
-		<div class="col-sm-9">
-			<input type="text" class="form-control" id="telepon" name="telepon" required>
-		</div>
-	</div>
-	<div class="form-group row">
-		<label for="staticKlinik" class="col-sm-3 col-form-label">Poliklinik</label>
-		<div class="col-sm-9">
-			<select name="poliklinik" id="poliklinik" class="form-control"></select>
-		</div>
-	</div>
-	<div class="form-group row">
-		<label for="staticDokter" class="col-sm-3 col-form-label">Dokter</label>
-		<div class="col-sm-9">
-			<select name="dokter" id="dokter" class="form-control"></select>
-		</div>
-	</div>
-	<div class="form-group row">
-		<label for="inputTglMasuk" class="col-sm-3 col-form-label">Tanggal</label>
-		<div class="col-sm-9">
-			<input type="text" class="form-control" id="tgl_kunjungan" readonly name="tgl_kunjungan" data-date-format="dd-mm-yyyy" data-mask="__-__-____" value="__-__-____" placeholder="__/__/____" required>
-		</div>
-	</div>
-</div>
-
-<div class="tab">
-	<!-- <div id="form-bpjs" > -->
-	 	<div class="form-group row">
-			<label for="staticEmail" class="col-sm-3 col-form-label">No Rujuk</label>
-			<div class="col-sm-9">
-				<div class="input-group">
-					<input type="text" class="form-control" id="no_rujukan" name="no_rujukan">
-					<div class="input-group-prepend">
-						<button class="btn btn-primary" id="btn_no_rujukan"><span id="check_btn_no_rujukan">Cek</span> <i class="fa fa-spinner fa-spin" style="display: none;" id="check_load_no_rujukan"></i></button>
+										<div class="row">
+											<div class="col-md-12">
+												<div class="input-group">
+			    									<input type="button" name="next" id="btn_next" class="next next action-button" style="margin-right: 5px;" disabled="disabled" value="Next"/>
+													<button class="btn btn-primary" id="btn_search"><i id="btn_load_search" class="fa fa-search"></i> Cari</button>
+												</div>
+											</div>
+										</div>
+			</fieldset>
+            <fieldset>
+            	<div class="form-group row">
+					<label for="staticEmail" class="col-sm-3 col-form-label">Penjamin</label>
+					<div class="col-sm-9">
+						<select name="kelompok" id="kelompok" class="form-control"></select>
 					</div>
 				</div>
-			</div>
-		</div>
-
-	 	<div class="form-group row">
-			<label for="staticEmail" class="col-sm-3 col-form-label">Tgl Rujuk</label>
-			<div class="col-sm-9">
-				<input type="text" class="form-control" id="tgl_rujukan" name="tgl_rujukan" disabled="disabled">
-			</div>
-		</div>
-		
-		<div class="form-group row">
-			<label for="staticEmail" class="col-sm-3 col-form-label">Faskes</label>
-			<div class="col-sm-9">
-				<input type="text" class="form-control" id="faskes" name="faskes" disabled="disabled">
-			</div>
-		</div>
-
-		<div class="form-group row">
-			<label for="staticEmail" class="col-sm-3 col-form-label">Kelas</label>
-			<div class="col-sm-9">
-				<input type="text" class="form-control" id="kelas" name="kelas" disabled="disabled">
-			</div>
-		</div>
-		<div class="form-group row">
-			<label for="staticEmail" class="col-sm-3 col-form-label">Diagnosa</label>
-			<div class="col-sm-9">
-				<input type="text" class="form-control" id="diagnosa" name="diagnosa" disabled="disabled">
-			</div>
-		</div>
-		<div class="form-group row">
-			<label for="staticEmail" class="col-sm-3 col-form-label">Klinik Rujukan</label>
-			<div class="col-sm-9">
-				<input type="text" class="form-control" id="klinik_rujukan" name="klinik_rujukan" disabled="disabled">
-			</div>
-		</div>
-		<div class="form-group row">
-			<label for="staticEmail" class="col-sm-3 col-form-label">Pemberi surat</label>
-			<div class="col-sm-9">
-				<select id="pemberi_surat" class="form-control"></select>
-			</div>
-		</div>
-	<!-- </div> -->
-</div>
-
-<div class="tab">
-	<div class="form-group row">
-		<label for="inputTglMasuk" class="col-sm-3 col-form-label"><?php echo $image_captcha; ?></label>
-		<div class="col-sm-9"><input type="text" class="form-control" id="captcha" name="captcha"></div>
-	</div>
-	<div class="alert alert-success" role="alert">
-		<table>
-			<tr>
-				<td width="120">Hari/ Tanggal</td>
-				<td>: <span id="ket_tgl_checkin"><?php echo date('d-m-Y'); ?></span></td>
-			</tr>
-			<tr>
-				<td>Jam Checkin</td>
-				<td>: <span id="ket_jam_checkin"><?php echo $check_in_at." - ".$check_in_to; ?></span></td>
-			</tr>
-			<tr>
-				<td>Klinik</td>
-				<td>: <span id="ket_klinik"></span></td>
-			</tr>
-		</table>
-	</div>
-</div>
-
-<div style="overflow:auto;">
-  <div style="float:right;">
-    <button type="button" id="prevBtn" class="btn btn-default" onclick="nextPrev(-1)">Previous</button>
-    <button type="button" id="nextBtn" class="btn btn-primary" onclick="nextPrev(1)">Next</button>
-    <button class="btn btn-primary" id="btn_search"><i id="btn_load_search" class="fa fa-search"></i> Cari</button>
-	<button class ="btn btn-primary" id="btn_save"><i class="fa fa-save" id="btn_load_save"></i> Simpan</button>
-  </div>
-</div>
-
-<!-- Circles which indicates the steps of the form: -->
-<div style="text-align:center;margin-top:40px;">
-  <span class="step"></span>
-  <span class="step"></span>
-  <span class="step"></span>
-  <span class="step"></span>
-</div>
-        </form>
+				<div class="form-group row" style="display: none;" id="select_jenis_kunjungan">
+					<label for="staticEmail" class="col-sm-3 col-form-label">Jenis Kunj</label>
+					<div class="col-sm-9">
+						<select name="jenis_kunjungan" id="jenis_kunjungan" class="form-control">
+							<option value="1" selected="selected">Episode Baru</option>
+							<option value="2">Episode Lanjutan</option>
+						</select>
+					</div>
+				</div>
+				<div class="form-group row">
+					<label for="inputPassword" class="col-sm-3 col-form-label">Keluhan</label>
+					<div class="col-sm-9">
+						<textarea class="form-control" style="height: 95px;" id="keluhan"></textarea>
+					</div>
+				</div>
+				<div class="form-group row">
+					<label for="inputPassword" class="col-sm-3 col-form-label">Telepon</label>
+					<div class="col-sm-9">
+						<input type="text" class="form-control" id="telepon" name="telepon" required>
+					</div>
+				</div>
+				<div class="form-group row">
+					<label for="staticKlinik" class="col-sm-3 col-form-label">Poliklinik</label>
+					<div class="col-sm-9">
+						<select name="poliklinik" id="poliklinik" class="form-control"></select>
+					</div>
+				</div>
+				<div class="form-group row">
+					<label for="staticDokter" class="col-sm-3 col-form-label">Dokter</label>
+					<div class="col-sm-9">
+						<select name="dokter" id="dokter" class="form-control"></select>
+					</div>
+				</div>
+				<div class="form-group row">
+					<label for="inputTglMasuk" class="col-sm-3 col-form-label">Tanggal</label>
+					<div class="col-sm-9">
+						<input type="text" class="form-control" id="tgl_kunjungan" readonly name="tgl_kunjungan" data-date-format="dd-mm-yyyy" data-mask="__-__-____" value="__-__-____" placeholder="__/__/____" required>
+					</div>
+				</div>
+			    <input type="button" name="next" class="next action-button" value="Next"/>
+            </fieldset>
+            <fieldset>
+				<div class="col-md-12" id="form-bpjs" >
+					<div class="form-group row">
+						<label class="col-sm-4 col-form-label">No Rujuk</label>
+						<div class="col-sm-8">
+							<div class="input-group">
+								<input type="text" class="form-control" id="no_rujukan" name="no_rujukan">
+								<div class="input-group-prepend">
+									<button class="btn btn-primary" id="btn_no_rujukan"><span id="check_btn_no_rujukan">Cek</span> <i class="fa fa-spinner fa-spin" style="display: none;" id="check_load_no_rujukan"></i></button>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="form-group row">
+						<label class="col-sm-4 col-form-label">Tgl Rujuk</label>
+						<div class="col-sm-8">
+							<input type="text" class="form-control" id="tgl_rujukan" name="tgl_rujukan" readonly>
+						</div>
+					</div>
+					<div class="form-group row">
+						<label class="col-sm-4 col-form-label">Faskes</label>
+						<div class="col-sm-8">
+							<input type="text" class="form-control" id="faskes" name="faskes" readonly>
+						</div>
+					</div>
+					<div class="form-group row">
+						<label class="col-sm-4 col-form-label">Kelas</label>
+						<div class="col-sm-8">
+							<input type="text" class="form-control" id="kelas" name="kelas" readonly>
+						</div>
+					</div>
+					<div class="form-group row">
+						<label class="col-sm-4 col-form-label">Diagnosa</label>
+						<div class="col-sm-8">
+							<input type="text" class="form-control" id="diagnosa" name="diagnosa" readonly>
+						</div>
+					</div>
+					<div class="form-group row">
+						<label class="col-sm-4 col-form-label">Klinik Rujukan</label>
+						<div class="col-sm-8">
+							<input type="text" class="form-control" id="klinik_rujukan" name="klinik_rujukan" readonly>
+						</div>
+					</div>
+					<div class="form-group row">
+						<label class="col-sm-4 col-form-label">Pemberi surat</label>
+						<div class="col-sm-8">
+							<select id="pemberi_surat" class="form-control"></select>
+						</div>
+					</div>
+				</div>
+			    <input type="button" name="previous" class="previous action-button-previous" value="Previous"/>
+			    <input type="button" name="next" class="next action-button" value="Next"/>
+            </fieldset>
+            <fieldset>
+				<div class="form-group row">
+					<label for="inputTglMasuk" class="col-sm-3 col-form-label"><?php echo $image_captcha; ?></label>
+					<div class="col-sm-9"><input type="text" class="form-control" id="captcha" name="captcha"></div>
+				</div>
+				<div class="alert alert-success" role="alert">
+					<table>
+						<tr>
+							<td width="120">Hari/ Tanggal</td>
+							<td>: <span id="ket_tgl_checkin"><?php echo date('d-m-Y'); ?></span></td>
+						</tr>
+						<tr>
+							<td>Jam Checkin</td>
+							<td>: <span id="ket_jam_checkin"><?php echo $check_in_at." - ".$check_in_to; ?></span></td>
+						</tr>
+						<tr>
+							<td>Klinik</td>
+							<td>: <span id="ket_klinik"></span></td>
+						</tr>
+					</table>
+				</div>
+                <input type="button" name="previous" class="previous action-button-previous" value="Previous"/>
+                <button class="btn btn-primary" id="btn_save"><i class="fa fa-save" id="btn_load_save"></i> Simpan</button>
+            </fieldset>
         </div>
     </div>
 </div>
+        </form>
+									<!-- <div class="card-body">
+										<div class="row">
+											<div class="col-md-6">
+												<div class="form-group row">
+													<label for="staticEmail" class="col-sm-3 col-form-label">Penjamin</label>
+													<div class="col-sm-9">
+														<select name="kelompok" id="kelompok" class="form-control"></select>
+													</div>
+												</div>
+												<div class="form-group row" style="display: none;" id="select_jenis_kunjungan">
+													<label for="staticEmail" class="col-sm-3 col-form-label">Jenis Kunj</label>
+													<div class="col-sm-9">
+														<select name="jenis_kunjungan" id="jenis_kunjungan" class="form-control">
+															<option value="1" selected="selected">Episode Baru</option>
+															<option value="2">Episode Lanjutan</option>
+														</select>
+													</div>
+												</div>
+												<div class="form-group row">
+													<label for="inputPassword" class="col-sm-3 col-form-label">Keluhan</label>
+													<div class="col-sm-9">
+														<textarea class="form-control" style="height: 95px;" id="keluhan"></textarea>
+													</div>
+												</div>
+												<div class="form-group row">
+													<label for="inputPassword" class="col-sm-3 col-form-label">Telepon</label>
+													<div class="col-sm-9">
+														<input type="text" class="form-control" id="telepon" name="telepon" required>
+													</div>
+												</div>
+												<div class="form-group row">
+													<label for="staticKlinik" class="col-sm-3 col-form-label">Poliklinik</label>
+													<div class="col-sm-9">
+														<select name="poliklinik" id="poliklinik" class="form-control"></select>
+													</div>
+												</div>
+												<div class="form-group row">
+													<label for="staticDokter" class="col-sm-3 col-form-label">Dokter</label>
+													<div class="col-sm-9">
+														<select name="dokter" id="dokter" class="form-control"></select>
+													</div>
+												</div>
+												<div class="form-group row">
+													<label for="inputTglMasuk" class="col-sm-3 col-form-label">Tanggal</label>
+													<div class="col-sm-9">
+														<input type="text" class="form-control" id="tgl_kunjungan" readonly name="tgl_kunjungan" data-date-format="dd-mm-yyyy" data-mask="__-__-____" value="__-__-____" placeholder="__/__/____" required>
+													</div>
+												</div>
+												<div class="form-group">
+													<table width="100%">
+														<tr>
+															<td><?php echo $image_captcha; ?></td>
+															<td><input type="text" class="form-control" id="captcha" name="captcha"></td>
+														</tr>
+													</table>
+												</div>
+											</div>
+
+
+											<div class="col-md-6" id="form-bpjs" style="display: none;">
+												<div class="form-group row">
+													<label class="col-sm-4 col-form-label">No Rujuk</label>
+													<div class="col-sm-8">
+														<div class="input-group">
+															<input type="text" class="form-control" id="no_rujukan" name="no_rujukan">
+															<div class="input-group-prepend">
+																<button class="btn btn-primary" id="btn_no_rujukan"><span id="check_btn_no_rujukan">Cek</span> <i class="fa fa-spinner fa-spin" style="display: none;" id="check_load_no_rujukan"></i></button>
+															</div>
+														</div>
+													</div>
+												</div>
+												<div class="form-group row">
+													<label class="col-sm-4 col-form-label">Tgl Rujuk</label>
+													<div class="col-sm-8">
+														<input type="text" class="form-control" id="tgl_rujukan" name="tgl_rujukan" readonly>
+													</div>
+												</div>
+												<div class="form-group row">
+													<label class="col-sm-4 col-form-label">Faskes</label>
+													<div class="col-sm-8">
+														<input type="text" class="form-control" id="faskes" name="faskes" readonly>
+													</div>
+												</div>
+												<div class="form-group row">
+													<label class="col-sm-4 col-form-label">Kelas</label>
+													<div class="col-sm-8">
+														<input type="text" class="form-control" id="kelas" name="kelas" readonly>
+													</div>
+												</div>
+												<div class="form-group row">
+													<label class="col-sm-4 col-form-label">Diagnosa</label>
+													<div class="col-sm-8">
+														<input type="text" class="form-control" id="diagnosa" name="diagnosa" readonly>
+													</div>
+												</div>
+												<div class="form-group row">
+													<label class="col-sm-4 col-form-label">Klinik Rujukan</label>
+													<div class="col-sm-8">
+														<input type="text" class="form-control" id="klinik_rujukan" name="klinik_rujukan" readonly>
+													</div>
+												</div>
+												<div class="form-group row">
+													<label class="col-sm-4 col-form-label">Pemberi surat</label>
+													<div class="col-sm-8">
+														<select id="pemberi_surat" class="form-control"></select>
+													</div>
+												</div>
+											</div>
+										</div>
+
+										<div class="alert alert-success" role="alert">
+											<table>
+												<tr>
+													<td width="120">Hari/ Tanggal</td>
+													<td>: <span id="ket_tgl_checkin"><?php echo date('d-m-Y'); ?></span></td>
+												</tr>
+												<tr>
+													<td>Jam Checkin</td>
+													<td>: <span id="ket_jam_checkin"><?php echo $check_in_at." - ".$check_in_to; ?></span></td>
+												</tr>
+												<tr>
+													<td>Klinik</td>
+													<td>: <span id="ket_klinik"></span></td>
+												</tr>
+											</table>
+										</div>
+										<div class="form-group">
+											<button class="btn btn-primary" id="btn_save"><i class="fa fa-save" id="btn_load_save"></i> Simpan</button>
+										</div>
+
+									</div> -->
 								</div>
 							</div>
 						</div>
@@ -313,7 +444,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 	<?php echo $_footer; ?>
 	<?php echo $_include_js; ?>
 	<!-- <script src="http://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.3.0/js/bootstrap-datepicker.js"></script> -->
-	<script type="text/javascript" src="<?php echo base_url(); ?>/assets/bootstrap/js/step-form-v2.js"></script>
+	<script type="text/javascript" src="<?php echo base_url(); ?>/assets/bootstrap/js/step-form.js"></script>
 	<script type="text/javascript">
 		Array.prototype.forEach.call(document.body.querySelectorAll("*[data-mask]"), applyDataMask);
 
@@ -561,17 +692,11 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 					document.getElementById('select_jenis_kunjungan').style.display = '';
 					// document.getElementById('form-bpjs').style.display = '';
 					// $("#form-bpjs *").enable();
-					// $('#form-bpjs *').prop('disabled',false);
-					$('#no_rujukan').prop('disabled',false);
-					$('#pemberi_surat').prop('disabled',false);
-					$('#btn_no_rujukan').prop('disabled',false);
+					$('#form-bpjs *').prop('disabled',false);
 				}else{
 					document.getElementById('select_jenis_kunjungan').style.display = 'none';
 					// $("#form-bpjs *").disable();
-					// $('#form-bpjs *').prop('disabled',true);
-					$('#no_rujukan').prop('disabled',true);
-					$('#pemberi_surat').prop('disabled',true);
-					$('#btn_no_rujukan').prop('disabled',true);
+					$('#form-bpjs *').prop('disabled',true);
 					// document.getElementById('form-bpjs').style.display = 'none';
 
 					_rujukan.kd_kelas 		= "";
