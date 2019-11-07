@@ -43,15 +43,17 @@ class Structure extends CI_Controller {
 		);
 
 		$this->Pasien->set_database($this->load->database('second', TRUE));
-		$query = $this->Pasien->count();
+		$query = $this->Pasien->get(" kd_pasien ");
 		if ($query->num_rows() > 0) {
-			$data = $query->row()->count;
+			$data = $query->result();
 		}
+		
 		echo json_encode(
 			array(
 				'status' 	=> $result,
 				'code' 	 	=> 200,
-				'count' 	=> $data,
+				'data' 		=> $data,
+				'count'		=> count($data),
 			)
 		);
 	}

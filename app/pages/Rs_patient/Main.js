@@ -308,6 +308,21 @@ Ext.define('App.pages.Rs_patient.Main', function(){
 																// Variable.getStore(Variable.paramsCriteria, 0, 25);
 																if (cst.code == 200) {
 																	win.close();
+																	Ext.create('App.pages.Rs_patient.Process_migrate',{
+																		fbar 	: [
+																			{
+																				xtype 	: 'textfield',
+																				readOnly: true,
+																			}
+																		],
+																		listeners: {
+																			show: function(thisForm){
+																				console.log(thisForm);
+																				thisForm.dockedItems.items[1].items.items[0].setValue("0/"+cst.count);
+																				// thisForm.items.items[0].setValue("0/"+cst.count);
+																			},
+																		}
+																	}).show()
 																}
 															},
 															failure: function(){
@@ -324,7 +339,6 @@ Ext.define('App.pages.Rs_patient.Main', function(){
 													win.close();
 												}
 											}
-
 										]
 									}).show();
 								}
