@@ -450,7 +450,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 		var getnow     = new Date();
 		var hrs_now = getnow.getHours() < 10 ? "0" + getnow.getHours() : getnow.getHours();
 		var mnt_now = getnow.getMinutes() < 10 ? "0" + getnow.getMinutes() : getnow.getMinutes();
-
+		var capthca = $('#captcha').val();
 		$("#btn_save").click(function(){
 			if($('#kd_pasien').val() == "_-__-__-__" && $('#tgl_lahir').val() == "__-__-____"){
 				$.toast({
@@ -468,7 +468,9 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 					position: 'top-right',
 				});
 				status_.check_validasi = false;
-			}else if($('#captcha').val() !== "<?php echo $word_captcha; ?>"){
+			}else if($('#captcha').val().toLowerCase() !== "<?php echo strtolower($word_captcha); ?>"){
+				console.log($('#captcha').val().toLowerCase());
+				console.log("<?php echo strtolower($word_captcha); ?>");
 				$.toast({
 					heading: 'Infomasi',
 					text: 'Captcha salah, silahkan ulangi kembali',
