@@ -43,7 +43,7 @@ class Structure extends CI_Controller {
 		);
 
 		$this->Pasien->set_database($this->load->database('second', TRUE));
-		$query = $this->Pasien->get(" kd_pasien ");
+		$query = $this->Pasien->get($this->input->post('field')." as id ");
 		if ($query->num_rows() > 0) {
 			$data = $query->result();
 		}
@@ -56,6 +56,13 @@ class Structure extends CI_Controller {
 				'count'		=> count($data),
 			)
 		);
+	}
+
+	public function migrate_data(){
+		$response = array();
+		$response['code'] 	= 200;
+		$response['status'] = true;
+		echo json_encode($response);
 	}
 
 	public function migrate(){

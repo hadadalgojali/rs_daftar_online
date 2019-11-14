@@ -13,7 +13,11 @@ Ext.define('App.pages.Rs_patient.Process_migrate',function(){
       items: [
         {
             xtype: 'progressbar',
-            value: 0.4
+            value: 0.0
+        },
+        {
+            xtype: 'progressbar',
+            value: 0.0
         },
       ],
     	initComponent:function(){

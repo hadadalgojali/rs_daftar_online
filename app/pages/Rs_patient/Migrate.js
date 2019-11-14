@@ -1,6 +1,6 @@
 Ext.define('App.pages.Rs_patient.Migrate',function(){
     var Variable  = {};
-
+    
     Variable.storeObjTablePrimary   = Ext.create('App.store.Table_structure');
     Variable.storeObjTableSecondary = Ext.create('App.store.Table_structure');
     Variable.storeCMBTablePrimary   = Ext.create('App.store.Table_structure');

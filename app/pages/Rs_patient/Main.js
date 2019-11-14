@@ -301,6 +301,7 @@ Ext.define('App.pages.Rs_patient.Main', function(){
 																default 		: JSON.stringify(variabel.default),
 																db_second 		: 'pasien',
 																db_default 		: 'rs_patient',
+																field 			: 'kd_pasien',
 															},
 															success: function(res){
 																var cst = JSON.parse(res.responseText);
@@ -313,6 +314,37 @@ Ext.define('App.pages.Rs_patient.Main', function(){
 																			{
 																				xtype 	: 'textfield',
 																				readOnly: true,
+																			},
+																			{
+																				xtype 	: 'button',
+																				text 	: 'Migrate',
+																				handler : function(){
+																					try{
+																						for (var i = 0; i < cst.data.length; i++) {
+																							setTimeout(
+																								function() {
+																									// new Promise () => {
+																										(async () => {
+																											let rawResponse = await fetch(url+'Structure/migrate_data', {
+																												method: 'POST',
+																												body: JSON.stringify({
+																													field: 'kd_pasien', 
+																													id: cst.data[i].id, 
+																													db_second : 'pasien',
+																													db_default : 'rs_patient',
+																												})
+																											});
+																											rawResponse     = await rawResponse.json();
+																											console.log(rawResponse);
+																										})();
+																									// }
+																								}
+																							, 1000);
+																						}
+																					}catch (error) {
+																						console.log(error);
+																					}
+																				}
 																			}
 																		],
 																		listeners: {
