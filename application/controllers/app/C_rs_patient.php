@@ -17,7 +17,6 @@ class C_rs_patient extends CI_Controller {
 
 	public function get($criteria = null){
 		$this->Rs_patient->set_database($this->load->database('default',TRUE));
-
 		$result = $this->Rs_patient->get("*", $this->input->get('params'), $this->input->get('limit'), $this->input->get('start'));
 		echo json_encode(
 			array(
