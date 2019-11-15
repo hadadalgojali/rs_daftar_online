@@ -62,6 +62,80 @@ class Structure extends CI_Controller {
 		$response = array();
 		$response['code'] 	= 200;
 		$response['status'] = true;
+		$parameter = array(
+			'key_second' 	=> $this->input->post('key_second'),
+			'key_default' 	=> $this->input->post('key_first'),
+			'id' 			=> $this->input->post('id'),
+			'second' 		=> $this->input->post('db_second'),
+			'default' 		=> $this->input->post('db_default'),
+			'field_second' 	=> $this->input->post('field_second'),
+			'field_default' => $this->input->post('field_first'),
+		);
+		$parameter['json_field_second'] 	= explode(",", $parameter['field_second']);
+		$parameter['json_field_default'] 	= explode(",", $parameter['field_default']);
+
+		$this->M_structure->set_database($this->load->database('second', TRUE));
+		$second = $this->M_structure->get_data(str_replace("'", "", $parameter['field_second']), $parameter['second'], array( $parameter['key_second'] => $parameter['id']));
+
+		if ($second->num_rows() > 0) {
+			foreach ($second->result_array() as $key => $value) {
+				$params = array();
+				for ($i=0; $i < count($parameter['json_field_second']); $i++) { 
+					$params[str_replace("'", "",$parameter['json_field_default'][$i])] = $value[str_replace("'", "",$parameter['json_field_second'][$i])];
+					// echo $parameter['json_field_second'][$i]."<br>";
+					// var_dump($value);
+					// echo $value[str_replace("'", "",$parameter['json_field_second'][$i])]."<br>";
+				}
+
+				// die;
+				$this->M_structure->set_database($this->load->database('default', TRUE));
+				$default = $this->M_structure->get_data("*", $parameter['default'], array( $parameter['key_default'] => $parameter['id']));
+				if ($default->num_rows() == 0) {
+					$default = $this->M_structure->get(" WHERE TABLE_NAME = '".$parameter['default']."' AND COLUMN_NAME not in (".$parameter['field_default'].")", " DISTINCT(COLUMN_NAME) as column_name, DATA_TYPE as data_type, COLUMN_KEY as column_key ");
+					if ($default->num_rows() > 0) {
+						if ($default->row()->column_key  == "PRI") {
+							$params[$default->row()->column_name] = (int)$this->get_last_id($parameter['default'], $default->row()->column_name) + 1;
+						}
+
+						if(strtoupper($default->row()->data_type)  == "DATE"){
+							$params[$default->row()->column_name] = date_format(date_create($params[$default->row()->column_name]), 'Y-m-d');
+							// echo $params[$default->row()->column_name]."<br>";die;
+						}
+
+						if (!in_array($default->row()->column_name, str_replace("'", "",$parameter['json_field_default']))) {
+							if ($default->row()->data_type  == "BIT" || $default->row()->data_type  == "INT" || $default->row()->data_type  == "INTEGER" || $default->row()->data_type  == "FLOAT") {
+								$params[$default->row()->column_name] = 0;
+							}else if($default->row()->data_type  == "STRING" || $default->row()->data_type  == "VARCHAR" || $default->row()->data_type  == "CHARACTER VARYING" || $default->row()->data_type  == "CHAR"){
+								$params[$default->row()->column_name] = "";
+							}else if($default->row()->data_type  == "DATE")
+								$params[$default->row()->column_name] = "0000-00-00";{
+							}
+						}
+					}
+
+					$default = $this->M_structure->get(" WHERE TABLE_NAME = '".$parameter['default']."' AND COLUMN_NAME in (".$parameter['field_default'].")", " DISTINCT(COLUMN_NAME) as column_name, DATA_TYPE as data_type, COLUMN_KEY as column_key ");
+					if ($default->num_rows() > 0) {
+						foreach ($default->result() as $res) {
+							if(strtoupper($res->data_type)  == "DATE"){
+								$params[$res->column_name] = date_format(date_create($params[$res->column_name]), 'Y-m-d');
+							}
+						}
+					}
+
+					// var_dump($params);
+					if ($this->M_structure->insert($parameter['default'], $params) == 0) {
+						$result = false;
+						break;
+					}else{
+						$result = true;
+					}
+				}
+				// var_dump($params);
+			}
+		}
+
+		// $this->M_structure->set_database($this->load->database('second', TRUE));
+
 		echo json_encode($response);
 	}
 

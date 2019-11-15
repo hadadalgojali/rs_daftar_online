@@ -15,8 +15,6 @@ class Pasien extends CI_Model {
 			$this->database->where($criteria);
 		}
 		$this->database->order_by('nama', $order_by);
-		$this->database->limit(100);
-
 		return $this->database->get();
 	}
 

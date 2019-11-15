@@ -15,10 +15,6 @@ Ext.define('App.pages.Rs_patient.Process_migrate',function(){
             xtype: 'progressbar',
             value: 0.0
         },
-        {
-            xtype: 'progressbar',
-            value: 0.0
-        },
       ],
     	initComponent:function(){
     		this.callParent();

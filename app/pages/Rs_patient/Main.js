@@ -1,5 +1,7 @@
 Ext.define('App.pages.Rs_patient.Main', function(){
 	var Variable = {};
+	let http = new XMLHttpRequest();
+	let url_migrate = url+'Structure/migrate_data';
 	Variable.storeobj = Ext.create('App.store.Rs_patient');
 	Variable.getStore = function(params, start, limit){
 		Variable.storeobj.removeAll();
@@ -22,6 +24,34 @@ Ext.define('App.pages.Rs_patient.Main', function(){
 	Variable.pagging.currentPage = 1;
 	Variable.pagging.limit 			 = 25;
 	Variable.pagging.totalPage   = 25;
+	Variable.wait = function(ms) {
+		return new Promise(r => setTimeout(r, ms));
+	}
+
+	Variable.XHRpost = function(i, params, panel) {
+		return new Promise(function(resolve) {
+			http.open('POST', url_migrate, true);
+			http.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+			http.onreadystatechange = function() {
+				if(http.readyState == 4){
+					var tmp_done = panel.dockedItems.items[1].items.items[0].getValue();
+					tmp_done = tmp_done.split("/");
+					tmp_done[0] = (i+1);
+					panel.dockedItems.items[1].items.items[0].setValue(tmp_done[0]+"/"+tmp_done[1]);
+					var nilai_1 = parseInt(tmp_done[0]);
+					var nilai_2 = parseInt(tmp_done[1]);
+					var hasil 	= 0;
+					parseFloat(hasil);
+					hasil = nilai_1/nilai_2;
+
+					panel.items.items[0].setValue(hasil);
+					resolve();
+				}
+			}
+			http.send(params);     
+		});
+	}
+
 	return {
 		extend : 'App.cmp.Panel',
 		layout :'fit',
@@ -318,29 +348,47 @@ Ext.define('App.pages.Rs_patient.Main', function(){
 																			{
 																				xtype 	: 'button',
 																				text 	: 'Migrate',
-																				handler : function(){
+																				handler : function(btn){
+																					var win = btn.up('window');
+																					console.log(win);
 																					try{
-																						for (var i = 0; i < cst.data.length; i++) {
-																							setTimeout(
-																								function() {
-																									// new Promise () => {
-																										(async () => {
-																											let rawResponse = await fetch(url+'Structure/migrate_data', {
-																												method: 'POST',
-																												body: JSON.stringify({
-																													field: 'kd_pasien', 
-																													id: cst.data[i].id, 
-																													db_second : 'pasien',
-																													db_default : 'rs_patient',
-																												})
-																											});
-																											rawResponse     = await rawResponse.json();
-																											console.log(rawResponse);
-																										})();
-																									// }
-																								}
-																							, 1000);
+																						// for (var i = 0; i < cst.data.length; i++) {
+																							// (async () => {
+																								// let rawResponse = await fetch(url+'Structure/migrate_data', {
+																									// method: 'POST',
+																									// body: JSON.stringify({
+																										// field: 'kd_pasien', 
+																										// id: cst.data[i].id, 
+																										// db_second : 'pasien',
+																										// db_default : 'rs_patient',
+																									// })
+																								// });
+																								// rawResponse     = await rawResponse.json();
+																								// Variable.wait(3000);
+																								// console.log(rawResponse);
+																							// })();
+																						// }
+																						var tmp_params_sec = "";
+																						for (var i = 0; i < variabel.second.length; i++) {
+																							tmp_params_sec += "'"+variabel.second[i]+"',";
 																						}
+																						tmp_params_sec = tmp_params_sec.substring(0, tmp_params_sec.length - 1);
+
+																						var tmp_params_def = "";
+																						for (var i = 0; i < variabel.default.length; i++) {
+																							tmp_params_def += "'"+variabel.default[i]+"',";
+																						}
+																						tmp_params_def = tmp_params_def.substring(0, tmp_params_def.length - 1);
+
+
+																						(async () => {
+																							for (var i = 0; i < cst.data.length; i++) {
+																								var tmp_params = "";
+																								tmp_params = "key_second=kd_pasien&key_first=patient_code&id="+cst.data[i].id+"&db_second=pasien&db_default=rs_patient&field_second="+tmp_params_sec+"&field_first="+tmp_params_def;
+																								await Variable.XHRpost(i, tmp_params, win);
+																							}
+																						})();
+
 																					}catch (error) {
 																						console.log(error);
 																					}
