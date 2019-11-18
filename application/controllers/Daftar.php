@@ -20,10 +20,10 @@ class Daftar extends CI_Controller {
 		include('./config.php');
 		$response = array();
 		$response['data_rs'] = $conf_db['rs'];
-		$this->load->view('pages/registrasi/lama', $response);
+		$this->load->view('pages/lama', $response);
 	}
 
-	public function registrasi($page = null){
+	public function lama(){
 		include('./config.php');
 		$response = array();
 		$response['data_rs'] = $conf_db['rs'];
@@ -60,7 +60,7 @@ class Daftar extends CI_Controller {
 		$response['word_captcha'] 	= $cap['word'];
 
 		// echo json_encode($cap);die;
-		$this->load->view('pages/registrasi/'.$page, $response);
+		$this->load->view('pages/registrasi/lama', $response);
 	}
 
 	public function search_patient(){

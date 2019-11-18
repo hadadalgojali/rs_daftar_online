@@ -27,17 +27,29 @@ class Checkin extends CI_Controller {
 		$response['code'] 	= 200;
 		$response['message']= "";
 		$this->Rs_visit->set_database($this->load->database('default',TRUE));
-		$query = $this->Rs_visit->get_with_relation(" rs_patient.patient_code ", array(
+		$query = $this->Rs_visit->get_with_relation(" * ", array(
 			'rs_visit.no_pendaftaran' => $this->input->post('no_pendaftaran'),
+			'rs_visit.entry_date' => date("Y-m-d"),
 		));
 		if ($query->num_rows() > 0) {
-			$this->load->view('pages/checkin/step2-review', $query->result());
+			$this->load->view('pages/checkin/step2-review', array(
+				'data' => $query,
+			));
 		}else{
 			$response['status'] = false;
 			$response['code'] 	= 401;
 			$response['message']= "Data tidak ditemukan";
 			$this->load->view('pages/checkin/step1-search', $response);
 		}
+	}
+
+	public function confirm_form(){
+		$response = array();
+		$response['status'] = true;
+		$response['code'] 	= 200;
+		$response['message']= "";
+		$response['no_pendaftaran'] = $this->input->post('no_pendaftaran');
+		$this->load->view('pages/checkin/step3-confirmation', $response);
 	}
 
 	public function search_form(){

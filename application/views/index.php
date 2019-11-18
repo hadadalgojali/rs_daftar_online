@@ -56,7 +56,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 									</div>
 									<div class="card-body">
 										Untuk pasien yang <u>sudah memiliki nomer rekam medis</u> di <b><?php echo strtoupper($data_rs['name']); ?></b>.<br>
-										<a href="<?php echo base_url(); ?>daftar/registrasi/lama" class="btn btn-primary btn-sm">Lanjut daftar pasien lama</a>
+										<a href="<?php echo base_url(); ?>daftar/lama" class="btn btn-primary btn-sm">Lanjut daftar pasien lama</a>
 									</div>
 								</div>
 							</div>
