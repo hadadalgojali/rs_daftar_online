@@ -20,10 +20,12 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 		var parameter 	= {};
 		var _rujukan 	= {};
 		_rujukan.kd_kelas 		= "";
+		_rujukan.no_kartu 		= "";
 		_rujukan.kd_poli 		= "";
 		_rujukan.kd_diagnosa 	= "";
 		_rujukan.rujukan 		= "";
 		_rujukan.faskes 		= "";
+		_rujukan.kd_faskes 		= "";
 		_rujukan.tgl_rujukan 	= "";
 		_rujukan.kd_dpjp 		= "";
 
@@ -400,12 +402,14 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 						$('#diagnosa').val(data.response.rujukan.diagnosa.kode+"-"+data.response.rujukan.diagnosa.nama);
 						$('#klinik_rujukan').val(data.response.rujukan.poliRujukan.kode+"-"+data.response.rujukan.poliRujukan.nama);
 
-						_rujukan.kd_kelas 	= data.response.rujukan.peserta.hakKelas.kode;
-						_rujukan.kd_poli 	= data.response.rujukan.poliRujukan.kode;
-						_rujukan.kd_diagnosa = data.response.rujukan.diagnosa.kode;
-						_rujukan.rujukan 	= $('#no_rujukan').val();
-						_rujukan.faskes 		= data.response.rujukan.provPerujuk.kode;
-						_rujukan.tgl_rujukan = data.response.rujukan.tglKunjungan;
+						_rujukan.kd_kelas 		= data.response.rujukan.peserta.hakKelas.kode;
+						_rujukan.no_kartu 		= data.response.rujukan.peserta.noKartu;
+						_rujukan.kd_poli 		= data.response.rujukan.poliRujukan.kode;
+						_rujukan.kd_diagnosa 	= data.response.rujukan.diagnosa.kode;
+						_rujukan.rujukan 		= $('#no_rujukan').val();
+						_rujukan.kd_faskes 		= data.response.rujukan.provPerujuk.kode;
+						_rujukan.faskes 		= data.response.rujukan.provPerujuk.nama;
+						_rujukan.tgl_rujukan 	= data.response.rujukan.tglKunjungan;
 						// rujukan.kd_dpjp 	= "";
 
 				    	$.ajax({
@@ -559,7 +563,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
 				parameter.penjamin  		= ui.item.value;
 				if (ui.item.value == '0000000002' || ui.item.value == '0000000009'){
-					parameter.jenis_penjamin = "0";
+					parameter.jenis_penjamin = "1";
 					document.getElementById('select_jenis_kunjungan').style.display = '';
 					// document.getElementById('form-bpjs').style.display = '';
 					// $("#form-bpjs *").enable();
@@ -568,6 +572,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 					$('#pemberi_surat').prop('disabled',false);
 					$('#btn_no_rujukan').prop('disabled',false);
 				}else{
+					parameter.jenis_penjamin = "0";
 					document.getElementById('select_jenis_kunjungan').style.display = 'none';
 					// $("#form-bpjs *").disable();
 					// $('#form-bpjs *').prop('disabled',true);

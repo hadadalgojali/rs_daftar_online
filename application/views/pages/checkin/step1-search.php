@@ -30,6 +30,24 @@
 </div>
 <script src="<?php echo base_url()?>assets/Keyboard-master/js/jquery.keyboard.min.js"></script>
 <script type="text/javascript">
+	if ('<?php echo $code; ?>' !== "200") {
+		$.toast({
+			heading: 'Infomasi',
+			text: '<?php echo $message; ?>',
+			icon: 'warning',
+			position: 'top-right',
+		});
+	}else{
+		if ('<?php echo $message; ?>' !== "") {
+			$.toast({
+				heading: 'Infomasi',
+				text: '<?php echo $message; ?>',
+				icon: 'success',
+				position: 'top-right',
+			});
+		}
+	}
+
 	$('#nomorPendaftaran').keyboard({
 		layout: 'custom',
 		customLayout : {

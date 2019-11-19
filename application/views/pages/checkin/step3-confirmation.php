@@ -34,7 +34,7 @@
 	$("#btn_check_in-3").click(function(){
 		$.ajax({
 			type: "POST", 
-			url: "<?php echo base_url(); ?>"+"checkin/confirm",
+			url: "<?php echo base_url(); ?>"+"checkin/process",
 			data: { no_pendaftaran : "<?php echo $no_pendaftaran; ?>" }, 
 			success: function(response) {
 				$("#main").html(response);
