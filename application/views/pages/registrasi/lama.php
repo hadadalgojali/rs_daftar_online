@@ -24,7 +24,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 		_rujukan.kd_poli 		= "";
 		_rujukan.kd_diagnosa 	= "";
 		_rujukan.rujukan 		= "";
-		_rujukan.faskes 		= "";
+		_rujukan.faskes 		= 1;
 		_rujukan.kd_faskes 		= "";
 		_rujukan.tgl_rujukan 	= "";
 		_rujukan.kd_dpjp 		= "";
@@ -408,7 +408,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 						_rujukan.kd_diagnosa 	= data.response.rujukan.diagnosa.kode;
 						_rujukan.rujukan 		= $('#no_rujukan').val();
 						_rujukan.kd_faskes 		= data.response.rujukan.provPerujuk.kode;
-						_rujukan.faskes 		= data.response.rujukan.provPerujuk.nama;
+						// _rujukan.faskes 		= data.response.rujukan.provPerujuk.nama;
 						_rujukan.tgl_rujukan 	= data.response.rujukan.tglKunjungan;
 						// rujukan.kd_dpjp 	= "";
 
@@ -422,7 +422,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 								spesialis 	: data.response.rujukan.poliRujukan.kode,
 							},
 							success : function(data){
-								console.log(data.response.list.length);
+								// console.log(data.response.list.length);
 								if (data.metaData.code == 200 || data.metaData.code == '200') {
 									_rujukan.kd_dpjp = data.response.list[0].kode;
 									for(var i = 0; i<data.response.list.length; i++){
@@ -431,6 +431,22 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 											text 	: data.response.list[i].nama
 										}));
 									}
+								}
+							}
+						});
+
+				    	$.ajax({
+							url 		: "<?php echo base_url()?>Vclaim/get_faskes",
+							dataType 	: 'json',
+							delay 		: 2000,
+							type 		: "POST",
+							data 		: {
+								faskes 	: data.response.rujukan.provPerujuk.kode,
+							},
+							success : function(data){
+								// console.log(data.response.list.length);
+								if (data.metaData.code !== '200') {
+									_rujukan.faskes = 2;
 								}
 							}
 						});
@@ -552,17 +568,16 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 					success: function(data) {
 						if (data.status === true) {
 							$.each(data.customer, function (index, data) {
-								$("#kelompok").append("<option value='" + data.customer_code + "'>" + data.customer_name + "</option>");
+								$("#kelompok").append("<option value='" + data.customer_code + "' initial='" + data.bpjs + "'>" + data.customer_name + "</option>");
 							});
 						}
 					}
 				})
 			},
 			select : function(evt, ui){
-				// console.log(ui.item);
-
+				// console.log(ui.item.element[0].attributes[1].value);
 				parameter.penjamin  		= ui.item.value;
-				if (ui.item.value == '0000000002' || ui.item.value == '0000000009'){
+				if (ui.item.element[0].attributes[1].value == '1'){
 					parameter.jenis_penjamin = "1";
 					document.getElementById('select_jenis_kunjungan').style.display = '';
 					// document.getElementById('form-bpjs').style.display = '';
@@ -585,7 +600,6 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 					_rujukan.kd_poli 		= "";
 					_rujukan.kd_diagnosa 	= "";
 					_rujukan.rujukan 		= "";
-					_rujukan.faskes 		= "";
 					_rujukan.tgl_rujukan 	= "";
 					_rujukan.kd_dpjp 		= "";
 

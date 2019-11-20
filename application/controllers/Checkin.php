@@ -25,6 +25,7 @@ class Checkin extends CI_Controller {
 		$this->load->model('Autocharge');
 		$this->load->model('Tarif_Component');
 		$this->load->model('Detail_component');
+		$this->load->model('Sjp_kunjungan');
 		$this->db_simrs = $this->load->database('second', TRUE);
 	}
 
@@ -169,13 +170,30 @@ class Checkin extends CI_Controller {
 			}
 		}
 
+		/*
+			=========================================================================================
+			GENERATE SEP
+			=========================================================================================
+		*/
+		if ($response['code'] == 200) {
+			$this->parameter = $query->result();
+			$response['sep'] = json_decode($this->GENERATE_SEP($this->parameter));
+			// var_dump($response['sep']);die;
+			if ($response['sep']->metaData->code !== '200') {
+				$response['code'] 		= 401;
+				$response['message'] 	= $response['sep']->metaData->message;
+			}else{
+				$response['message'] = $response['message'].", no sep : ".$response['sep']->response->sep->noSep;
+			}
+		}
+
 		if ($response['code'] == 200) {
 			$this->parameter = $query->result();
 			$this->db_simrs->trans_commit();
 			$this->Rs_visit->set_database($this->load->database('default',TRUE));
 			$this->Rs_visit->update(
 				array( 'no_pendaftaran' => $this->parameter[0]->no_pendaftaran, ), 
-				array( 'hadir' => 1, )
+				array( 'hadir' => 1, 'kode_sep' => $response['sep']->response->sep->noSep,)
 			);
 			// $this->db_simrs->trans_rollback();
 		}else{
@@ -183,6 +201,27 @@ class Checkin extends CI_Controller {
 		}
 		$this->db_simrs->close();
 		$this->load->view('pages/checkin/step1-search', $response);
+	}
+
+	private function GENERATE_SEP($parameter){
+		include('./config.php');
+		$curl  	= curl_init();
+		$url = $conf_app['bpjs']['url_generate_sep'];
+		$curl = curl_init();
+		curl_setopt($curl, CURLOPT_URL, $url);
+		curl_setopt($curl, CURLOPT_PORT, 8080);
+		curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+		curl_setopt($curl, CURLOPT_HEADER, false);
+		curl_setopt($curl, CURLOPT_POSTFIELDS, $this->parameter_bpjs($parameter));
+		curl_setopt($curl, CURLOPT_HTTPHEADER, $this->getSignature()); 
+		curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, false);
+		curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
+		curl_setopt($curl, CURLOPT_FOLLOWLOCATION, 1);
+		curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
+		curl_setopt($curl, CURLOPT_USERAGENT, 'Mozilla/5.0 (Windows; U; Windows NT 6.1; rv:2.2) Gecko/20110201');
+		$data = curl_exec($curl);
+		curl_close($curl);
+		return $data;
 	}
 
 	private function CRUD_kunjungan($parameter){
@@ -318,6 +357,9 @@ class Checkin extends CI_Controller {
 					}
 				}
 			}
+		}else{
+			$result['result'] 	= 1;
+			$result['error'] 	= "";
 		}
 		return $result;
 	}
@@ -396,6 +438,9 @@ class Checkin extends CI_Controller {
 					break;
 				}
 			}
+		}else{
+			$result['result'] 	= 1;
+			$result['error'] 	= "";
 		}
 		return $result;
 	}
@@ -492,29 +537,6 @@ class Checkin extends CI_Controller {
 		return $parameter['shift'];
 	}
 
-	private function get_faskes($parameter){
-		include('./config.php');
-		$faskes = "1";
-		$url   	= $conf_app['bpjs']['url_faskes'].$parameter[0]->faskes_asal."/2";
-		$curl  	= curl_init();
-		$proxy 	= '127.0.0.1';
-		// curl_setopt($curl, CURLOPT_FOLLOWLOCATION, true);
-		curl_setopt($curl, CURLOPT_URL, $url);
-		// curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
-		curl_setopt($curl, CURLOPT_HEADER, false);
-		curl_setopt($curl, CURLOPT_HTTPHEADER, $this->getSignature()); 
-		curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, false);
-		curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
-		curl_setopt($curl, CURLOPT_FOLLOWLOCATION, 1);
-		curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
-		curl_setopt($curl, CURLOPT_USERAGENT, 'Mozilla/5.0 (Windows; U; Windows NT 6.1; rv:2.2) Gecko/20110201');
-
-		$data 	= curl_exec($curl);
-		$err    = curl_errno( $curl );
-		$errmsg = curl_error( $curl );
-		var_dump($data);die;
-	}
-
 	private function getSignature(){
 		include('./config.php');
 
@@ -529,7 +551,9 @@ class Checkin extends CI_Controller {
 	}
 
 	function parameter_bpjs($parameter){
-		$query 	= $this->db_simrs->query("SELECT max(no_dpjp) as no_dpjp FROM sjp_kunjungan where no_dpjp <> '' AND no_dpjp not ilike 'null'");
+		include('./config.php');
+		$this->Sjp_kunjungan->set_database($this->load->database('second', TRUE));
+		$query 	= $this->Sjp_kunjungan->get(" COALESCE(max(no_dpjp),0) as no_dpjp ", "no_dpjp <> '' AND no_dpjp is not null");
 		if ($query->num_rows() > 0) {
 			$no_surat = (int)$query->row()->no_dpjp + 1;
 		} 
@@ -539,12 +563,12 @@ class Checkin extends CI_Controller {
               "t_sep": {
                  "noKartu": "'.$parameter[0]->nomor_peserta.'",
                  "tglSep": "'. date("Y-m-d").'",
-                 "ppkPelayanan": "1308R001",
+                 "ppkPelayanan": "'.$conf_app['bpjs']['ppk_pelayanan'].'",
                  "jnsPelayanan": "2",
                  "klsRawat": "'.$parameter[0]->kd_kelas.'",
                  "noMR": "'.$parameter[0]->patient_code.'",
                  "rujukan": {
-                    "asalRujukan": "'.$this->get_faskes($parameter).'",
+                    "asalRujukan": "'.$parameter[0]->faskes_asal.'",
                     "tglRujukan": "'.$parameter[0]->tgl_rujukan.'",
                     "noRujukan": "'.$parameter[0]->no_rujukan.'",
                     "ppkRujukan": "'.$parameter[0]->kd_rujukan.'"

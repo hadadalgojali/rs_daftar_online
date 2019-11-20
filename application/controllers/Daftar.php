@@ -300,7 +300,7 @@ class Daftar extends CI_Controller {
 						'no_rujukan'			=> $parameter['no_rujukan'],
 						'diagnosa'				=> '',
 						'faskes_asal'			=> $parameter['data_rujukan']->faskes,
-						'kd_rujukan'			=> '',
+						'kd_rujukan'			=> $parameter['data_rujukan']->kd_faskes,
 						'kelas'					=> '',
 						'hadir'					=> 0,
 						'jenis_daftar'			=> 'JNSDFTR_ONLINE',
@@ -317,7 +317,6 @@ class Daftar extends CI_Controller {
 						'faskes' 				=> $parameter['data_rujukan']->kd_faskes,
 						'tgl_rujukan' 			=> $parameter['data_rujukan']->tgl_rujukan,
 						'kd_dpjp' 				=> $parameter['data_rujukan']->kd_dpjp,
-
 					)
 				);
 				$response['parameter']['no_pendaftaran']= substr(date('Y'), -2).date('m').date('d').$parameter['no_pendaftaran'];
