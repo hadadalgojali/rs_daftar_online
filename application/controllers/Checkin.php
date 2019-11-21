@@ -231,7 +231,7 @@ class Checkin extends CI_Controller {
 
 		$this->Kunjungan->set_database($this->load->database('second', TRUE));
 		$query = $this->Kunjungan->get(
-			" *, URUT_MASUK as urut_masuk ", 
+			" * ", 
 			array(
 				'kd_pasien' => $parameter[0]->patient_code,
 				'kd_unit' 	=> $parameter[0]->unit_code,
