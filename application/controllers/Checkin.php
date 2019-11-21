@@ -175,15 +175,17 @@ class Checkin extends CI_Controller {
 			GENERATE SEP
 			=========================================================================================
 		*/
-		if ($response['code'] == 200) {
+		if ($response['code'] == 200 ) {
 			$this->parameter = $query->result();
-			$response['sep'] = json_decode($this->GENERATE_SEP($this->parameter));
-			// var_dump($response['sep']);die;
-			if ($response['sep']->metaData->code !== '200') {
-				$response['code'] 		= 401;
-				$response['message'] 	= $response['sep']->metaData->message;
-			}else{
-				$response['message'] = $response['message'].", no sep : ".$response['sep']->response->sep->noSep;
+			if ($this->parameter[0]->kd_rujukan != '') {
+				$response['sep'] = json_decode($this->GENERATE_SEP($this->parameter));
+				// var_dump($response['sep']);die;
+				if ($response['sep']->metaData->code !== '200') {
+					$response['code'] 		= 401;
+					$response['message'] 	= $response['sep']->metaData->message;
+				}else{
+					$response['message'] = $response['message'].", no sep : ".$response['sep']->response->sep->noSep;
+				}
 			}
 		}
 
