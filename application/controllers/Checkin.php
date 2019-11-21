@@ -175,6 +175,7 @@ class Checkin extends CI_Controller {
 			GENERATE SEP
 			=========================================================================================
 		*/
+		$tmp_sep = "";
 		if ($response['code'] == 200 ) {
 			$this->parameter = $query->result();
 			if ($this->parameter[0]->kd_rujukan != '') {
@@ -183,6 +184,7 @@ class Checkin extends CI_Controller {
 				if ($response['sep']->metaData->code !== '200') {
 					$response['code'] 		= 401;
 					$response['message'] 	= $response['sep']->metaData->message;
+					$tmp_sep = $response['sep']->response->sep->noSep;
 				}else{
 					$response['message'] = $response['message'].", no sep : ".$response['sep']->response->sep->noSep;
 				}
@@ -195,7 +197,7 @@ class Checkin extends CI_Controller {
 			$this->Rs_visit->set_database($this->load->database('default',TRUE));
 			$this->Rs_visit->update(
 				array( 'no_pendaftaran' => $this->parameter[0]->no_pendaftaran, ), 
-				array( 'hadir' => 1, 'kode_sep' => $response['sep']->response->sep->noSep,)
+				array( 'hadir' => 1, 'kode_sep' => $tmp_sep,)
 			);
 			// $this->db_simrs->trans_rollback();
 		}else{
