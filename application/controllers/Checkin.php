@@ -509,7 +509,7 @@ class Checkin extends CI_Controller {
 		$parameter = array();
 		$this->Bagian_shift->set_database($this->load->database('second', TRUE));
 		$query 	= $this->Bagian_shift->get(" shift ", array(
-			'KD_BAGIAN' => substr($criteria,0,1)
+			'kd_bagian' => substr($criteria,0,1)
 		));
 
 		if ($query->num_rows() > 0) {
