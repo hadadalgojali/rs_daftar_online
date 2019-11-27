@@ -3,6 +3,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
 class Daftar extends CI_Controller {
 	protected $_ci;
+	protected $rand;
 
 	public function __construct(){
 		parent::__construct();
@@ -13,6 +14,7 @@ class Daftar extends CI_Controller {
 		$this->load->model('Rs_visit');
 		$this->load->model('Rs_dokter_klinik');
 		$this->load->model('Rs_jadwal_poli');
+      	$this->rand = substr(rand(), 0, 4);
 		$this->load->helper('captcha');
 	}
 
@@ -40,12 +42,14 @@ class Daftar extends CI_Controller {
 		$response['tanggal_to'] 	= "+".$conf_app['tanggal_to'];
 
 		$vals = array(
+			'word'   	 => $this->rand,
 			'img_path'   => './assets/image/captcha/',
 			'img_url'    => base_url().'assets/image/captcha/',
 			'img_width'  => '160',
 			'img_height' => 40,
 			'border'     => 0,
-			'font_size'  => 30,
+			'font_size'  => 22,
+			'font_path'  => FCPATH . 'system/fonts/Xerox.ttf',
 			'expiration' => 4000,
 			'colors'     => array(
 					'background' => array(255, 255, 255),

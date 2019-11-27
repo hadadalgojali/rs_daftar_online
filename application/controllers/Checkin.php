@@ -184,7 +184,7 @@ class Checkin extends CI_Controller {
 				if ($response['sep']->metaData->code !== '200') {
 					$response['code'] 		= 401;
 					$response['message'] 	= $response['sep']->metaData->message;
-					$tmp_sep = $response['sep']->response->sep->noSep;
+					$tmp_sep 				= $response['sep']->response->sep->noSep;
 				}else{
 					$response['message'] = $response['message'].", no sep : ".$response['sep']->response->sep->noSep;
 				}
